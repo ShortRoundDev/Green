@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Managers">
+      <UniqueIdentifier>{f4a78fa8-7075-4473-a12a-f039e76ff0ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\System">
+      <UniqueIdentifier>{9e16b8ce-4274-462c-b021-0c921e6a6d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{9376c01f-71da-4a3e-883b-75930f9d3931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\System">
+      <UniqueIdentifier>{ff61b663-6ac2-476e-834c-5a15b260f86b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Framework">
+      <UniqueIdentifier>{f1851d1b-c221-40f9-ba1f-d1a740eb10e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Log">
+      <UniqueIdentifier>{3f83638d-d6e4-4d49-832c-818d944f7999}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Log">
+      <UniqueIdentifier>{b930c85f-392f-4f07-a36b-c45ff7903682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Graphics">
+      <UniqueIdentifier>{ae06c4b3-ad98-4b63-863a-47abdad0fb29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Graphics">
+      <UniqueIdentifier>{96e4fa7d-c0ed-42a1-983f-952b8a678ea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{a04b4e15-b5ab-43ef-ae4d-2b4125b87e5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\World">
+      <UniqueIdentifier>{010c2755-b411-4faa-ab1f-6b9fd5b5e342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Util">
+      <UniqueIdentifier>{57fd30f9-af80-407f-8560-c93c1c1b5510}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Util\Vertex">
+      <UniqueIdentifier>{f4506dfc-2be0-4783-8a90-02201972d9b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Environment">
+      <UniqueIdentifier>{6246b11d-12e7-40ff-982a-6006b4d9d4ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Util\Pixel">
+      <UniqueIdentifier>{e3925d6c-5d8e-4055-a12b-4e15ef9126ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Assets">
+      <UniqueIdentifier>{3fa39e3f-b481-4a5b-8629-5217220edf6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Game">
+      <UniqueIdentifier>{354c1ac2-a35f-4bfd-8058-6ae8cd89a341}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Game">
+      <UniqueIdentifier>{de238c35-9a07-4f9f-b6ea-f6f901971ec9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Program.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemManager.cpp">
+      <Filter>Source Files\Managers\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemVars.cpp">
+      <Filter>Source Files\Managers\System</Filter>
+    </ClCompile>
+    <ClCompile Include="LogManager.cpp">
+      <Filter>Source Files\Managers\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files\Managers\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsManager.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalShaderIncluder.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Source Files\Managers\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Managers\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemManager.h">
+      <Filter>Header Files\Managers\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemVars.h">
+      <Filter>Header Files\Managers\System</Filter>
+    </ClInclude>
+    <ClInclude Include="GTypes.h">
+      <Filter>Source Files\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="LogManager.h">
+      <Filter>Header Files\Managers\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files\Managers\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsManager.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalShaderIncluder.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GVertex.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>Header Files\Managers\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Managers\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalBuffer.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="WorldVertex.hlsl">
+      <Filter>Resource Files\Shaders\World</Filter>
+    </FxCompile>
+    <FxCompile Include="Perspective.hlsl">
+      <Filter>Resource Files\Shaders\Util\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexInput.hlsl">
+      <Filter>Resource Files\Shaders\Util\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="Vertex.hlsl">
+      <Filter>Resource Files\Shaders\Util\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="GlobalCBuffer.hlsl">
+      <Filter>Resource Files\Shaders\Util</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelInput.hlsl">
+      <Filter>Resource Files\Shaders\Util\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="WorldPixel.hlsl">
+      <Filter>Resource Files\Shaders\World</Filter>
+    </FxCompile>
+    <FxCompile Include="Pixel.hlsl">
+      <Filter>Resource Files\Shaders\Util\Pixel</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shadertoolsconfig.json">
+      <Filter>Resource Files\Environment</Filter>
+    </None>
+    <None Include="Gamma.hlsl">
+      <Filter>Resource Files\Shaders\Util\Pixel</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Default.cfg">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Assets\Boxes.obj">
+      <Filter>Resource Files\Assets</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Assets\Boxes.mtl">
+      <Filter>Resource Files\Assets</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+</Project>
