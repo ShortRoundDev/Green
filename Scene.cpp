@@ -34,6 +34,11 @@ void Scene::draw()
     Graphics.setViewMatrix(m_camera->getView());
 
     m_shader->use();
+    renderMeshes();
+}
+
+void Scene::renderMeshes()
+{
     for (u32 i = 0; i < m_meshCount; i++)
     {
         m_brushes[i].draw();

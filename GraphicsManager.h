@@ -54,6 +54,9 @@ public:
 
     void setViewMatrix(const XMMATRIX& view);
 
+    void resetRenderTarget();
+    void resetViewport();
+
     LRESULT CALLBACK messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 
 private:
@@ -70,6 +73,7 @@ private:
     ComPtr<ID3D11DepthStencilState> m_depthStencilState;
     ComPtr<ID3D11DepthStencilView> m_depthStencilView;
     ComPtr<ID3D11RasterizerState> m_rasterState;
+    D3D11_VIEWPORT m_viewport;
 
     i32 m_numerator;
     i32 m_denominator;

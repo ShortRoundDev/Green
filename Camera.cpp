@@ -7,8 +7,8 @@ static constexpr f32 sensitivity = 0.2f;
 
 Camera::Camera()
 {
-    m_pos = XMFLOAT3(0, 64, -128);
-    m_rotation = XMFLOAT3(45, 0, 0);
+    m_pos = XMFLOAT3(0, 0, -256);
+    m_rotation = XMFLOAT3(0, 0, 0);
 	update(); // set view matrix once
 }
 
@@ -35,7 +35,6 @@ void Camera::update()
 	{
 		m_rotation.x = -89.0f;
 	}
-
 
 	XMVECTOR positionVec = XMLoadFloat3(&m_pos);
 
@@ -70,6 +69,7 @@ void Camera::update()
 	XMVECTOR _lookVec = XMVectorAdd(positionVec, m_look);
 
 	m_view = XMMatrixLookAtLH(positionVec, _lookVec, upVec);
+	//auto space = XMMatrixMultiply(Graphics.getProjection(), m_view);
 	//orto = XMMatrixLookAtLH({ 0, 0, 0 }, { 0, 0, 1 }, { 0, 1, 0 });
 	//skyViewMatrix = XMMatrixLookAtLH(positionVec, _lookVec, upVec);
 }

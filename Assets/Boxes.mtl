@@ -1,12 +1,6 @@
 newmtl DevFloor1
 map_Kd textures\DevFloor1.png
 
-newmtl DevFloor2
-map_Kd textures\DevFloor2.png
-
 newmtl DevWall1
 map_Kd textures\DevWall1.png
-
-newmtl DevWall2
-map_Kd textures\DevWall2.png
 

@@ -4,6 +4,7 @@
 #include "SystemManager.h"
 #include "Shader.h"
 #include "Mesh.h"
+#include "Light.h"
 #include "Texture.h"
 
 static Logger logger = CreateLogger("GraphicsManager");
@@ -188,6 +189,16 @@ i32 GraphicsManager::diffY()
 void GraphicsManager::setViewMatrix(const XMMATRIX& view)
 {
 	m_view = view;
+}
+
+void GraphicsManager::resetRenderTarget()
+{
+	m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+}
+
+void GraphicsManager::resetViewport()
+{
+	m_deviceContext->RSSetViewports(1, &m_viewport);
 }
 
 LRESULT CALLBACK GraphicsManager::messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
@@ -574,16 +585,15 @@ bool GraphicsManager::initRasterizer()
 
 	m_deviceContext->RSSetState(m_rasterState.Get());
 
-	D3D11_VIEWPORT viewport = { };
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-	viewport.Width = (float)vars.width;
-	viewport.Height = (float)vars.height;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
+	ZeroMemory(&m_viewport, sizeof(D3D11_VIEWPORT));
+	m_viewport.Width = (float)vars.width;
+	m_viewport.Height = (float)vars.height;
+	m_viewport.MinDepth = 0.0f;
+	m_viewport.MaxDepth = 1.0f;
+	m_viewport.TopLeftX = 0.0f;
+	m_viewport.TopLeftY = 0.0f;
 
-	m_deviceContext->RSSetViewports(1, &viewport);
+	m_deviceContext->RSSetViewports(1, &m_viewport);
 	float fov = (float)M_PI_4_F;
 	float aspect = (float)vars.width / (float)vars.height;
 
@@ -607,7 +617,15 @@ bool GraphicsManager::initShaders()
 	putShader(L"World", new Shader(
 		m_device.Get(),
 		L"WorldVertex.cso",
-		L"WorldPixel.cso"
+		L"WorldPixel.cso",
+		0
+	));
+
+	putShader(L"Light", new Shader(
+		m_device.Get(),
+		L"ShadowMapVertex.cso",
+		L"ShadowMapPixel.cso",
+		sizeof(LightSpaceBuffer)
 	));
 	
 	return true;

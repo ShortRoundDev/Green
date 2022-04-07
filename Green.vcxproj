@@ -153,6 +153,7 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="IManager.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="LocalShaderIncluder.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="LogManager.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="GTypes.h" />
     <ClInclude Include="GVertex.h" />
     <ClInclude Include="IManager.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="LocalShaderIncluder.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="LogManager.h" />
@@ -193,6 +195,27 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="PixelInput.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="ShadowMapPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="ShadowMapVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="ShadowPixelInput.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Vertex.hlsl">

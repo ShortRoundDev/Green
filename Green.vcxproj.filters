@@ -67,6 +67,9 @@
     <Filter Include="Header Files\Managers\Game">
       <UniqueIdentifier>{de238c35-9a07-4f9f-b6ea-f6f901971ec9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\ShadowMap">
+      <UniqueIdentifier>{b2df0be2-17ee-4aa1-a697-f5ada77c5fc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -109,6 +112,9 @@
       <Filter>Source Files\Managers\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
       <Filter>Source Files\Managers\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -161,6 +167,9 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Managers\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="WorldVertex.hlsl">
@@ -186,6 +195,15 @@
     </FxCompile>
     <FxCompile Include="Pixel.hlsl">
       <Filter>Resource Files\Shaders\Util\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowMapVertex.hlsl">
+      <Filter>Resource Files\Shaders\ShadowMap</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowPixelInput.hlsl">
+      <Filter>Resource Files\Shaders\Util\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowMapPixel.hlsl">
+      <Filter>Resource Files\Shaders\ShadowMap</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

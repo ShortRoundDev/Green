@@ -13,6 +13,7 @@ public:
     ~Scene();
 
     void draw();
+    void renderMeshes();
     void update();
 
 private:
