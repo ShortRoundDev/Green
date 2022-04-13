@@ -6,22 +6,32 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
+#include "reactphysics3d/reactphysics3d.h"
+
 #include <vector>
 #include <string>
 
 using namespace Microsoft::WRL;
+using namespace reactphysics3d;
 
 class Texture;
+class GameManager;
 
 class Mesh
 {
 public:
-    static bool createFromFile(std::string path, Mesh** meshes, size_t* totalMeshes);
+    static bool createFromFile(
+        std::string path,
+        Mesh** meshes, size_t* totalMeshes,
+        ConvexMeshShape*** physicsMeshes, size_t* totalPhysicsMeshes,
+        GameManager* gameManager
+    );
     void draw();
 
-private:
     Mesh();
     ~Mesh();
+
+private:
 
     bool initialize(const std::vector<GVertex>& vertices, size_t vertCount, const std::vector<u32>& indices, size_t indexCount, Texture* texture);
 
@@ -35,4 +45,7 @@ private:
     u32 m_textureCount;
 
     bool m_status;
+
+    void concatenateVertices(std::vector<GVertex>& out, const std::vector<GVertex>& a, const std::vector<GVertex>& b);
+    void concatenateIndices(std::vector<u32>& out, const std::vector<u32>& a, const std::vector<u32>& b);
 };

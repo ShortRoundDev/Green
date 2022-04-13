@@ -2,14 +2,26 @@
 
 #include "GraphicsManager.h"
 #include "GTypes.h"
+#include "Logger.h"
 
 static constexpr f32 sensitivity = 0.2f;
+static Logger logger = CreateLogger("Camera");
 
 Camera::Camera()
 {
-    m_pos = XMFLOAT3(0, 0, -256);
-    m_rotation = XMFLOAT3(0, 0, 0);
-	update(); // set view matrix once
+    m_pos = XMFLOAT3( 0, 512, 0);
+
+    //m_rotation = XMFLOAT3(0, 0, 0);
+
+	auto posVec = XMLoadFloat3(&m_pos);
+	XMFLOAT3 look = { 0, -1.0, 0 };
+	auto lookVec = XMLoadFloat3(&look);
+	XMFLOAT3 up = { 0, 1, 0 };
+	auto upVec = XMLoadFloat3(&up);
+	m_view = XMMatrixLookAtLH(posVec, lookVec, upVec);
+	m_rotation = XMFLOAT3(90, 0, 0);
+
+	//update(); // set view matrix once
 }
 
 Camera::~Camera()
@@ -52,17 +64,22 @@ void Camera::update()
 	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(p, y, r);
 
 	m_look = XMVector3TransformCoord(m_look, rotationMatrix);
+	XMVECTOR moveVec = XMVectorScale(m_look, 4);
+
 	XMFLOAT3 forward;
+	XMFLOAT3 moveF3;
+
 	XMStoreFloat3(&forward, m_look);
+	XMStoreFloat3(&moveF3, moveVec);
 	///// KEY MOVE /////
 	if (Graphics.keyDown('S'))
 	{
-		move({ -forward.x, -forward.y, -forward.z });
+		move({ -moveF3.x, -moveF3.y, -moveF3.z });
 	}
 
 	if (Graphics.keyDown('W'))
 	{
-		move(forward);
+		move(moveF3);
 	}
 
 	upVec = XMVector3TransformCoord(upVec, rotationMatrix);
@@ -100,6 +117,8 @@ void Camera::move(XMFLOAT3 diff)
 
 	XMVECTOR newPos = XMVectorAdd(pos, diffVec);
 	XMStoreFloat3(&m_pos, newPos);
+
+	logger.info("%f, %f, %f", m_pos.x, m_pos.y, m_pos.z);
 }
 
 const XMMATRIX& Camera::getView()

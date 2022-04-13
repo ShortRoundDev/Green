@@ -4,10 +4,10 @@
 #include "SystemManager.h"
 #include "Shader.h"
 #include "Mesh.h"
-#include "Light.h"
+#include "ILight.h"
 #include "Texture.h"
 
-static Logger logger = CreateLogger("GraphicsManager");
+static ::Logger logger = CreateLogger("GraphicsManager");
 
 ////////// PUBLIC //////////
 bool GraphicsManager::start()
@@ -64,7 +64,10 @@ void GraphicsManager::bindGlobalBuffer()
 	m_gBuffer.world		 = XMMatrixTranspose(m_world);
 	m_gBuffer.projection = XMMatrixTranspose(m_projection);
 	m_gBuffer.view		 = XMMatrixTranspose(m_view);
-	m_gBuffer.camera	 = m_camera;
+	m_gBuffer.camera	 = { m_camera.x, m_camera.y, m_camera.z, 1.0f };
+
+	m_gBuffer.ambientLightColor = { 0.53f, 0.56f, 0.73f, 1.0f };
+	m_gBuffer.lightDirection = { 0.5, 0.5, 0.5, 1.0f };
 
 	inverseTranspose(m_gBuffer.world, m_gBuffer.invWorld);
 
@@ -191,6 +194,12 @@ void GraphicsManager::setViewMatrix(const XMMATRIX& view)
 	m_view = view;
 }
 
+void GraphicsManager::setCameraPos(const XMFLOAT3& pos)
+{
+	m_camera = pos;
+}
+
+
 void GraphicsManager::resetRenderTarget()
 {
 	m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
@@ -199,6 +208,19 @@ void GraphicsManager::resetRenderTarget()
 void GraphicsManager::resetViewport()
 {
 	m_deviceContext->RSSetViewports(1, &m_viewport);
+}
+
+void GraphicsManager::setShadowRasterizer(bool shadowRasterizer)
+{
+	if (shadowRasterizer)
+	{
+		m_deviceContext->RSSetState(m_shadowMapRasterizer.Get());
+	}
+	else
+	{
+		m_deviceContext->RSSetState(m_sceneRasterizer.Get());
+
+	}
 }
 
 LRESULT CALLBACK GraphicsManager::messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
@@ -578,12 +600,21 @@ bool GraphicsManager::initRasterizer()
 	rasterDesc.FrontCounterClockwise = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
 
-	if (FAILED(m_device->CreateRasterizerState(&rasterDesc, m_rasterState.GetAddressOf())))
+	if (FAILED(m_device->CreateRasterizerState(&rasterDesc, m_sceneRasterizer.GetAddressOf())))
 	{
-		return true;
+		return false;
 	}
 
-	m_deviceContext->RSSetState(m_rasterState.Get());
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	if (FAILED(m_device->CreateRasterizerState(&rasterDesc, m_shadowMapRasterizer.GetAddressOf())))
+	{
+		return false;
+	}
+
+	m_deviceContext->RSSetState(m_sceneRasterizer.Get());
 
 	ZeroMemory(&m_viewport, sizeof(D3D11_VIEWPORT));
 	m_viewport.Width = (float)vars.width;
@@ -621,12 +652,19 @@ bool GraphicsManager::initShaders()
 		0
 	));
 
-	putShader(L"Light", new Shader(
+	putShader(L"SpotLight", new Shader(
 		m_device.Get(),
-		L"ShadowMapVertex.cso",
-		L"ShadowMapPixel.cso",
+		L"SpotLightShadowMapVertex.cso",
+		L"SpotLightShadowMapPixel.cso",
 		sizeof(LightSpaceBuffer)
 	));
+
+	/*putShader(L"PointLight", new Shader(
+		m_device.Get(),
+		L"PointLightShadowMapVertex.cso",
+		L"PointLightShadowMapPixe;.cso",
+		sizeof(LightSpaceBuffer)
+	));*/
 	
 	return true;
 }

@@ -11,4 +11,6 @@ struct GlobalBuffer
     XMMATRIX projection;
     XMMATRIX invWorld;
     XMFLOAT4 camera;
+    XMFLOAT4 ambientLightColor;
+    XMFLOAT4 lightDirection;
 };

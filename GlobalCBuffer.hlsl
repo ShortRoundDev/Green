@@ -8,6 +8,8 @@ cbuffer GlobalCBuffer : register(b0)
     matrix projection;
     matrix invWorld;
     float4 camera;
+    float4 ambientLightColor;
+    float4 lightDirection;
 }
 
 #endif

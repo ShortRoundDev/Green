@@ -37,4 +37,4 @@ private:
     FILE* m_errStream;
 };
 
-Logger CreateLogger(const char* fileName);
+::Logger CreateLogger(const char* fileName);

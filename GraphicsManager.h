@@ -53,9 +53,11 @@ public:
     bool keyDown(u32 key);
 
     void setViewMatrix(const XMMATRIX& view);
+    void setCameraPos(const XMFLOAT3& pos);
 
     void resetRenderTarget();
     void resetViewport();
+    void setShadowRasterizer(bool shadowRasterizer);
 
     LRESULT CALLBACK messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 
@@ -72,7 +74,9 @@ private:
     ComPtr<ID3D11Texture2D> m_depthStencilBuffer;
     ComPtr<ID3D11DepthStencilState> m_depthStencilState;
     ComPtr<ID3D11DepthStencilView> m_depthStencilView;
-    ComPtr<ID3D11RasterizerState> m_rasterState;
+    ComPtr<ID3D11RasterizerState> m_sceneRasterizer;
+    ComPtr<ID3D11RasterizerState> m_shadowMapRasterizer;
+
     D3D11_VIEWPORT m_viewport;
 
     i32 m_numerator;
@@ -82,7 +86,7 @@ private:
     XMMATRIX m_ortho;
     XMMATRIX m_world;
     XMMATRIX m_view;
-    XMFLOAT4 m_camera;
+    XMFLOAT3 m_camera;
 
     ComPtr<ID3D11Buffer> m_gBufferBuffer;
 

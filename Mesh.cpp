@@ -1,6 +1,7 @@
 #include "Mesh.h"
 
 #include "GraphicsManager.h"
+#include "GameManager.h"
 #include "Logger.h"
 #include "Texture.h"
 
@@ -8,24 +9,193 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-static Logger logger = CreateLogger("Mesh");
+#include "reactphysics3d/reactphysics3d.h"
 
-bool Mesh::createFromFile(std::string path, Mesh** meshes, size_t* totalMeshes)
+#include <unordered_set>
+
+using namespace reactphysics3d;
+
+static ::Logger logger = CreateLogger("Mesh");
+
+struct HashXMFloat3
+{
+public:
+    size_t operator()(const XMFLOAT3& vector) const
+    {
+               // Evil
+        return (std::bit_cast<u32>(vector.x) * 73856093) ^
+               (std::bit_cast<u32>(vector.y) * 19349663) ^
+               (std::bit_cast<u32>(vector.z) * 83492791);
+    }
+};
+
+struct EqualsXMFloat3
+{
+public:
+    bool operator()(const XMFLOAT3& a, const XMFLOAT3& b) const
+    {
+        return a.x == b.x && a.y == b.y && a.z == b.z;
+    }
+};
+
+bool Mesh::createFromFile(
+    std::string path,
+    Mesh** meshes, size_t* totalMeshes,
+    ConvexMeshShape*** physicsMeshes, size_t* totalPhysicsMeshes,
+    GameManager* gameManager
+)
 {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-    if (scene == NULL)
+    if (scene == NULL || gameManager == NULL)
     {
+        *physicsMeshes = NULL;
+        *totalPhysicsMeshes = 0;
         *meshes = NULL;
         *totalMeshes = 0;
         return false;
     }
-    *totalMeshes = scene->mNumMeshes;
-    *meshes = new Mesh[*totalMeshes];
 
-    for (u32 i = 0; i < scene->mNumMeshes; i++)
+    std::vector<Mesh> outMeshes = std::vector<Mesh>();
+
+    auto root = scene->mRootNode;
+    *totalPhysicsMeshes = root->mNumChildren;
+    *physicsMeshes = new ConvexMeshShape*[*totalPhysicsMeshes];
+    for (u32 i = 0; i < root->mNumChildren; i++)
     {
-        auto node = scene->mRootNode;
+        auto child = root->mChildren[i];
+        logger.info("%d: Meshes: %d", i, child->mNumMeshes);
+    }
+
+    // For each NODE in SCENE
+    for (u32 i = 0; i < root->mNumChildren; i++)
+    {
+        auto xmFloat3Comparator = [](XMFLOAT3 a, XMFLOAT3 b) { return a.x == b.x && a.y == b.y && a.z == b.z; };
+
+        std::vector<XMFLOAT3> nodeVertices;
+        std::unordered_set<XMFLOAT3, HashXMFloat3, EqualsXMFloat3> uniqueNodeVertices;
+        std::vector<u32> nodeIndices = std::vector<u32>();
+
+        std::vector<PolygonVertexArray::PolygonFace> nodeFaces = std::vector<PolygonVertexArray::PolygonFace>();
+
+        auto child = root->mChildren[i];
+        u32 faceIndexOffset = 0;
+
+        //For each MESH in NODE
+        for (u32 j = 0; j < child->mNumMeshes; j++)
+        {
+            std::vector<GVertex> meshVertices = std::vector<GVertex>();
+            std::vector<u32> meshIndices = std::vector<u32>();
+
+            auto mesh = scene->mMeshes[child->mMeshes[j]];
+
+            //For each VERTEX in MESH
+            for (u32 k = 0; k < mesh->mNumVertices; k++)
+            {
+                f32 u = 0.0f, v = 0.0f;
+                if (mesh->mTextureCoords[0])
+                {
+                    u = mesh->mTextureCoords[0][k].x;
+                    v = mesh->mTextureCoords[0][k].y;
+                }
+
+                GVertex vertex = CreateVertex(
+                    mesh->mVertices[k].x,
+                    mesh->mVertices[k].y,
+                    mesh->mVertices[k].z,
+                    mesh->mNormals[k].x,
+                    mesh->mNormals[k].y,
+                    mesh->mNormals[k].z,
+                    -u,
+                    v
+                );
+
+                auto nodeVertex = XMFLOAT3(mesh->mVertices[k].x, mesh->mVertices[k].y, mesh->mVertices[k].z);
+                if (uniqueNodeVertices.find(nodeVertex) == uniqueNodeVertices.end()) // not found
+                {
+                    uniqueNodeVertices.insert(nodeVertex);
+                    nodeVertices.push_back(nodeVertex);
+                }
+
+                meshVertices.push_back(vertex);
+            }
+            
+            //For each FACE in MESH
+            for (u32 k = 0; k < mesh->mNumFaces; k++)
+            {
+                auto face = mesh->mFaces[k];
+                
+                //For each INDEX in FACE
+                PolygonVertexArray::PolygonFace nodeFace = PolygonVertexArray::PolygonFace();
+                nodeFace.indexBase = faceIndexOffset;
+                nodeFace.nbVertices = face.mNumIndices;
+                nodeFaces.push_back(nodeFace);
+                for (u32 l = 0; l < face.mNumIndices; l++)
+                {
+                    meshIndices.push_back(face.mIndices[l]);
+
+                    //remap node index
+                    auto uniquePos = meshVertices[face.mIndices[l]];
+                    auto vertexIterator = std::find_if(nodeVertices.begin(), nodeVertices.end(), [uniquePos](const XMFLOAT3& a) {
+                        return a.x == uniquePos.pos.x && a.y == uniquePos.pos.y && a.z == uniquePos.pos.z;
+                    });
+                    auto index = std::distance(nodeVertices.begin(), vertexIterator);
+                    
+                    nodeIndices.push_back(index);
+                }
+                faceIndexOffset = nodeIndices.size();                
+            }
+
+            //Get texture from material list on mesh
+            Texture* texture = NULL;
+            int texIdx = 0;
+            if (mesh->mMaterialIndex >= 0)
+            {
+                aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+                auto diffuseCount = material->GetTextureCount(aiTextureType_DIFFUSE);
+                if (diffuseCount > 0)
+                {
+                    aiString str;
+                    material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+
+                    texture = Graphics.getTexture(std::string(str.C_Str()));
+                }
+            }
+
+            // Create MESH for Rendering
+            Mesh _mesh = Mesh();
+            _mesh.initialize(
+                meshVertices,
+                meshVertices.size(),
+                meshIndices,
+                meshIndices.size(),
+                texture
+            );
+            outMeshes.push_back(_mesh);
+        }
+
+        //Create NODE for Physics
+        PolygonVertexArray* nodeVertexArray = new PolygonVertexArray(
+            nodeVertices.size(),
+            nodeVertices.data(),
+            sizeof(XMFLOAT3),
+            nodeIndices.data(),
+            sizeof(u32),
+            nodeFaces.size(),
+            nodeFaces.data(),
+            PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
+            PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
+        );
+
+        PolyhedronMesh* nodeMesh = gameManager->getPhysicsCommon()->createPolyhedronMesh(nodeVertexArray);
+        (*physicsMeshes)[i] = gameManager->getPhysicsCommon()->createConvexMeshShape(nodeMesh);
+        
+        *totalMeshes = outMeshes.size();
+        *meshes = outMeshes.data();
+    }
+
+    /*for (u32 i = 0; i < scene->mNumMeshes; i++)
+    {
         auto mesh = scene->mMeshes[i];
         
         size_t vertCount = mesh->mNumVertices;
@@ -85,7 +255,7 @@ bool Mesh::createFromFile(std::string path, Mesh** meshes, size_t* totalMeshes)
             indexCount,
             texture
         );
-    }
+    }*/
     return true;
 }
 
@@ -173,4 +343,38 @@ bool Mesh::initialize(
 
     m_status = true;
     return true;
+}
+
+void Mesh::concatenateVertices(
+    std::vector<GVertex>& out,
+    const std::vector<GVertex>& a,
+    const std::vector<GVertex>& b
+)
+{
+    for (u32 i = 0; i < a.size(); i++)
+    {
+        out.push_back(a[i]);
+    }
+    for (u32 i = 0; i < b.size(); i++)
+    {
+        out.push_back(b[i]);
+    }
+}
+
+void Mesh::concatenateIndices(
+    std::vector<u32>& out,
+    const std::vector<u32>& a,
+    const std::vector<u32>& b
+)
+{
+    size_t initialSize = out.size();
+    for (u32 i = 0; i < a.size(); i++)
+    {
+        out.push_back(a[i] + initialSize);
+    }
+    initialSize = out.size();
+    for (u32 i = 0; i < b.size(); i++)
+    {
+        out.push_back(b[i] + initialSize);
+    }
 }

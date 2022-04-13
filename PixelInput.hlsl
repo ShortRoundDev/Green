@@ -4,7 +4,10 @@
 struct PixelInput
 {
     float4 position : SV_POSITION;
+    float3 fragPos: POSITION;
+    float3 normal : NORMAL0;
     float2 tex : TEXCOORD0;
+    float4 pixelPosLightSpace : POSITION1;
 };
 
 #endif

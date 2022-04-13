@@ -70,6 +70,15 @@
     <Filter Include="Resource Files\Shaders\ShadowMap">
       <UniqueIdentifier>{b2df0be2-17ee-4aa1-a697-f5ada77c5fc3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Util\Light">
+      <UniqueIdentifier>{9c892494-99c1-448f-a85f-98c59f98595b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Graphics\Lights">
+      <UniqueIdentifier>{8ee5a305-e625-4519-bd76-080ddd8d805a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Graphics\Lights">
+      <UniqueIdentifier>{3ba1e28b-d21e-4165-a525-bef79861c43a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -114,8 +123,14 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Managers\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files\Managers\Graphics</Filter>
+    <ClCompile Include="ILight.cpp">
+      <Filter>Source Files\Managers\Graphics\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Source Files\Managers\Graphics\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files\Managers\Graphics\Lights</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,8 +182,14 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Managers\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files\Managers\Graphics</Filter>
+    <ClInclude Include="ILight.h">
+      <Filter>Header Files\Managers\Graphics\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>Header Files\Managers\Graphics\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files\Managers\Graphics\Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -196,13 +217,13 @@
     <FxCompile Include="Pixel.hlsl">
       <Filter>Resource Files\Shaders\Util\Pixel</Filter>
     </FxCompile>
-    <FxCompile Include="ShadowMapVertex.hlsl">
+    <FxCompile Include="SpotLightShadowMapVertex.hlsl">
       <Filter>Resource Files\Shaders\ShadowMap</Filter>
     </FxCompile>
     <FxCompile Include="ShadowPixelInput.hlsl">
       <Filter>Resource Files\Shaders\Util\Pixel</Filter>
     </FxCompile>
-    <FxCompile Include="ShadowMapPixel.hlsl">
+    <FxCompile Include="SpotLightShadowMapPixel.hlsl">
       <Filter>Resource Files\Shaders\ShadowMap</Filter>
     </FxCompile>
   </ItemGroup>
@@ -213,6 +234,10 @@
     <None Include="Gamma.hlsl">
       <Filter>Resource Files\Shaders\Util\Pixel</Filter>
     </None>
+    <None Include="ShadowMap.hlsl">
+      <Filter>Resource Files\Shaders\Util\Light</Filter>
+    </None>
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Default.cfg">
