@@ -79,6 +79,18 @@
     <Filter Include="Header Files\Managers\Graphics\Lights">
       <UniqueIdentifier>{3ba1e28b-d21e-4165-a525-bef79861c43a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Managers\Game\Entities">
+      <UniqueIdentifier>{bfcb82f3-4843-4ed8-972d-118cf6e2b259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Game\Entities">
+      <UniqueIdentifier>{1c62ebe1-82c2-4c5f-baa4-50c6126c4e46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Game\Physics">
+      <UniqueIdentifier>{cb334d56-92f7-45de-8bd9-01ab4c584975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Game\Physics">
+      <UniqueIdentifier>{461f8cc6-b27c-4506-96dc-b0f95010f773}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -131,6 +143,18 @@
     </ClCompile>
     <ClCompile Include="PointLight.cpp">
       <Filter>Source Files\Managers\Graphics\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Managers\Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWorldObject.cpp">
+      <Filter>Source Files\Managers\Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Managers\Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleActorExclusionFilter.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +214,18 @@
     </ClInclude>
     <ClInclude Include="PointLight.h">
       <Filter>Header Files\Managers\Graphics\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Managers\Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWorldObject.h">
+      <Filter>Header Files\Managers\Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Managers\Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleActorExclusionFilter.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

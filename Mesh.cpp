@@ -9,30 +9,25 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "reactphysics3d/reactphysics3d.h"
-
 #include <unordered_set>
-
-using namespace reactphysics3d;
 
 static ::Logger logger = CreateLogger("Mesh");
 
-struct HashXMFloat3
+struct HashPxVector3
 {
 public:
-    size_t operator()(const XMFLOAT3& vector) const
+    size_t operator()(const PxVec3& vector) const
     {
-               // Evil
         return (std::bit_cast<u32>(vector.x) * 73856093) ^
                (std::bit_cast<u32>(vector.y) * 19349663) ^
                (std::bit_cast<u32>(vector.z) * 83492791);
     }
 };
 
-struct EqualsXMFloat3
+struct EqualsPxVector3
 {
 public:
-    bool operator()(const XMFLOAT3& a, const XMFLOAT3& b) const
+    bool operator()(const PxVec3& a, const PxVec3& b) const
     {
         return a.x == b.x && a.y == b.y && a.z == b.z;
     }
@@ -40,8 +35,8 @@ public:
 
 bool Mesh::createFromFile(
     std::string path,
-    Mesh** meshes, size_t* totalMeshes,
-    ConvexMeshShape*** physicsMeshes, size_t* totalPhysicsMeshes,
+    std::vector<Mesh*>& meshes,
+    std::vector<PxConvexMesh*>& physicsMeshes,
     GameManager* gameManager
 )
 {
@@ -49,18 +44,12 @@ bool Mesh::createFromFile(
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
     if (scene == NULL || gameManager == NULL)
     {
-        *physicsMeshes = NULL;
-        *totalPhysicsMeshes = 0;
-        *meshes = NULL;
-        *totalMeshes = 0;
         return false;
     }
 
     std::vector<Mesh> outMeshes = std::vector<Mesh>();
 
     auto root = scene->mRootNode;
-    *totalPhysicsMeshes = root->mNumChildren;
-    *physicsMeshes = new ConvexMeshShape*[*totalPhysicsMeshes];
     for (u32 i = 0; i < root->mNumChildren; i++)
     {
         auto child = root->mChildren[i];
@@ -72,11 +61,10 @@ bool Mesh::createFromFile(
     {
         auto xmFloat3Comparator = [](XMFLOAT3 a, XMFLOAT3 b) { return a.x == b.x && a.y == b.y && a.z == b.z; };
 
-        std::vector<XMFLOAT3> nodeVertices;
-        std::unordered_set<XMFLOAT3, HashXMFloat3, EqualsXMFloat3> uniqueNodeVertices;
-        std::vector<u32> nodeIndices = std::vector<u32>();
-
-        std::vector<PolygonVertexArray::PolygonFace> nodeFaces = std::vector<PolygonVertexArray::PolygonFace>();
+        std::vector<PxVec3> nodeVertices;
+        std::unordered_set<PxVec3, HashPxVector3, EqualsPxVector3> uniqueNodeVertices;
+        //std::vector<u32> nodeIndices = std::vector<u32>();
+        //std::vector<PolygonVertexArray::PolygonFace> nodeFaces = std::vector<PolygonVertexArray::PolygonFace>();
 
         auto child = root->mChildren[i];
         u32 faceIndexOffset = 0;
@@ -110,7 +98,7 @@ bool Mesh::createFromFile(
                     v
                 );
 
-                auto nodeVertex = XMFLOAT3(mesh->mVertices[k].x, mesh->mVertices[k].y, mesh->mVertices[k].z);
+                auto nodeVertex = PxVec3(mesh->mVertices[k].x, mesh->mVertices[k].y, mesh->mVertices[k].z);
                 if (uniqueNodeVertices.find(nodeVertex) == uniqueNodeVertices.end()) // not found
                 {
                     uniqueNodeVertices.insert(nodeVertex);
@@ -119,31 +107,30 @@ bool Mesh::createFromFile(
 
                 meshVertices.push_back(vertex);
             }
-            
+
             //For each FACE in MESH
             for (u32 k = 0; k < mesh->mNumFaces; k++)
             {
                 auto face = mesh->mFaces[k];
-                
+
                 //For each INDEX in FACE
-                PolygonVertexArray::PolygonFace nodeFace = PolygonVertexArray::PolygonFace();
-                nodeFace.indexBase = faceIndexOffset;
-                nodeFace.nbVertices = face.mNumIndices;
-                nodeFaces.push_back(nodeFace);
+                //PolygonVertexArray::PolygonFace nodeFace = PolygonVertexArray::PolygonFace();
+                //nodeFace.indexBase = faceIndexOffset;
+                //nodeFace.nbVertices = face.mNumIndices;
+                //nodeFaces.push_back(nodeFace);
                 for (u32 l = 0; l < face.mNumIndices; l++)
                 {
                     meshIndices.push_back(face.mIndices[l]);
 
                     //remap node index
-                    auto uniquePos = meshVertices[face.mIndices[l]];
-                    auto vertexIterator = std::find_if(nodeVertices.begin(), nodeVertices.end(), [uniquePos](const XMFLOAT3& a) {
-                        return a.x == uniquePos.pos.x && a.y == uniquePos.pos.y && a.z == uniquePos.pos.z;
-                    });
-                    auto index = std::distance(nodeVertices.begin(), vertexIterator);
-                    
-                    nodeIndices.push_back(index);
+                   // auto uniquePos = meshVertices[face.mIndices[l]];
+                    //auto vertexIterator = std::find_if(nodeVertices.begin(), nodeVertices.end(), [uniquePos](const XMFLOAT3& a) {
+                    //    return a.x == uniquePos.pos.x && a.y == uniquePos.pos.y && a.z == uniquePos.pos.z;
+                    //});
+                    //auto index = std::distance(nodeVertices.begin(), vertexIterator);
+                    //nodeIndices.push_back(index);
                 }
-                faceIndexOffset = nodeIndices.size();                
+                //faceIndexOffset = nodeIndices.size();
             }
 
             //Get texture from material list on mesh
@@ -163,36 +150,55 @@ bool Mesh::createFromFile(
             }
 
             // Create MESH for Rendering
-            Mesh _mesh = Mesh();
-            _mesh.initialize(
+            Mesh* _mesh = new Mesh();
+            _mesh->initialize(
                 meshVertices,
                 meshVertices.size(),
                 meshIndices,
                 meshIndices.size(),
                 texture
             );
-            outMeshes.push_back(_mesh);
+            meshes.push_back(_mesh);
         }
 
-        //Create NODE for Physics
-        PolygonVertexArray* nodeVertexArray = new PolygonVertexArray(
-            nodeVertices.size(),
-            nodeVertices.data(),
-            sizeof(XMFLOAT3),
-            nodeIndices.data(),
-            sizeof(u32),
-            nodeFaces.size(),
-            nodeFaces.data(),
-            PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
-            PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
-        );
+        PxVec3* convexVertices = new PxVec3[nodeVertices.size()];
+        CopyMemory(convexVertices, nodeVertices.data(), nodeVertices.size() * sizeof(PxVec3));
 
-        PolyhedronMesh* nodeMesh = gameManager->getPhysicsCommon()->createPolyhedronMesh(nodeVertexArray);
-        (*physicsMeshes)[i] = gameManager->getPhysicsCommon()->createConvexMeshShape(nodeMesh);
+        PxConvexMeshDesc meshDesc;
+        meshDesc.points.count = nodeVertices.size();
+        meshDesc.points.stride = sizeof(PxVec3);
+        meshDesc.points.data = convexVertices;
+        meshDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+
+        PxDefaultMemoryOutputStream buffer;
+        PxConvexMeshCookingResult::Enum result;
+        if (!gameManager->getCooking()->cookConvexMesh(meshDesc, buffer, &result))
+        {
+            logger.err("Failed to cook convex mesh!");
+            return false;
+        }
+        PxDefaultMemoryInputData input(buffer.getData(), buffer.getSize());
+        auto mesh = gameManager->getPhysics()->createConvexMesh(input);
+        auto actor = gameManager->getPhysics()->createRigidStatic(PxTransform(PxVec3(0, 0, 0)));
+        auto material = gameManager->getPhysics()->createMaterial(0.5f, 0.5f, 0.6f);
+
+        auto shape = PxRigidActorExt::createExclusiveShape(*actor, PxConvexMeshGeometry(mesh), *material);
         
-        *totalMeshes = outMeshes.size();
-        *meshes = outMeshes.data();
+        gameManager->getPxScene()->addActor(*actor);
+
+        //physicsMeshes.push_back(gameManager->getPhysics()->createConvexMesh(input));
+        
+
+
+        //PxRigidStatic* st = gameManager->getPhysics()->createRigidStatic(PxTransform(PxVec3(0, 0, 0));
+        //PxRigidActorExt::createExclusiveShape(*st, PxConvexMeshGeometry(mesh), nullptr);
+        
+
+        //physicsMeshes.push_back(new btConvexHullShape((btScalar*)vertices, nodeVertices.size(), sizeof(btVector3)));
+        //PolyhedronMesh* nodeMesh = gameManager->getPhysicsCommon()->createPolyhedronMesh(nodeVertexArray);
+        //physicsMeshes.push_back(gameManager->getPhysicsCommon()->createConvexMeshShape(nodeMesh));
     }
+
 
     /*for (u32 i = 0; i < scene->mNumMeshes; i++)
     {
@@ -261,7 +267,10 @@ bool Mesh::createFromFile(
 
 void Mesh::draw()
 {
-    m_texture->use();
+    if (m_texture != NULL)
+    {
+        m_texture->use();
+    }
     UINT stride = sizeof(GVertex);
     UINT offset = 0;
 
@@ -281,6 +290,11 @@ Mesh::Mesh()
 Mesh::~Mesh()
 {
 
+}
+
+Texture* Mesh::getTexture()
+{
+    return m_texture;
 }
 
 bool Mesh::initialize(

@@ -6,13 +6,13 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 
-#include "reactphysics3d/reactphysics3d.h"
+#include "PxPhysicsAPI.h"
 
 #include <vector>
 #include <string>
 
 using namespace Microsoft::WRL;
-using namespace reactphysics3d;
+using namespace physx;
 
 class Texture;
 class GameManager;
@@ -22,14 +22,16 @@ class Mesh
 public:
     static bool createFromFile(
         std::string path,
-        Mesh** meshes, size_t* totalMeshes,
-        ConvexMeshShape*** physicsMeshes, size_t* totalPhysicsMeshes,
+        std::vector<Mesh*>& meshes,
+        std::vector<PxConvexMesh*>& physicsMeshes,
         GameManager* gameManager
     );
     void draw();
 
     Mesh();
     ~Mesh();
+
+    Texture* getTexture();
 
 private:
 

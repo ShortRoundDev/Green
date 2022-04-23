@@ -1,0 +1,9 @@
+Package: bullet3
+Version: 3.17
+Port-Version: 1
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 230dedfa6f6836ce4c4b751863e8529c33334573d816bc554e7a594673106f53
+Description: Bullet Physics is a professional collision detection, rigid body, and soft body dynamics library
+Type: Port
+Status: purge ok half-installed

@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "SpotLight.h"
 #include "PointLight.h"
+#include "Player.h"
 
 static ::Logger logger = CreateLogger("Scene");
 
@@ -18,8 +19,8 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     initSceneTextures();
     if (!Mesh::createFromFile(
         fileName,
-        &m_brushes, &m_meshCount,
-        &m_physicsMeshes, &m_physicsMeshCount,
+        m_brushes,
+        m_physicsMeshes,
         gameManager
     ))
     {
@@ -27,6 +28,15 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
         return;
     }
     addRigidBodies(gameManager);
+
+    /*Vector3 _pos = Vector3(0, 0, 0);
+    Quaternion o = Quaternion::identity();
+    Transform t(_pos, o);
+    auto body = gameManager->getPhysicsWorld()->createRigidBody(t);
+    body->setType(BodyType::STATIC);
+
+    auto box = gameManager->getPhysicsCommon()->createBoxShape(Vector3(128, 8, 128));
+    auto collider = body->addCollider(box, Transform::identity());*/
 
     m_camera = new Camera();
     m_shader = Graphics.getShader(L"World");
@@ -42,22 +52,20 @@ Scene::~Scene()
 
 void Scene::addRigidBodies(GameManager* gameManager)
 {
-    for (u32 i = 0; i < m_physicsMeshCount; i++)
+    for (u32 i = 0; i < m_physicsMeshes.size(); i++)
     {
-        Vector3 position(0, 0, 0);
-        Quaternion identity = Quaternion::identity();
-        Transform transform(position, identity);
 
-        RigidBody* body = gameManager->getPhysicsWorld()->createRigidBody(transform);
-        Collider* collider = body->addCollider(m_physicsMeshes[i], transform);
-        body->setType(BodyType::STATIC);
-        m_walls.push_back(body);
     }
 }
 
 void Scene::generateShadowMaps()
 {
    // m_light->renderShadowMap(this);
+}
+
+void Scene::initEntities()
+{
+    m_gameObjects.push_back(new Player(XMFLOAT3(0, 128, 0)));
 }
 
 void Scene::draw()
@@ -74,15 +82,32 @@ void Scene::draw()
 void Scene::renderMeshes()
 {
     //m_light->use(1);
-    for (u32 i = 0; i < m_meshCount; i++)
+    for (u32 i = 0; i < m_brushes.size(); i++)
     {
-        m_brushes[i].draw();
+        if (m_brushes[i]->getTexture() == NULL)
+        {
+            logger.warn("%d: Texture is null", i);
+        }
+        m_brushes[i]->draw();
     }
 }
 
 void Scene::update()
 {
+    for (auto object : m_gameObjects)
+    {
+        object->update();
+    }
+}
 
+Camera* Scene::getCamera()
+{
+    return m_camera;
+}
+
+std::vector<GameObject*>& Scene::getGameObjects()
+{
+    return m_gameObjects;
 }
 
 ////////// PRIVATE //////////

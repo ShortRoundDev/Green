@@ -1,15 +1,18 @@
 #pragma once
 
-#include "reactphysics3d/reactphysics3d.h"
-#include <string>
+#include "PxPhysicsAPI.h"
 
-using namespace reactphysics3d;
+#include <string>
+#include <vector>
 
 class Mesh;
 class Shader;
 class Camera;
 class ILight;
 class GameManager;
+class GameObject;
+
+using namespace physx;
 
 class Scene
 {
@@ -18,22 +21,26 @@ public:
     ~Scene();
 
     void generateShadowMaps();
+    void initEntities();
     void addRigidBodies(GameManager* gameManager);
     void draw();
     void renderMeshes();
     void update();
 
+    Camera* getCamera();
+
+    std::vector<GameObject*>& getGameObjects();
 
 private:
-    size_t m_meshCount;
-    Mesh* m_brushes;
     Shader* m_shader;
-    ConvexMeshShape** m_physicsMeshes;
-    size_t m_physicsMeshCount;
     Camera* m_camera;
     ILight* m_light;
 
-    std::vector<RigidBody*> m_walls;
+    std::vector<Mesh*> m_brushes;
+    std::vector<PxConvexMesh*> m_physicsMeshes;
+
+    //std::vector<btRigidBody*> m_walls;
+    std::vector<GameObject*> m_gameObjects;
 
     bool initSceneTextures();
 };

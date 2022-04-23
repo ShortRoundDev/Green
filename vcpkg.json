@@ -1,5 +1,5 @@
 {
     "name": "green",
     "version-string": "0.0.1",
-    "dependencies":  [ "directxtk", "assimp" ]
+    "dependencies":  [ "directxtk", "assimp", "physx" ]
 }

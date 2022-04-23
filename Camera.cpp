@@ -72,7 +72,7 @@ void Camera::update()
 	XMStoreFloat3(&forward, m_look);
 	XMStoreFloat3(&moveF3, moveVec);
 	///// KEY MOVE /////
-	if (Graphics.keyDown('S'))
+	/*if (Graphics.keyDown('S'))
 	{
 		move({ -moveF3.x, -moveF3.y, -moveF3.z });
 	}
@@ -80,7 +80,7 @@ void Camera::update()
 	if (Graphics.keyDown('W'))
 	{
 		move(moveF3);
-	}
+	}*/
 
 	upVec = XMVector3TransformCoord(upVec, rotationMatrix);
 	XMVECTOR _lookVec = XMVectorAdd(positionVec, m_look);

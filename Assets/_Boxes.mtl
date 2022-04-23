@@ -1,6 +1,0 @@
-newmtl DevFloor1
-map_Kd textures\DevFloor1.png
-
-newmtl DevWall1
-map_Kd textures\DevWall1.png
-
