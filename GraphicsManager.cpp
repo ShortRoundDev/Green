@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "ILight.h"
 #include "Texture.h"
+#include "PointLight.h"
 
 static ::Logger logger = CreateLogger("GraphicsManager");
 
@@ -605,9 +606,9 @@ bool GraphicsManager::initRasterizer()
 		return false;
 	}
 
-	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBias = 1;
 	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
+	rasterDesc.SlopeScaledDepthBias = 1.0f;
 
 	if (FAILED(m_device->CreateRasterizerState(&rasterDesc, m_shadowMapRasterizer.GetAddressOf())))
 	{
@@ -649,7 +650,7 @@ bool GraphicsManager::initShaders()
 		m_device.Get(),
 		L"WorldVertex.cso",
 		L"WorldPixel.cso",
-		0
+		sizeof(PointLightSpaceBuffer)
 	));
 
 	putShader(L"SpotLight", new Shader(

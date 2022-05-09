@@ -274,6 +274,9 @@
       <Filter>Resource Files\Shaders\Util\Light</Filter>
     </None>
     <None Include="vcpkg.json" />
+    <None Include="PointLight.hlsli">
+      <Filter>Resource Files\Shaders\Util\Light</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Default.cfg">

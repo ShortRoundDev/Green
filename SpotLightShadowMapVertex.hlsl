@@ -7,8 +7,6 @@
 ShadowPixelInput Vertex(VertexInput input)
 {
     ShadowPixelInput output;
-    
-    input.position.w = 1.0f;
    
     output.position = mul(input.position, lightSpace);
     output.tex = input.tex;

@@ -61,6 +61,56 @@ PointLight::PointLight(
     m_projection = XMMatrixPerspectiveFovLH(M_PI_2_F, (f32)width / (f32)height, 0.1f, 1000.0f);
 
     m_shader = Graphics.getShader(L"SpotLight");
+
+    //calculate cbuffer
+    XMVECTOR eyePos = XMLoadFloat4(&m_pos);
+    XMFLOAT4 upFloat4 = { 0, 1.0f, 0, 1.0f };
+    XMVECTOR up = XMLoadFloat4(&upFloat4);
+
+    m_cBuffer.lightPos = m_pos;
+    m_cBuffer.color = m_color;
+
+    for (int i = 0; i < 6; i++)
+    {
+        XMFLOAT4 upFloat4 = { 0, 1.0f, 0, 1.0f };
+        XMVECTOR up = XMLoadFloat4(&upFloat4);
+
+        bindShadowMap(i);
+        XMFLOAT4 lookAheadFloat4;// = { 0, 0, 1, 1 };
+        switch (i)
+        {
+        case 0:
+            lookAheadFloat4 = { 1, 0, 0, 1 };
+            break;
+        case 1:
+            lookAheadFloat4 = { -1, 0, 0, 1 };
+            break;
+        case 2:
+            lookAheadFloat4 = { 0, 1, 0, 1.0f };
+            upFloat4 = { 0, 0, -1, 1 };
+            up = XMLoadFloat4(&upFloat4);
+            break;
+        case 3:
+            lookAheadFloat4 = { 0, -1, 0, 1 };
+            upFloat4 = { 0, 0, -1, 1 };
+            up = XMLoadFloat4(&upFloat4);
+            break;
+        case 4:
+            lookAheadFloat4 = { 0, 0, 1, 1 };
+            break;
+        case 5:
+            lookAheadFloat4 = { 0, 0, -1, 1 };
+            break;
+        }
+
+        XMVECTOR dir = XMLoadFloat4(&lookAheadFloat4);
+        XMVECTOR lookAtPos = XMVectorAdd(eyePos, dir);
+        m_view = XMMatrixLookAtLH(eyePos, lookAtPos, up);
+        m_space = XMMatrixMultiply(m_view, m_projection);
+        XMMATRIX m_spaceT = XMMatrixTranspose(m_space);
+
+        m_cBuffer.lightSpace[i] = m_spaceT;
+    }
 }
 
 PointLight::~PointLight()
@@ -134,7 +184,6 @@ void PointLight::renderShadowMap(Scene* scene)
     Graphics.resetRenderTarget();
     Graphics.resetViewport();
     Graphics.setShadowRasterizer(false);
-
 }
 
 void PointLight::bindShadowMap(u32 face)
@@ -144,4 +193,9 @@ void PointLight::bindShadowMap(u32 face)
     ID3D11RenderTargetView* renderTargets[1] = { 0 };
     context->OMSetRenderTargets(1, renderTargets, m_shadowMapFacesDsv[face].Get());
     context->ClearDepthStencilView(m_shadowMapFacesDsv[face].Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+
+const PointLightSpaceBuffer& PointLight::getCbuffer()
+{
+    return m_cBuffer;
 }

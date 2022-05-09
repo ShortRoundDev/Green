@@ -42,7 +42,7 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     m_shader = Graphics.getShader(L"World");
 
     //m_light = new SpotLight({ 64, 128.0f, -64, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 800, 800, { -1.0f, 0, 1.0f, 1.0f });
-    //m_light = new PointLight({ 0, 64, 0, 1 }, { 1, 1, 1, 1 }, 800, 800);
+    m_light = new PointLight({ 0, 64, 0, 1 }, { 1, 1, 1, 1 }, 800, 800);
 }
 
 Scene::~Scene()
@@ -60,7 +60,7 @@ void Scene::addRigidBodies(GameManager* gameManager)
 
 void Scene::generateShadowMaps()
 {
-   // m_light->renderShadowMap(this);
+    m_light->renderShadowMap(this);
 }
 
 void Scene::initEntities()
@@ -70,18 +70,19 @@ void Scene::initEntities()
 
 void Scene::draw()
 {
-    //m_camera->move({0, 0, -1.0f});
     m_camera->update();
     Graphics.setViewMatrix(m_camera->getView());
     Graphics.setCameraPos(m_camera->getPosition());
 
+    auto buffer = ((PointLight*)m_light)->getCbuffer();
+    m_shader->bindCBuffer(&buffer);
     m_shader->use();
     renderMeshes();
 }
 
 void Scene::renderMeshes()
 {
-    //m_light->use(1);
+    m_light->use(1);
     for (u32 i = 0; i < m_brushes.size(); i++)
     {
         if (m_brushes[i]->getTexture() == NULL)

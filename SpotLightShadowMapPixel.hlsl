@@ -1,6 +1,17 @@
 #include "ShadowMap.hlsl"
+#include "ShadowPixelInput.hlsl"
 
-float4 Pixel() : SV_TARGET
+struct PS_OUT
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 color : SV_Target;
+    float depth : SV_Depth;
+};
+
+PS_OUT Pixel(ShadowPixelInput input) : SV_TARGET
+{
+    PS_OUT output;
+    output.color = float4(1, 1, 1, 1);
+    output.depth = 1.0f;
+    
+    return output;
 }

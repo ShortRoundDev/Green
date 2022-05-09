@@ -16,7 +16,7 @@ Player::Player(XMFLOAT3 pos) :
 {
     auto material = Game.getPhysics()->createMaterial(0.5, 0.5, 0.6);
     PxCapsuleControllerDesc desc;
-    PxControllerDesc
+    //PxControllerDesc
     desc.radius = 32.0f;
     desc.height = 48.0f;
     desc.material = material;
