@@ -227,6 +227,9 @@
     <ClInclude Include="SingleActorExclusionFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MeshLightBuffer.h">
+      <Filter>Header Files\Managers\Graphics\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="WorldVertex.hlsl">
@@ -275,6 +278,9 @@
     </None>
     <None Include="vcpkg.json" />
     <None Include="PointLight.hlsli">
+      <Filter>Resource Files\Shaders\Util\Light</Filter>
+    </None>
+    <None Include="DirectionalLight.hlsli">
       <Filter>Resource Files\Shaders\Util\Light</Filter>
     </None>
   </ItemGroup>

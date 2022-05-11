@@ -6,7 +6,8 @@
 #include "Mesh.h"
 #include "ILight.h"
 #include "Texture.h"
-#include "PointLight.h"
+
+#include "MeshLightBuffer.h"
 
 static ::Logger logger = CreateLogger("GraphicsManager");
 
@@ -67,8 +68,9 @@ void GraphicsManager::bindGlobalBuffer()
 	m_gBuffer.view		 = XMMatrixTranspose(m_view);
 	m_gBuffer.camera	 = { m_camera.x, m_camera.y, m_camera.z, 1.0f };
 
-	m_gBuffer.ambientLightColor = { 0.53f, 0.56f, 0.73f, 1.0f };
-	m_gBuffer.lightDirection = { 0.5, 0.5, 0.5, 1.0f };
+	m_gBuffer.sun.ambient = { 0.196f / 100.0f, 0.223f / 100.0f, 0.286f / 100.0f, 1 };
+	m_gBuffer.sun.color = { 0.196f / 20.0f, 0.223f / 20.0f, 0.286f / 20.0f, 1 };
+	m_gBuffer.sun.direction = { 0.5, 0.5, 0.5, 1.0f };
 
 	inverseTranspose(m_gBuffer.world, m_gBuffer.invWorld);
 
@@ -97,6 +99,14 @@ void GraphicsManager::bindGlobalBuffer()
 
 bool GraphicsManager::update()
 {
+	for (int i = 0; i < 256; i++)
+	{
+		if (m_keys[i].down)
+		{
+			m_keys[i].edge = false;
+		}
+	}
+
 	MSG msg = { };
 	ZeroMemory(&msg, sizeof(msg));
 
@@ -263,6 +273,11 @@ bool GraphicsManager::keyDown(u32 key)
 	}
 
 	return m_keys[key].down;
+}
+
+bool GraphicsManager::keyDownEdge(u32 key)
+{
+	return keyDown(key) && m_keys[key].edge;
 }
 
 void GraphicsManager::onKeyDown(u32 key)
@@ -606,9 +621,10 @@ bool GraphicsManager::initRasterizer()
 		return false;
 	}
 
-	rasterDesc.DepthBias = 1;
+	rasterDesc.DepthBias = 100;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.SlopeScaledDepthBias = 1.0f;
+	//rasterDesc.CullMode = D3D11_CULL_FRONT;
 
 	if (FAILED(m_device->CreateRasterizerState(&rasterDesc, m_shadowMapRasterizer.GetAddressOf())))
 	{
@@ -650,7 +666,7 @@ bool GraphicsManager::initShaders()
 		m_device.Get(),
 		L"WorldVertex.cso",
 		L"WorldPixel.cso",
-		sizeof(PointLightSpaceBuffer)
+		sizeof(MeshLightBuffer)
 	));
 
 	putShader(L"SpotLight", new Shader(

@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "SpotLight.h"
 #include "PointLight.h"
+#include "MeshLightBuffer.h"
 #include "Player.h"
 
 static ::Logger logger = CreateLogger("Scene");
@@ -42,7 +43,8 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     m_shader = Graphics.getShader(L"World");
 
     //m_light = new SpotLight({ 64, 128.0f, -64, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 800, 800, { -1.0f, 0, 1.0f, 1.0f });
-    m_light = new PointLight({ 0, 64, 0, 1 }, { 1, 1, 1, 1 }, 800, 800);
+    m_light = new PointLight({ 0, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
+    m_light2 = new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
 }
 
 Scene::~Scene()
@@ -61,6 +63,7 @@ void Scene::addRigidBodies(GameManager* gameManager)
 void Scene::generateShadowMaps()
 {
     m_light->renderShadowMap(this);
+    m_light2->renderShadowMap(this);
 }
 
 void Scene::initEntities()
@@ -75,7 +78,22 @@ void Scene::draw()
     Graphics.setCameraPos(m_camera->getPosition());
 
     auto buffer = ((PointLight*)m_light)->getCbuffer();
-    m_shader->bindCBuffer(&buffer);
+    MeshLightBuffer lightBuffer;
+    if (lights)
+    {
+        lightBuffer.nPointLights = 2;
+    }
+    else
+    {
+        lightBuffer.nPointLights = 0;
+    }
+    lightBuffer.pointLights[0] = buffer;
+
+    buffer = ((PointLight*)m_light2)->getCbuffer();
+    lightBuffer.pointLights[1] = buffer;
+
+    m_shader->bindCBuffer(&lightBuffer);
+
     m_shader->use();
     renderMeshes();
 }
@@ -83,6 +101,7 @@ void Scene::draw()
 void Scene::renderMeshes()
 {
     m_light->use(1);
+    m_light2->use(2);
     for (u32 i = 0; i < m_brushes.size(); i++)
     {
         if (m_brushes[i]->getTexture() == NULL)

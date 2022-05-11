@@ -30,11 +30,13 @@ public:
     Camera* getCamera();
 
     std::vector<GameObject*>& getGameObjects();
+    bool lights = true;
 
 private:
     Shader* m_shader;
     Camera* m_camera;
     ILight* m_light;
+    ILight* m_light2;
 
     std::vector<Mesh*> m_brushes;
     std::vector<PxConvexMesh*> m_physicsMeshes;

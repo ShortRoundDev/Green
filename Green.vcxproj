@@ -195,6 +195,7 @@
     <ClInclude Include="GVertex.h" />
     <ClInclude Include="ILight.h" />
     <ClInclude Include="IManager.h" />
+    <ClInclude Include="MeshLightBuffer.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="SingleActorExclusionFilter.h" />
@@ -275,6 +276,7 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <FileType>Document</FileType>
     </CopyFileToFolders>
+    <None Include="DirectionalLight.hlsli" />
     <None Include="Gamma.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>

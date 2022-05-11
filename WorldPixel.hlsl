@@ -1,124 +1,84 @@
 //#include "WorldObjectCBuffer.hlsli"
 #include "Pixel.hlsl"
 #include "Gamma.hlsl"
-//#include "ShadowMap.hlsl"
+
+#include "DirectionalLight.hlsli"
 #include "PointLight.hlsli"
 
 Texture2D albedo : register(t0);
 
+TextureCube shadowMap : register(t1);
+TextureCube shadowMap2 : register(t2);
+TextureCube shadowMap3 : register(t3);
+
 SamplerState sampleType : register(s0);
 SamplerComparisonState shadowSampler : register(s1);
 
-
-TextureCube shadowMap : register(t1);
-#define dx 1.0
-
-const float3 sampleOffsetDirections[20] = {
-   float3(+dx, +dx, +dx), float3(+dx, -dx, +dx), float3(-dx, -dx, +dx), float3(-dx, +dx, +dx), 
-   float3(+dx, +dx, -dx), float3(+dx, -dx, -dx), float3(-dx, -dx, -dx), float3(-dx, +dx, -dx),
-   float3(+dx, +dx, 0.0), float3(+dx, -dx, 0.0), float3(-dx, -dx, 0.0), float3(-dx, +dx, 0.0),
-   float3(+dx, 0.0, +dx), float3(-dx, 0.0, +dx), float3(+dx, 0.0, -dx), float3(-dx, 0.0, -dx),
-   float3(0.0, +dx, +dx), float3(0.0, -dx, +dx), float3(0.0, -dx, -dx), float3(0.0, +dx, -dx)
-};
-
-float Shadow(float3 pos, float4 pixelPosLightSpace, float3 normal)
-{   
-    float3 pixelToLight = pos - lightPos.xyz;
-
-    //float closest = shadowMap.Sample(shadowSampler, pixelToLight).r; // get nearest in map
-    
-    float current = (pixelPosLightSpace.xyz / pixelPosLightSpace.w).z;
-    
-    float shadow = 0.0;
-    int samples = 20;
-    float viewDistance = length(camera.xyz - pos);
-    
-    float diskRadius = (1.0 + (viewDistance / 1000.0f)) / 25.0;
-    //1.0 / 800.0;
-    //(1.0 + (viewDistance / 1000.0f)) / 25.0;
-    for (int i = 0; i < samples; i++)
-    {
-        shadow += shadowMap.SampleCmpLevelZero(shadowSampler, normalize(pixelToLight) + sampleOffsetDirections[i] * diskRadius, current);
-    }
-    return shadow / float(samples);
-        /*if (current > closest)
-        {
-            shadow += 1.0;
-        }
-        else
-        {
-            shadow -= 1.0;
-        }*/
-
-    //return shadow / float(samples);
-
+cbuffer Lights : register(b1)
+{
+    uint nPointLights;
+    PointLight pointLights[3];
 }
 
 float4 Pixel(PixelInput input) : SV_TARGET
 {
     float3 texColor = albedo.Sample(sampleType, input.tex).rgb;
-    float3 normal = normalize(input.normal);
-    float3 ambient = 0.05f * ambientLightColor;
-    
-    // diffuse
-    //float3 lightDir = normalize(lightPos.xyz - input.fragPos);
-    float diff = max(dot(lightDirection.xyz, normal), 0.2f);
-    float3 diffuse = diff * ambientLightColor;
-
-    //Specular
-    float specularStrength = 0.5;
-    float3 viewDir = normalize(camera.xyz - input.fragPos);
-    float3 reflectDir = reflect(-lightDirection.xyz, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64);
-    float specular = specularStrength * spec * ambientLightColor;
-    
-    float3 posToLight = input.fragPos - lightPos.xyz;
-    
-    int axis = 0; // right
-    float component = 0;
-    float
-        xDot = abs(dot(posToLight, float3(1, 0, 0))),
-        yDot = abs(dot(posToLight, float3(0, 1, 0))),
-        zDot = abs(dot(posToLight, float3(0, 0, 1)));
-    if (xDot > yDot)
+    float3 ambient = sun.ambient;
+    float3 sunLight = CalculateDirectionalColor(
+        sun,
+        texColor,
+        camera.xyz,
+        input.pixelPos,
+        input.normal,
+        16,     //todo: make this a texture or something
+        0.2f    //todo: make this a texture or something
+    );
+    float shadowAccumulator = 0.0f;
+    float3 pointColor = float3(0.0f, 0.0f, 0.0f);
+    TextureCube t = shadowMap;
+    uint x = 16;
+    for (int i = 0; i < nPointLights; i++)
     {
-        if (xDot > zDot)
+        if (i == 0)
         {
-            axis = 0;
-            component = posToLight.x;
+            shadowAccumulator += PointLightShadow(
+                shadowSampler,
+                pointLights[i],
+                input.pixelPos,
+                camera,
+                shadowMap
+            );
         }
         else
         {
-            axis = 2;
-            component = posToLight.z;
+            shadowAccumulator += PointLightShadow(
+                shadowSampler,
+                pointLights[i],
+                input.pixelPos,
+                camera,
+                shadowMap2
+            );
         }
+        
+        pointColor += CalcPointLight(
+            16,
+            0.2f,
+            input.normal,
+            input.pixelPos,
+            camera,
+            texColor,
+            pointLights[i]
+        );
     }
-    else
+    
+    float shadow = 0.0f;
+    
+    if (nPointLights > 0)
     {
-        if (yDot > zDot)
-        {
-            axis = 1;
-            component = posToLight.y;
-        }
-        else
-        {
-            axis = 2;
-            component = posToLight.z;
-        }
-    }
-    axis *= 2;
-    if (component < 0)
-    {
-        axis += 1;
+        shadow = shadowAccumulator / float(nPointLights);
     }
     
-    float4 pixelPosLightSpace = mul(float4(input.fragPos, 1.0), lightSpace[axis]);
-    
-    float shadow = Shadow(input.fragPos, pixelPosLightSpace, normal);
-    
-    float pointColor = CalcPointLight(normal, input.fragPos, viewDir, texColor);
-    
-    float3 lighting = (ambient + (1.0 - shadow) * ((diffuse + specular) + pointColor)) * texColor;
+    float3 lighting = texColor * (ambient + sunLight + (pointColor * (1.0f - shadow)));
     
     return float4(lighting, 1.0f);
 }

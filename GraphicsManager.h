@@ -51,6 +51,7 @@ public:
     i32 diffX();
     i32 diffY();
     bool keyDown(u32 key);
+    bool keyDownEdge(u32 key);
 
     void setViewMatrix(const XMMATRIX& view);
     void setCameraPos(const XMFLOAT3& pos);

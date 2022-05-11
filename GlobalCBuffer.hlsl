@@ -1,6 +1,8 @@
 #ifndef __GLOBAL_CBUFFER_HLSLI__
 #define __GLOBAL_CBUFFER_HLSLI__
 
+#include "DirectionalLight.hlsli"
+
 cbuffer GlobalCBuffer : register(b0)
 {
     matrix world;
@@ -8,8 +10,8 @@ cbuffer GlobalCBuffer : register(b0)
     matrix projection;
     matrix invWorld;
     float4 camera;
-    float4 ambientLightColor;
-    float4 lightDirection;
+    
+    DirectionalLight sun;
 }
 
 #endif

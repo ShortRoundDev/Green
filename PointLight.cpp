@@ -67,9 +67,6 @@ PointLight::PointLight(
     XMFLOAT4 upFloat4 = { 0, 1.0f, 0, 1.0f };
     XMVECTOR up = XMLoadFloat4(&upFloat4);
 
-    m_cBuffer.lightPos = m_pos;
-    m_cBuffer.color = m_color;
-
     for (int i = 0; i < 6; i++)
     {
         XMFLOAT4 upFloat4 = { 0, 1.0f, 0, 1.0f };
@@ -92,7 +89,7 @@ PointLight::PointLight(
             break;
         case 3:
             lookAheadFloat4 = { 0, -1, 0, 1 };
-            upFloat4 = { 0, 0, -1, 1 };
+            upFloat4 = { 0, 0, 1, 1 };
             up = XMLoadFloat4(&upFloat4);
             break;
         case 4:
@@ -109,7 +106,12 @@ PointLight::PointLight(
         m_space = XMMatrixMultiply(m_view, m_projection);
         XMMATRIX m_spaceT = XMMatrixTranspose(m_space);
 
+        m_cBuffer.lightPos = m_pos;
+        m_cBuffer.color = m_color;
         m_cBuffer.lightSpace[i] = m_spaceT;
+        m_cBuffer.constantDropoff = 0.0001f; // idk
+        m_cBuffer.linearDropoff = 0.000025f;
+        m_cBuffer.quadraticDropoff = 0.00001f;
     }
 }
 
@@ -155,7 +157,7 @@ void PointLight::renderShadowMap(Scene* scene)
             break;
         case 3:
             lookAheadFloat4 = { 0, -1, 0, 1 };
-            upFloat4 = { 0, 0, -1, 1 };
+            upFloat4 = { 0, 0, 1, 1 };
             up = XMLoadFloat4(&upFloat4);
             break;
         case 4:
@@ -195,7 +197,7 @@ void PointLight::bindShadowMap(u32 face)
     context->ClearDepthStencilView(m_shadowMapFacesDsv[face].Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-const PointLightSpaceBuffer& PointLight::getCbuffer()
+const PointLightBuffer& PointLight::getCbuffer()
 {
     return m_cBuffer;
 }

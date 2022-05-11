@@ -76,6 +76,10 @@ void Player::update()
         m_move.y = 5;
     }
 
+    if (Graphics.keyDownEdge('B'))
+    {
+        Game.getScene()->lights ^= true;
+    }
     
     m_controller->move(m_move, 0.1f, 0, filters);
 }

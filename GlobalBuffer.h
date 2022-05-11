@@ -4,6 +4,13 @@
 
 using namespace DirectX;
 
+struct DirectionalLight
+{
+    XMFLOAT4 ambient;
+    XMFLOAT4 color;
+    XMFLOAT4 direction;
+};
+
 struct GlobalBuffer
 {
     XMMATRIX world;
@@ -11,6 +18,5 @@ struct GlobalBuffer
     XMMATRIX projection;
     XMMATRIX invWorld;
     XMFLOAT4 camera;
-    XMFLOAT4 ambientLightColor;
-    XMFLOAT4 lightDirection;
+    DirectionalLight sun;
 };
