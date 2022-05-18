@@ -8,14 +8,18 @@ PointLight::PointLight(
     XMFLOAT4 pos,
     XMFLOAT4 color,
     u32 width,
-    u32 height
+    u32 height,
+    f32 radius,
+    f32 cutoff
 ) :
     ILight(
         pos,
         color,
         width,
         height
-    )
+    ),
+    m_radius(radius),
+    m_cutoff(cutoff)
 {
     D3D11_TEXTURE2D_DESC desc;
     desc.Width = width;
@@ -109,9 +113,8 @@ PointLight::PointLight(
         m_cBuffer.lightPos = m_pos;
         m_cBuffer.color = m_color;
         m_cBuffer.lightSpace[i] = m_spaceT;
-        m_cBuffer.constantDropoff = 0.0001f; // idk
-        m_cBuffer.linearDropoff = 0.000025f;
-        m_cBuffer.quadraticDropoff = 0.00001f;
+        m_cBuffer.radius = radius;
+        m_cBuffer.cutoff = cutoff;
     }
 }
 
@@ -197,7 +200,24 @@ void PointLight::bindShadowMap(u32 face)
     context->ClearDepthStencilView(m_shadowMapFacesDsv[face].Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-const PointLightBuffer& PointLight::getCbuffer()
+PointLightBuffer PointLight::getCbuffer()
 {
     return m_cBuffer;
+}
+
+f32 PointLight::maxDistance()
+{
+    if (m_cutoff == 0.0f)
+    {
+        return 0.0f;
+    }
+    return m_radius / sqrtf(m_cutoff);
+}
+
+AABB PointLight::getBounds()
+{
+    f32 dist = maxDistance();
+    XMFLOAT3 min = XMFLOAT3(m_pos.x - dist, m_pos.y - dist, m_pos.z - dist);
+    XMFLOAT3 max = XMFLOAT3(m_pos.x + dist, m_pos.y + dist, m_pos.z + dist);
+    return AABB(min, max);
 }

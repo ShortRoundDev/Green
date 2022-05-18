@@ -15,9 +15,8 @@ struct PointLight
     matrix view[6];
     float4 color;
     float4 position;
-    float constantDropoff;
-    float linearDropoff;
-    float quadraticDropoff;
+    float radius;
+    float cutoff;
 };
 
 float3 CalcPointLight(
@@ -41,12 +40,14 @@ float3 CalcPointLight(
     float specularMagnitude = pow(max(dot(viewDirection, reflectDir), 0.0), shininess);
 
     //dropoff
-    float distance = length(light.position.xyz - pixelPos);
-    float attenuation = 1.0f / (
-        light.constantDropoff +
-        (light.linearDropoff * distance) +
-        (light.quadraticDropoff * (distance * distance))
-    );
+    float3 diff = (light.position.xyz - pixelPos); // 63
+    float distance = length(diff); // 65
+    float d = max(distance - light.radius, 0); // = 1
+    
+    float denom = (d / light.radius) + 1; // 1.015625
+    float attenuation = 1 / (denom * denom); // 0.9694674556213018
+    attenuation = (attenuation - light.cutoff) / (1 - light.cutoff); // 0.8694674556213018 / 0.9 = 0.9660749506903353
+    attenuation = max(attenuation, 0); // = 
 
     //diffuse color
     float3 diffuseLight = textureColor * (0.2f * diffMagnitude) * attenuation * light.color.rgb;

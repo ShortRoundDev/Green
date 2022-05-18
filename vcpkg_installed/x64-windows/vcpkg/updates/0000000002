@@ -1,9 +1,0 @@
-Package: physx
-Version: 4.1.2
-Depends: vcpkg-cmake
-Architecture: x64-windows
-Multi-Arch: same
-Abi: 09cdbdc06ba2ab316c51920d1b0760bbd1128638bad86e0bfe2190d50cf195e9
-Description: The NVIDIA PhysX SDK is a scalable multi-platform physics solution supporting a wide range of devices, from smartphones to high-end multicore CPUs and GPUs
-Type: Port
-Status: install ok half-installed

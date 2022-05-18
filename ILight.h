@@ -44,6 +44,9 @@ public:
     virtual void renderShadowMap(Scene* scene) = 0;
     virtual void use(u32 slot) = 0;
 
+    XMFLOAT4 getPos();
+    ID3D11ShaderResourceView* getDepthMapSrv();
+
 protected:
     u32 m_width;
     u32 m_height;

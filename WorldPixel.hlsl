@@ -5,20 +5,19 @@
 #include "DirectionalLight.hlsli"
 #include "PointLight.hlsli"
 
-Texture2D albedo : register(t0);
-
-TextureCube shadowMap : register(t1);
-TextureCube shadowMap2 : register(t2);
-TextureCube shadowMap3 : register(t3);
-
-SamplerState sampleType : register(s0);
-SamplerComparisonState shadowSampler : register(s1);
-
 cbuffer Lights : register(b1)
 {
     uint nPointLights;
     PointLight pointLights[3];
 }
+
+Texture2D albedo : register(t0);
+TextureCube shadowMaps[3] : register(t1);
+
+SamplerState sampleType : register(s0);
+SamplerComparisonState shadowSampler : register(s1);
+
+
 
 float4 Pixel(PixelInput input) : SV_TARGET
 {
@@ -35,30 +34,16 @@ float4 Pixel(PixelInput input) : SV_TARGET
     );
     float shadowAccumulator = 0.0f;
     float3 pointColor = float3(0.0f, 0.0f, 0.0f);
-    TextureCube t = shadowMap;
     uint x = 16;
     for (int i = 0; i < nPointLights; i++)
     {
-        if (i == 0)
-        {
-            shadowAccumulator += PointLightShadow(
-                shadowSampler,
-                pointLights[i],
-                input.pixelPos,
-                camera,
-                shadowMap
-            );
-        }
-        else
-        {
-            shadowAccumulator += PointLightShadow(
-                shadowSampler,
-                pointLights[i],
-                input.pixelPos,
-                camera,
-                shadowMap2
-            );
-        }
+        shadowAccumulator += PointLightShadow(
+            shadowSampler,
+            pointLights[i],
+            input.pixelPos,
+            camera,
+            shadowMaps[i]
+        );
         
         pointColor += CalcPointLight(
             16,

@@ -2,6 +2,7 @@
 
 #include "GTypes.h"
 #include "GVertex.h"
+#include "AABB.h"
 
 #include <d3d11.h>
 #include <wrl/client.h>
@@ -16,6 +17,9 @@ using namespace physx;
 
 class Texture;
 class GameManager;
+class AABB;
+class ILight;
+class MeshViewModel;
 
 class Mesh
 {
@@ -30,6 +34,12 @@ public:
 
     Mesh();
     ~Mesh();
+
+    AABB getBox();
+
+    void addLight(ILight* light);
+
+    MeshViewModel* getViewModel();
 
     Texture* getTexture();
 
@@ -48,6 +58,14 @@ private:
 
     bool m_status;
 
+    AABB m_box;
+
+    XMFLOAT3 getCentroid();
+
+    std::vector<GVertex> m_vertices;
+    std::vector<ILight*> m_lights;
+
+    void initAABB(const std::vector<GVertex>& vertices);
     void concatenateVertices(std::vector<GVertex>& out, const std::vector<GVertex>& a, const std::vector<GVertex>& b);
     void concatenateIndices(std::vector<u32>& out, const std::vector<u32>& a, const std::vector<u32>& b);
 };

@@ -91,6 +91,12 @@
     <Filter Include="Header Files\Managers\Game\Physics">
       <UniqueIdentifier>{461f8cc6-b27c-4506-96dc-b0f95010f773}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Managers\Graphics\ViewModels">
+      <UniqueIdentifier>{0357253c-34f3-4aed-b1b3-cc44e6b9acdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Graphics\ViewModels">
+      <UniqueIdentifier>{e2e1b41f-208f-46ef-8ec1-d22bc9ba15df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -155,6 +161,18 @@
     </ClCompile>
     <ClCompile Include="SingleActorExclusionFilter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AABB.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Octree.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="OctreeNode.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshViewModel.cpp">
+      <Filter>Source Files\Managers\Graphics\ViewModels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +247,18 @@
     </ClInclude>
     <ClInclude Include="MeshLightBuffer.h">
       <Filter>Header Files\Managers\Graphics\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Octree.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="OctreeNode.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshViewModel.h">
+      <Filter>Header Files\Managers\Graphics\ViewModels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "SingleActorExclusionFilter.h"
 #include "Camera.h"
+#include "PointLight.h"
 
 static ::Logger logger = CreateLogger("Player");
 
@@ -39,7 +40,6 @@ Player::~Player()
 void Player::update()
 {
     checkFloor();
-    logger.info("Onfloor: %d", m_onGround);
     auto view = Game.getScene()->getCamera()->getView();
     view = XMMatrixTranspose(view);
     auto look = XMFLOAT3(

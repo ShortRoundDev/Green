@@ -11,6 +11,7 @@
 #include "SpotLight.h"
 #include "PointLight.h"
 #include "MeshLightBuffer.h"
+#include "MeshViewModel.h"
 #include "Player.h"
 
 static ::Logger logger = CreateLogger("Scene");
@@ -43,8 +44,28 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     m_shader = Graphics.getShader(L"World");
 
     //m_light = new SpotLight({ 64, 128.0f, -64, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 800, 800, { -1.0f, 0, 1.0f, 1.0f });
-    m_light = new PointLight({ 0, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
-    m_light2 = new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
+    m_lights.push_back(new PointLight({ 64, 128, -64, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
+    m_lights.push_back(new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
+    //m_light2 = new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
+
+    m_tree = new Octree(m_brushes);
+    for (auto light : m_lights)
+    {
+        auto box = ((PointLight*)light)->getBounds();
+        std::vector<Mesh*> result;
+
+        m_tree->query(&box, result);
+
+        for (auto mesh : result)
+        {
+            mesh->addLight(light);
+        }
+    }
+
+    for (auto mesh : m_brushes)
+    {
+        m_meshViewModels.push_back(mesh->getViewModel());
+    }
 }
 
 Scene::~Scene()
@@ -62,8 +83,11 @@ void Scene::addRigidBodies(GameManager* gameManager)
 
 void Scene::generateShadowMaps()
 {
-    m_light->renderShadowMap(this);
-    m_light2->renderShadowMap(this);
+    for (auto light : m_lights)
+    {
+        light->renderShadowMap(this);
+    }
+    //m_light2->renderShadowMap(this);
 }
 
 void Scene::initEntities()
@@ -73,35 +97,17 @@ void Scene::initEntities()
 
 void Scene::draw()
 {
+    m_shader->use();
     m_camera->update();
+
     Graphics.setViewMatrix(m_camera->getView());
     Graphics.setCameraPos(m_camera->getPosition());
 
-    auto buffer = ((PointLight*)m_light)->getCbuffer();
-    MeshLightBuffer lightBuffer;
-    if (lights)
-    {
-        lightBuffer.nPointLights = 2;
-    }
-    else
-    {
-        lightBuffer.nPointLights = 0;
-    }
-    lightBuffer.pointLights[0] = buffer;
-
-    buffer = ((PointLight*)m_light2)->getCbuffer();
-    lightBuffer.pointLights[1] = buffer;
-
-    m_shader->bindCBuffer(&lightBuffer);
-
-    m_shader->use();
-    renderMeshes();
+    renderViewModels();
 }
 
 void Scene::renderMeshes()
 {
-    m_light->use(1);
-    m_light2->use(2);
     for (u32 i = 0; i < m_brushes.size(); i++)
     {
         if (m_brushes[i]->getTexture() == NULL)
@@ -110,6 +116,23 @@ void Scene::renderMeshes()
         }
         m_brushes[i]->draw();
     }
+}
+
+void Scene::renderViewModels()
+{
+    //for (u32 i = 0; i < m_meshViewModels.size(); i++)
+    //{
+    //    m_meshViewModels[i]->draw();
+    //}
+    for (u32 i = 0; i < m_meshViewModels.size(); i++)
+    {
+        //if (m_brushes[i]->getTexture() == NULL)
+        //{
+        //    logger.warn("%d: Texture is null", i);
+        //}
+        m_meshViewModels[i]->draw();
+    }
+
 }
 
 void Scene::update()
@@ -125,9 +148,14 @@ Camera* Scene::getCamera()
     return m_camera;
 }
 
-std::vector<GameObject*>& Scene::getGameObjects()
+const std::vector<GameObject*>& Scene::getGameObjects()
 {
     return m_gameObjects;
+}
+
+const std::vector<ILight*>& Scene::getLights()
+{
+    return m_lights;
 }
 
 ////////// PRIVATE //////////

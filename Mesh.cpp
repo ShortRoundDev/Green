@@ -4,6 +4,8 @@
 #include "GameManager.h"
 #include "Logger.h"
 #include "Texture.h"
+#include "ILight.h"
+#include "MeshViewModel.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -292,6 +294,47 @@ Mesh::~Mesh()
 
 }
 
+AABB Mesh::getBox()
+{
+    return m_box;
+}
+
+void Mesh::addLight(ILight* light)
+{
+    m_lights.push_back(light);
+}
+
+MeshViewModel* Mesh::getViewModel()
+{
+    if (m_lights.size() > 3)
+    {
+        auto centroid = getCentroid();
+        auto centroidV = XMLoadFloat3(&centroid);
+        std::sort(m_lights.begin(), m_lights.end(), [centroidV](ILight* a, ILight* b) {
+            auto aPos = a->getPos();
+            XMVECTOR aV = XMLoadFloat4(&aPos);
+
+            auto bPos = b->getPos();
+            XMVECTOR bV = XMLoadFloat4(&bPos);
+
+            XMVECTOR aDiff = XMVectorSubtract(centroidV, aV);
+            XMVECTOR bDiff = XMVectorSubtract(centroidV, bV);
+
+            auto aLengthV = XMVector3LengthSq(aDiff);
+            auto bLengthV = XMVector3LengthSq(bDiff);
+
+            f32 aLength, bLength;
+            XMStoreFloat(&aLength, aLengthV);
+            XMStoreFloat(&bLength, bLengthV);
+
+            return aLength > bLength;
+        });
+        m_lights.erase(m_lights.begin() + 3, m_lights.end());
+    }
+
+    return new MeshViewModel(this, m_lights);
+}
+
 Texture* Mesh::getTexture()
 {
     return m_texture;
@@ -305,6 +348,7 @@ bool Mesh::initialize(
     Texture* texture
 )
 {
+    m_vertices = vertices;
     m_texture = texture;
 
     const GVertex* pVertices = vertices.data();
@@ -356,7 +400,30 @@ bool Mesh::initialize(
     }
 
     m_status = true;
+
+    initAABB(vertices);
     return true;
+}
+
+XMFLOAT3 Mesh::getCentroid()
+{
+    GVertex centroidV = m_vertices[0];
+    for (int i = 1; i < m_vertices.size(); i++)
+    {
+        centroidV.pos.x += m_vertices[i].pos.x;
+        centroidV.pos.y += m_vertices[i].pos.y;
+        centroidV.pos.z += m_vertices[i].pos.z;
+    }
+    centroidV.pos.x /= (float)m_vertices.size();
+    centroidV.pos.y /= (float)m_vertices.size();
+    centroidV.pos.z /= (float)m_vertices.size();
+
+    return centroidV.pos;
+}
+
+void Mesh::initAABB(const std::vector<GVertex>& vertices)
+{
+    m_box = AABB(vertices);
 }
 
 void Mesh::concatenateVertices(
