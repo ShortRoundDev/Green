@@ -37,7 +37,8 @@ private:
     ComPtr<ID3D11InputLayout> m_inputLayout;
     ComPtr<ID3D11Buffer> m_matrixBuffer;
     ComPtr<ID3D11SamplerState> m_samplerState;
-    ComPtr<ID3D11SamplerState> m_shadowSampler;
+    ComPtr<ID3D11SamplerState> m_pointShadowSampler;
+    ComPtr<ID3D11SamplerState> m_spotShadowSampler;
     ComPtr<ID3D11BlendState> m_blendState;
     ComPtr<ID3D11Buffer> m_cBuffer;
 

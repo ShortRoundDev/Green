@@ -27,7 +27,6 @@ public:
     static bool createFromFile(
         std::string path,
         std::vector<Mesh*>& meshes,
-        std::vector<PxConvexMesh*>& physicsMeshes,
         GameManager* gameManager
     );
     void draw();
@@ -42,6 +41,7 @@ public:
     MeshViewModel* getViewModel();
 
     Texture* getTexture();
+    void setTexture(Texture* texture);
 
 private:
 

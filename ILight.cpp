@@ -9,3 +9,8 @@ ID3D11ShaderResourceView* ILight::getDepthMapSrv()
 {
     return m_depthMapSrv.Get();
 }
+
+u32 ILight::getLightType()
+{
+    return m_lightType;
+}

@@ -25,7 +25,6 @@ public:
 
     void generateShadowMaps();
     void initEntities();
-    void addRigidBodies(GameManager* gameManager);
     void draw();
     void renderMeshes();
     void renderViewModels();

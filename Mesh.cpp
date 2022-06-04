@@ -5,6 +5,8 @@
 #include "Logger.h"
 #include "Texture.h"
 #include "ILight.h"
+#include "SpotLight.h"
+#include "PointLight.h"
 #include "MeshViewModel.h"
 
 #include <assimp/Importer.hpp>
@@ -38,7 +40,6 @@ public:
 bool Mesh::createFromFile(
     std::string path,
     std::vector<Mesh*>& meshes,
-    std::vector<PxConvexMesh*>& physicsMeshes,
     GameManager* gameManager
 )
 {
@@ -306,11 +307,22 @@ void Mesh::addLight(ILight* light)
 
 MeshViewModel* Mesh::getViewModel()
 {
-    if (m_lights.size() > 3)
+    auto centroid = getCentroid();
+    auto centroidV = XMLoadFloat3(&centroid);
+
+    std::vector<ILight*> spotLights;
+    std::vector<ILight*> pointLights;
+
+    std::copy_if(m_lights.begin(), m_lights.end(), std::back_inserter(spotLights), [](ILight* val) {
+        return val->getLightType() == SPOT_LIGHT;
+    });
+
+    std::copy_if(m_lights.begin(), m_lights.end(), std::back_inserter(pointLights), [](ILight* val) {
+        return val->getLightType() == POINT_LIGHT;
+    });
+    if (spotLights.size() > 3)
     {
-        auto centroid = getCentroid();
-        auto centroidV = XMLoadFloat3(&centroid);
-        std::sort(m_lights.begin(), m_lights.end(), [centroidV](ILight* a, ILight* b) {
+        std::sort(spotLights.begin(), spotLights.end(), [centroidV](ILight* a, ILight* b) {
             auto aPos = a->getPos();
             XMVECTOR aV = XMLoadFloat4(&aPos);
 
@@ -328,16 +340,56 @@ MeshViewModel* Mesh::getViewModel()
             XMStoreFloat(&bLength, bLengthV);
 
             return aLength > bLength;
-        });
-        m_lights.erase(m_lights.begin() + 3, m_lights.end());
+            });
+        spotLights.erase(spotLights.begin() + 3, spotLights.end());
     }
 
-    return new MeshViewModel(this, m_lights);
+    if (pointLights.size() > 3)
+    {
+        std::sort(pointLights.begin(), pointLights.end(), [centroidV](ILight* a, ILight* b) {
+            auto aPos = a->getPos();
+            XMVECTOR aV = XMLoadFloat4(&aPos);
+
+            auto bPos = b->getPos();
+            XMVECTOR bV = XMLoadFloat4(&bPos);
+
+            XMVECTOR aDiff = XMVectorSubtract(centroidV, aV);
+            XMVECTOR bDiff = XMVectorSubtract(centroidV, bV);
+
+            auto aLengthV = XMVector3LengthSq(aDiff);
+            auto bLengthV = XMVector3LengthSq(bDiff);
+
+            f32 aLength, bLength;
+            XMStoreFloat(&aLength, aLengthV);
+            XMStoreFloat(&bLength, bLengthV);
+
+            return aLength > bLength;
+            });
+        pointLights.erase(pointLights.begin() + 3, pointLights.end());
+    }
+
+    std::vector<SpotLight*> spotLightsSorted;
+    std::vector<PointLight*> pointLightsSorted;
+
+    std::transform(spotLights.begin(), spotLights.end(), std::back_inserter(spotLightsSorted), [](ILight* light) {
+        return (SpotLight*)light;
+    });
+
+    std::transform(pointLights.begin(), pointLights.end(), std::back_inserter(pointLightsSorted), [](ILight* light) {
+        return (PointLight*)light;
+    });
+
+    return new MeshViewModel(this, spotLightsSorted, pointLightsSorted);
 }
 
 Texture* Mesh::getTexture()
 {
     return m_texture;
+}
+
+void Mesh::setTexture(Texture* texture)
+{
+    m_texture = texture;
 }
 
 bool Mesh::initialize(

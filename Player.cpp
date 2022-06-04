@@ -5,6 +5,7 @@
 #include "GraphicsManager.h"
 #include "Scene.h"
 #include "SingleActorExclusionFilter.h"
+#include "PlayerBehaviorCallback.h"
 #include "Camera.h"
 #include "PointLight.h"
 
@@ -20,7 +21,11 @@ Player::Player(XMFLOAT3 pos) :
     //PxControllerDesc
     desc.radius = 32.0f;
     desc.height = 48.0f;
+    desc.invisibleWallHeight = 3.0;
+    desc.climbingMode = PxCapsuleClimbingMode::eEASY;
     desc.material = material;
+    desc.behaviorCallback = new PlayerBehaviorCallback();
+    //desc.call
     m_controller = Game.getControllers()->createController(desc);
     m_controller->setPosition(PxExtendedVec3(0, 128, 0));
     if (!m_controller)
@@ -51,6 +56,8 @@ void Player::update()
     _look = XMVector3Normalize(_look);
     ::XMStoreFloat3(&look, _look);
 
+    XMFLOAT3 walk = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
     if (!m_onGround)
     {
         m_move.y -= 0.25;
@@ -62,15 +69,87 @@ void Player::update()
 
     if (m_onGround)
     {
-        m_move.x = 0;
-        m_move.z = 0;
+        //friction
+        XMFLOAT3 moveXZ = XMFLOAT3(m_move.x, 0, m_move.z);
+        XMVECTOR moveV = XMLoadFloat3(&moveXZ);
+        moveV = XMVectorScale(moveV, 0.8f);
+        XMStoreFloat3(&moveXZ, moveV);
+
+        m_move.x = moveXZ.x;
+        m_move.z = moveXZ.z;
     }
 
     if (Graphics.keyDown('W'))
     {
-        m_move.x = look.x * 3;
-        m_move.z = look.z * 3;
+        walk.x += look.x * 0.7f;
+        walk.z += look.z * 0.7f;
     }
+
+    if (Graphics.keyDown('A'))
+    {
+        XMFLOAT3 lookPlane(look.x, 0, look.z);
+        XMVECTOR lookV = XMLoadFloat3(&lookPlane);
+        
+        XMFLOAT3 up(0, 1, 0);
+        XMVECTOR upV = XMLoadFloat3(&up);
+        
+        XMVECTOR leftV = XMVector3Cross(lookV, upV);
+        XMFLOAT3 left;
+        XMStoreFloat3(&left, leftV);
+
+        walk.x += left.x * 0.7f;
+        walk.z += left.z * 0.7f;
+    }
+
+    if (Graphics.keyDown('D'))
+    {
+        XMFLOAT3 lookPlane(look.x, 0, look.z);
+        XMVECTOR lookV = XMLoadFloat3(&lookPlane);
+
+        XMFLOAT3 down(0, -1, 0);
+        XMVECTOR downV = XMLoadFloat3(&down);
+
+        XMVECTOR rightV = XMVector3Cross(lookV, downV);
+        XMFLOAT3 right;
+        XMStoreFloat3(&right, rightV);
+
+        walk.x += right.x * 0.7f;
+        walk.z += right.z * 0.7f;
+    }
+
+    if (Graphics.keyDown('S'))
+    {
+        walk.x += -look.x * 0.7f;
+        walk.z += -look.z * 0.7f;
+    }
+
+    XMVECTOR walkV = XMLoadFloat3(&walk);
+    XMVECTOR lenV = XMVector3Length(walkV);
+    XMFLOAT3 len;
+
+    XMStoreFloat3(&len, lenV);
+    walkV = XMVector3ClampLength(walkV, 0.0f, 3.0f);
+    
+    XMStoreFloat3(&walk, walkV);
+
+    if (m_onGround)
+    {
+        m_move.x += walk.x;
+        m_move.z += walk.z;
+    }
+    else
+    {
+        /*if (walk.x != 0.0f)
+        {
+            m_move.x = walk.x;
+        }
+        if (walk.z != 0.0f)
+        {
+            m_move.z = walk.z;
+        }*/
+    }
+
+
     if (m_onGround && Graphics.keyDown(32))
     {
         m_move.y = 5;

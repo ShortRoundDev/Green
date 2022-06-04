@@ -1,6 +1,8 @@
 #ifndef __POINT_LIGHT_HLSLI__
 #define __POINT_LIGHT_HLSLI__
 
+#include "LightUtil.hlsli"
+
 static const float3 sampleOffsetDirections[20] =
 {
    float3(+1.0f, +1.0f, +1.0f), float3(+1.0f, -1.0f, +1.0f), float3(-1.0f, -1.0f, +1.0f), float3(-1.0f, +1.0f, +1.0f),
@@ -29,15 +31,8 @@ float3 CalcPointLight(
     PointLight light
 )
 {
-    float3 viewDirection = normalize(camera.xyz - pixelPos);
-    
-    //diffuse magnitude
-    float3 dir = normalize(light.position.xyz - pixelPos);
-    float diffMagnitude = max(dot(normal, dir), roughness);
-    
-    //specular magnitude
-    float3 reflectDir = reflect(-dir, normal);
-    float specularMagnitude = pow(max(dot(viewDirection, reflectDir), 0.0), shininess);
+    float diffMagnitude = diffuse(pixelPos, normal, light.position.xyz, roughness);
+    float specularMagnitude = specular(camera.xyz - pixelPos, normal, light.position.xyz, pixelPos, shininess);
 
     //dropoff
     float3 diff = (light.position.xyz - pixelPos); // 63

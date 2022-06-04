@@ -2,6 +2,8 @@
 
 class Mesh;
 class ILight;
+class PointLight;
+class SpotLight;
 class Shader;
 
 #include "GTypes.h"
@@ -12,15 +14,24 @@ class Shader;
 class MeshViewModel
 {
 public:
-    MeshViewModel(Mesh* mesh, std::vector<ILight*> lights);
+    MeshViewModel(
+        Mesh* mesh,
+        std::vector<SpotLight*> spotLights,
+        std::vector<PointLight*> pointLights
+    );
     ~MeshViewModel();
 
     void draw();
 
 private:
     Mesh* m_mesh;
-    ILight* m_lights[3]; // may change later
-    u32 m_numLights;
+    PointLight* m_pointLights[3]; // may change later
+    SpotLight* m_spotLights[3];
+    u32 m_numSpotLights;
+    u32 m_numPointLights;
     Shader* m_shader;
+
+    ID3D11ShaderResourceView** m_pointLightBuffer;
+    ID3D11ShaderResourceView** m_spotLightBuffer;
 };
 

@@ -73,7 +73,8 @@ void Shader::use()
     context->VSSetShader(m_vertex.Get(), NULL, 0);
     context->PSSetShader(m_pixel.Get(), NULL, 0);
     context->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
-    context->PSSetSamplers(1, 1, m_shadowSampler.GetAddressOf());
+    context->PSSetSamplers(1, 1, m_pointShadowSampler.GetAddressOf());
+    context->PSSetSamplers(2, 1, m_spotShadowSampler.GetAddressOf());
 
     float factor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
     context->OMSetBlendState(m_blendState.Get(), factor, 0xffffffff);
@@ -232,12 +233,35 @@ bool Shader::initSampler(ID3D11Device* device)
     samplerDesc.MinLOD = 0;
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-    result = device->CreateSamplerState(&samplerDesc, m_shadowSampler.GetAddressOf());
+    result = device->CreateSamplerState(&samplerDesc, m_pointShadowSampler.GetAddressOf());
     if (FAILED(result))
     {
-        logger.err("Shadow sampler creation error!");
+        logger.err("Point shadow sampler creation error!");
         return false;
     }
+
+    ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
+    samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    samplerDesc.MipLODBias = 0.0f;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+    samplerDesc.BorderColor[0] = 0;
+    samplerDesc.BorderColor[1] = 0;
+    samplerDesc.BorderColor[2] = 0;
+    samplerDesc.BorderColor[3] = 0;
+    samplerDesc.MinLOD = 0;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    result = device->CreateSamplerState(&samplerDesc, m_spotShadowSampler.GetAddressOf());
+    if (FAILED(result))
+    {
+        logger.err("Spot shadow sampler creation error!");
+        return false;
+    }
+
 
     return true;
 }
@@ -272,7 +296,7 @@ bool Shader::initCBuffer(ID3D11Device* device, size_t bufferSize)
     D3D11_BUFFER_DESC matrixBufferDesc;
     ZeroMemory(&matrixBufferDesc, sizeof(D3D11_BUFFER_DESC));
     matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    matrixBufferDesc.ByteWidth = bufferSize;
+    matrixBufferDesc.ByteWidth = (u32)(std::ceil((float)bufferSize/16.0f) * 16.0f);
     matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     matrixBufferDesc.MiscFlags = 0;

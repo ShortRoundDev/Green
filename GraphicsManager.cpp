@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "ILight.h"
 #include "Texture.h"
+#include "Sprite.h"
 
 #include "MeshLightBuffer.h"
 
@@ -676,12 +677,12 @@ bool GraphicsManager::initShaders()
 		sizeof(LightSpaceBuffer)
 	));
 
-	/*putShader(L"PointLight", new Shader(
+	putShader(L"Sprite", new Shader(
 		m_device.Get(),
-		L"PointLightShadowMapVertex.cso",
-		L"PointLightShadowMapPixe;.cso",
-		sizeof(LightSpaceBuffer)
-	));*/
+		L"SpriteVertex.cso",
+		L"SpritePixel.cso",
+		sizeof(SpriteBuffer)
+	));
 	
 	return true;
 }

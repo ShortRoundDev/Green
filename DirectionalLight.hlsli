@@ -11,7 +11,7 @@ struct DirectionalLight
 float3 DiffuseDirectionalLight(DirectionalLight light, float3 normal, float roughness)
 {
     float diffMagnitude = max(dot(light.direction.xyz, normal), roughness); // 0.2f configurable?
-    return light.color * diffMagnitude;
+    return light.color.rgb * diffMagnitude;
 }
 
 float3 SpecularDirectionalLight(

@@ -97,6 +97,9 @@
     <Filter Include="Header Files\Managers\Graphics\ViewModels">
       <UniqueIdentifier>{e2e1b41f-208f-46ef-8ec1-d22bc9ba15df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Sprite">
+      <UniqueIdentifier>{9b7f421f-6d7b-45e5-8fc4-6c153ad8f5e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -159,9 +162,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files\Managers\Game\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="SingleActorExclusionFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AABB.cpp">
       <Filter>Source Files\Managers\Graphics</Filter>
     </ClCompile>
@@ -173,6 +173,15 @@
     </ClCompile>
     <ClCompile Include="MeshViewModel.cpp">
       <Filter>Source Files\Managers\Graphics\ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleActorExclusionFilter.cpp">
+      <Filter>Source Files\Managers\Game\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBehaviorCallback.cpp">
+      <Filter>Source Files\Managers\Game\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,9 +251,6 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files\Managers\Game\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="SingleActorExclusionFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MeshLightBuffer.h">
       <Filter>Header Files\Managers\Graphics\Lights</Filter>
     </ClInclude>
@@ -259,6 +265,15 @@
     </ClInclude>
     <ClInclude Include="MeshViewModel.h">
       <Filter>Header Files\Managers\Graphics\ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleActorExclusionFilter.h">
+      <Filter>Header Files\Managers\Game\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBehaviorCallback.h">
+      <Filter>Header Files\Managers\Game\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +310,12 @@
     <FxCompile Include="SpotLightShadowMapPixel.hlsl">
       <Filter>Resource Files\Shaders\ShadowMap</Filter>
     </FxCompile>
+    <FxCompile Include="SpritePixel.hlsl">
+      <Filter>Resource Files\Shaders\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="SpriteVertex.hlsl">
+      <Filter>Resource Files\Shaders\Sprite</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shadertoolsconfig.json">
@@ -311,6 +332,12 @@
       <Filter>Resource Files\Shaders\Util\Light</Filter>
     </None>
     <None Include="DirectionalLight.hlsli">
+      <Filter>Resource Files\Shaders\Util\Light</Filter>
+    </None>
+    <None Include="LightUtil.hlsli">
+      <Filter>Resource Files\Shaders\Util\Light</Filter>
+    </None>
+    <None Include="SpotLight.hlsli">
       <Filter>Resource Files\Shaders\Util\Light</Filter>
     </None>
   </ItemGroup>

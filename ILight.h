@@ -5,6 +5,8 @@
 #include <DirectXMath.h>
 #include <wrl/client.h>
 
+#include "AABB.h"
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -21,13 +23,14 @@ class Scene;
 class ILight
 {
 public:
-    ILight(XMFLOAT4 pos, XMFLOAT4 color, u32 width, u32 height) :
+    ILight(XMFLOAT4 pos, XMFLOAT4 color, u32 width, u32 height, u32 lightType) :
         m_pos(pos),
         m_color(color),
         m_width(width),
         m_height(height),
         m_far(1000.0f),
-        m_near(0.01f)
+        m_near(0.01f),
+        m_lightType(lightType)
     {
         m_viewport.TopLeftX = 0.0f;
         m_viewport.TopLeftY = 0.0f;
@@ -43,11 +46,18 @@ public:
 
     virtual void renderShadowMap(Scene* scene) = 0;
     virtual void use(u32 slot) = 0;
+    virtual void draw() = 0;
 
     XMFLOAT4 getPos();
     ID3D11ShaderResourceView* getDepthMapSrv();
 
+    u32 getLightType();
+
+    virtual AABB getBounds() = 0;
+
 protected:
+    u32 m_lightType;
+
     u32 m_width;
     u32 m_height;
 

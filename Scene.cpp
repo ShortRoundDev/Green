@@ -22,15 +22,12 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     if (!Mesh::createFromFile(
         fileName,
         m_brushes,
-        m_physicsMeshes,
         gameManager
     ))
     {
         logger.err("Failed to load meshes!");
         return;
     }
-    addRigidBodies(gameManager);
-
     /*Vector3 _pos = Vector3(0, 0, 0);
     Quaternion o = Quaternion::identity();
     Transform t(_pos, o);
@@ -44,14 +41,18 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     m_shader = Graphics.getShader(L"World");
 
     //m_light = new SpotLight({ 64, 128.0f, -64, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 800, 800, { -1.0f, 0, 1.0f, 1.0f });
-    m_lights.push_back(new PointLight({ 64, 128, -64, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
-    m_lights.push_back(new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
+    //m_lights.push_back(new PointLight({ 64, 128, -64, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
+    //m_lights.push_back(new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
+    m_lights.push_back(new SpotLight({ 32, 148, -80, 1 }, { 0.5f, 0.5f, 1.0f, 1 }, 1600, 1600, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
+    m_lights.push_back(new SpotLight({ 32, 148, -40, 1 }, { 1.0f, 0.5f, 0.5f, 1 }, 1600, 1600, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
+    //m_lights.push_back(new SpotLight({ 0, 0, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, { 0, 1, 0, 1 }, 10, 10, 1.0f));
+    
     //m_light2 = new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
 
     m_tree = new Octree(m_brushes);
     for (auto light : m_lights)
     {
-        auto box = ((PointLight*)light)->getBounds();
+        auto box = light->getBounds();
         std::vector<Mesh*> result;
 
         m_tree->query(&box, result);
@@ -71,14 +72,6 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
 Scene::~Scene()
 {
 
-}
-
-void Scene::addRigidBodies(GameManager* gameManager)
-{
-    for (u32 i = 0; i < m_physicsMeshes.size(); i++)
-    {
-
-    }
 }
 
 void Scene::generateShadowMaps()
@@ -104,6 +97,10 @@ void Scene::draw()
     Graphics.setCameraPos(m_camera->getPosition());
 
     renderViewModels();
+    for (auto l : m_lights)
+    {
+        l->draw();
+    }
 }
 
 void Scene::renderMeshes()

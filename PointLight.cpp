@@ -16,7 +16,8 @@ PointLight::PointLight(
         pos,
         color,
         width,
-        height
+        height,
+        POINT_LIGHT
     ),
     m_radius(radius),
     m_cutoff(cutoff)
@@ -220,4 +221,9 @@ AABB PointLight::getBounds()
     XMFLOAT3 min = XMFLOAT3(m_pos.x - dist, m_pos.y - dist, m_pos.z - dist);
     XMFLOAT3 max = XMFLOAT3(m_pos.x + dist, m_pos.y + dist, m_pos.z + dist);
     return AABB(min, max);
+}
+
+PointLightBuffer PointLight::getCBuffer()
+{
+    return m_cBuffer;
 }

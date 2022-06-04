@@ -4,25 +4,30 @@
 
 #include "DirectionalLight.hlsli"
 #include "PointLight.hlsli"
+#include "SpotLight.hlsli"
 
 cbuffer Lights : register(b1)
 {
     uint nPointLights;
     PointLight pointLights[3];
+    float3 padding;
+    uint nSpotLights;
+    SpotLight spotLights[3];
 }
 
 Texture2D albedo : register(t0);
-TextureCube shadowMaps[3] : register(t1);
+
+TextureCube pointShadowMaps[3] : register(t1);
+Texture2D spotShadowMaps[3] : register(t4);
 
 SamplerState sampleType : register(s0);
-SamplerComparisonState shadowSampler : register(s1);
-
-
+SamplerComparisonState pointShadowSampler : register(s1);
+SamplerState spotShadowSampler : register(s2);
 
 float4 Pixel(PixelInput input) : SV_TARGET
 {
     float3 texColor = albedo.Sample(sampleType, input.tex).rgb;
-    float3 ambient = sun.ambient;
+    float3 ambient = sun.ambient.rgb;
     float3 sunLight = CalculateDirectionalColor(
         sun,
         texColor,
@@ -34,15 +39,15 @@ float4 Pixel(PixelInput input) : SV_TARGET
     );
     float shadowAccumulator = 0.0f;
     float3 pointColor = float3(0.0f, 0.0f, 0.0f);
-    uint x = 16;
-    for (int i = 0; i < nPointLights; i++)
+    
+    for (uint i = 0; i < nPointLights; i++)
     {
         shadowAccumulator += PointLightShadow(
-            shadowSampler,
+            pointShadowSampler,
             pointLights[i],
             input.pixelPos,
             camera,
-            shadowMaps[i]
+            pointShadowMaps[i]
         );
         
         pointColor += CalcPointLight(
@@ -56,14 +61,38 @@ float4 Pixel(PixelInput input) : SV_TARGET
         );
     }
     
-    float shadow = 0.0f;
-    
-    if (nPointLights > 0)
+    float3 spotColor = float3(0.0f, 0.0f, 0.0f);
+    for (uint j = 0; j < nSpotLights; j++)
     {
-        shadow = shadowAccumulator / float(nPointLights);
+        shadowAccumulator += SpotLightShadow(
+            spotShadowSampler,
+            spotLights[j],
+            input.pixelPos,
+            camera,
+            spotShadowMaps[j]
+        );
+        
+        spotColor += CalcSpotLight(
+            16, 0.2f,
+            input.normal,
+            input.pixelPos,
+            camera,
+            texColor,
+            spotLights[j]
+        );
+        
     }
     
-    float3 lighting = texColor * (ambient + sunLight + (pointColor * (1.0f - shadow)));
+    float shadow = 0.0f;
+    
+    uint totalLights = nPointLights + nSpotLights;
+    
+    if (totalLights > 0)
+    {
+        shadow = shadowAccumulator / totalLights;
+    }
+    
+    float3 lighting = texColor * (ambient + sunLight + ((pointColor + spotColor) * (1.0f - shadow)));
     
     return float4(lighting, 1.0f);
 }

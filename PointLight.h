@@ -4,6 +4,8 @@
 #include "GTypes.h"
 #include "AABB.h"
 
+constexpr u32 POINT_LIGHT = 0;
+
 struct PointLightBuffer
 {
     XMMATRIX lightSpace[6];
@@ -25,7 +27,7 @@ public:
     PointLightBuffer getCbuffer();
     AABB getBounds();
 
-    PointLightBuffer m_cBuffer;
+    PointLightBuffer getCBuffer();
 
 private:
     void bindShadowMap(u32 face);
@@ -34,6 +36,8 @@ private:
     f32 m_cutoff;
 
     f32 maxDistance();
+
+    PointLightBuffer m_cBuffer;
 
     ComPtr<ID3D11DepthStencilView> m_shadowMapFacesDsv[6];
 

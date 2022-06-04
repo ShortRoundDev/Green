@@ -4,17 +4,36 @@
 
 #include "Mesh.h"
 #include "ILight.h"
+#include "SpotLight.h"
+#include "PointLight.h"
 #include "Shader.h"
 
-MeshViewModel::MeshViewModel(Mesh* mesh, std::vector<ILight*> lights) :
+#include "Logger.h"
+
+static Logger logger = CreateLogger("MeshViewModel");
+
+MeshViewModel::MeshViewModel(
+    Mesh* mesh,
+    std::vector<SpotLight*> spotLights,
+    std::vector<PointLight*> pointLights
+) :
     m_mesh(mesh),
-    m_numLights(std::min((int)lights.size(), 3)),
+    m_numSpotLights(std::min((int)spotLights.size(), 3)),
+    m_numPointLights(std::min((int)pointLights.size(), 3)),
     m_shader(Graphics.getShader(L"World"))
 {
-    for (int i = 0; i < m_numLights; i++)
+    for (int i = 0; i < m_numPointLights; i++)
     {
-        m_lights[i] = lights[i];
+        m_pointLights[i] = pointLights[i];
     }
+
+    for (int i = 0; i < m_numSpotLights; i++)
+    {
+        m_spotLights[i] = spotLights[i];
+    }
+
+    m_pointLightBuffer = new ID3D11ShaderResourceView*[m_numPointLights];
+    m_spotLightBuffer = new ID3D11ShaderResourceView*[m_numSpotLights];
 }
 
 MeshViewModel::~MeshViewModel()
@@ -25,22 +44,27 @@ MeshViewModel::~MeshViewModel()
 void MeshViewModel::draw()
 {
     MeshLightBuffer lightBuffer;
-    lightBuffer.nPointLights = m_numLights;
 
-    if (m_numLights)
+    ZeroMemory(&lightBuffer, sizeof(lightBuffer));
+    lightBuffer.nPointLights = m_numPointLights;
+    for (int i = 0; i < m_numPointLights; i++)
     {
-        ID3D11ShaderResourceView** _lights = new ID3D11ShaderResourceView*[m_numLights];
-
-        for (int i = 0; i < m_numLights; i++)
-        {
-            //m_lights[i]->use(i + 1);
-            _lights[i] = m_lights[i]->getDepthMapSrv();
-            auto buffer = ((PointLight*)m_lights[i])->m_cBuffer;
-            lightBuffer.pointLights[i] = buffer;
-        }
-        Graphics.getContext()->PSSetShaderResources(1, m_numLights, _lights);
-        m_shader->bindCBuffer(&lightBuffer);
+        //m_lights[i]->use(i + 1);
+        m_pointLightBuffer[i] = m_pointLights[i]->getDepthMapSrv();
+        auto buffer = m_pointLights[i]->getCBuffer();
+        lightBuffer.pointLights[i] = buffer;
     }
+    Graphics.getContext()->PSSetShaderResources(1, m_numPointLights, m_pointLightBuffer);
 
+    lightBuffer.nSpotLights = m_numSpotLights;
+    for (int i = 0; i < m_numSpotLights; i++)
+    {
+        m_spotLightBuffer[i] = m_spotLights[i]->getDepthMapSrv();
+        SpotLightBuffer buffer = m_spotLights[i]->getCBuffer();
+        lightBuffer.spotLights[i] = buffer;
+    }
+    Graphics.getContext()->PSSetShaderResources(4, m_numSpotLights, m_spotLightBuffer);
+
+    m_shader->bindCBuffer(&lightBuffer);
     m_mesh->draw();
 }
