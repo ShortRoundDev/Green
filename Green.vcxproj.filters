@@ -340,6 +340,9 @@
     <None Include="SpotLight.hlsli">
       <Filter>Resource Files\Shaders\Util\Light</Filter>
     </None>
+    <None Include="Assets\Sprite.mtl">
+      <Filter>Resource Files\Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Default.cfg">
@@ -351,5 +354,10 @@
     <CopyFileToFolders Include="Assets\Boxes.mtl">
       <Filter>Resource Files\Assets</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Sprite.obj">
+      <Filter>Resource Files\Assets</Filter>
+    </Resource>
   </ItemGroup>
 </Project>

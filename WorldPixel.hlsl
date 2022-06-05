@@ -40,6 +40,8 @@ float4 Pixel(PixelInput input) : SV_TARGET
     float shadowAccumulator = 0.0f;
     float3 pointColor = float3(0.0f, 0.0f, 0.0f);
     
+    uint totalLights = nPointLights;
+    
     for (uint i = 0; i < nPointLights; i++)
     {
         shadowAccumulator += PointLightShadow(
@@ -64,13 +66,18 @@ float4 Pixel(PixelInput input) : SV_TARGET
     float3 spotColor = float3(0.0f, 0.0f, 0.0f);
     for (uint j = 0; j < nSpotLights; j++)
     {
-        shadowAccumulator += SpotLightShadow(
+        float spotShadow = SpotLightShadow(
             spotShadowSampler,
             spotLights[j],
             input.pixelPos,
             camera,
             spotShadowMaps[j]
         );
+        if (spotShadow >= 0) // returns -1 if outside shadowmap
+        {
+            totalLights++;
+            shadowAccumulator += spotShadow;
+        }
         
         spotColor += CalcSpotLight(
             16, 0.2f,
@@ -80,16 +87,13 @@ float4 Pixel(PixelInput input) : SV_TARGET
             texColor,
             spotLights[j]
         );
-        
     }
     
     float shadow = 0.0f;
-    
-    uint totalLights = nPointLights + nSpotLights;
-    
+        
     if (totalLights > 0)
     {
-        shadow = shadowAccumulator / totalLights;
+        shadow = min(1.0f, max(shadowAccumulator / totalLights, 0.0f));
     }
     
     float3 lighting = texColor * (ambient + sunLight + ((pointColor + spotColor) * (1.0f - shadow)));

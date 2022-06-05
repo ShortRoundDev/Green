@@ -134,7 +134,7 @@ SpotLight::SpotLight(
     m_cBuffer.radius = radius;
     m_cBuffer.cutoff = cutoff;
 
-    m_sprite = new Sprite("textures/sprites/001-lightbulb.png", { m_pos.x, m_pos.y, m_pos.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
+    m_sprite = new Sprite("textures\\sprites\\002-spotlight.png", { m_pos.x, m_pos.y, m_pos.z }, m_color);
 }
 
 SpotLight::~SpotLight()

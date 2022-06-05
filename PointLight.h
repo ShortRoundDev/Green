@@ -6,6 +6,8 @@
 
 constexpr u32 POINT_LIGHT = 0;
 
+class Sprite;
+
 struct PointLightBuffer
 {
     XMMATRIX lightSpace[6];
@@ -29,6 +31,8 @@ public:
 
     PointLightBuffer getCBuffer();
 
+    void draw();
+
 private:
     void bindShadowMap(u32 face);
 
@@ -38,6 +42,8 @@ private:
     f32 maxDistance();
 
     PointLightBuffer m_cBuffer;
+
+    Sprite* m_sprite;
 
     ComPtr<ID3D11DepthStencilView> m_shadowMapFacesDsv[6];
 

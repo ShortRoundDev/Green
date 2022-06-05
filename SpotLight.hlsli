@@ -34,13 +34,19 @@ float SpotLightShadow(
     float2 texel;
     shadowMap.GetDimensions(texel.x, texel.y);
     texel = 1.0f / texel;
+    
+    if (projCoords.x <= texel.x + 0.0005f || projCoords.x >= 1.0f - (texel.x + 0.0005f) || projCoords.y <= (texel.y + 0.0005f) || projCoords.y >= 1.0f - (texel.y + 0.0005f))
+    {
+        return -1;
+    }
+    
 
     for (int x = -1; x <= 1; ++x)
     {
         for (int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = shadowMap.Sample(shadowSampler, projCoords.xy).r;
-            shadowAcc += current - 0.000000005f > pcfDepth ? 1.0f : 0.0f;
+            float pcfDepth = shadowMap.Sample(shadowSampler, projCoords.xy + float2(x, y) * texel).r;
+            shadowAcc += current > pcfDepth ? 1.0f : 0.0f;
         }
     }
     return shadowAcc / 9.0f;

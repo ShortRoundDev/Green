@@ -3,6 +3,7 @@
 #include "GraphicsManager.h"
 #include "Scene.h"
 #include "Shader.h"
+#include "Sprite.h"
 
 PointLight::PointLight(
     XMFLOAT4 pos,
@@ -117,6 +118,8 @@ PointLight::PointLight(
         m_cBuffer.radius = radius;
         m_cBuffer.cutoff = cutoff;
     }
+
+    m_sprite = new Sprite("textures\\sprites\\001-lightbulb.png", { m_pos.x, m_pos.y, m_pos.z }, m_color);
 }
 
 PointLight::~PointLight()
@@ -226,4 +229,12 @@ AABB PointLight::getBounds()
 PointLightBuffer PointLight::getCBuffer()
 {
     return m_cBuffer;
+}
+
+void PointLight::draw()
+{
+    if (m_sprite)
+    {
+        m_sprite->draw();
+    }
 }

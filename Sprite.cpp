@@ -17,7 +17,7 @@ Sprite::Sprite(std::string textureName, XMFLOAT3 position, XMFLOAT4 color) :
     m_cBuffer({
         XMFLOAT4(position.x, position.y, position.z, 1.0f),
         color,
-        XMFLOAT2(32.0f, 32.0f)
+        XMFLOAT2(16.0f, 16.00f)
     })
 {
     std::vector<Mesh*> meshes;
