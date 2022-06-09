@@ -19,7 +19,7 @@ PixelInput Vertex(VertexInput input)
     
     float4 newPos = float4(input.position.xy * scale, input.position.zw);
     float3 right = float3(view[0][0], view[1][0], view[2][0]);
-    float3 up = float3(0, 1.0f, 0);
+    float3 up = float3(view[0][1], view[1][1], view[2][1]);
     
     newPos = float4(pos.xyz
         + right * newPos.x
