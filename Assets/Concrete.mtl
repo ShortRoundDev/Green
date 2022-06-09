@@ -1,0 +1,9 @@
+newmtl carpet/carpetfloorwhite
+map_Kd textures\carpet\carpetfloorwhite.png
+
+newmtl concrete/concretefloor7
+map_Kd textures\concrete\concretefloor7.png
+
+newmtl paint/plasterwallwhite
+map_Kd textures\paint\plasterwallwhite.png
+

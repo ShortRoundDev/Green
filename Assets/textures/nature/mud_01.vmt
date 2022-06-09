@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "realisticwallsandfloors/nature/mud_01"
+	"$surfaceprop" "MudSlipperySlime"
+}

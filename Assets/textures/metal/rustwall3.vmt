@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "realisticwallsandfloors/metal/rustwall3"
+	"$surfaceprop" "Metal"
+}

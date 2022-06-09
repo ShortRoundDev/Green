@@ -60,6 +60,9 @@ public:
     void resetViewport();
     void setShadowRasterizer(bool shadowRasterizer);
 
+    GlobalBuffer m_gBuffer;
+
+
     LRESULT CALLBACK messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 
 private:
@@ -91,7 +94,6 @@ private:
 
     ComPtr<ID3D11Buffer> m_gBufferBuffer;
 
-    GlobalBuffer m_gBuffer;
 
     ///// FRAMEWORK STUFF /////
     std::unordered_map<std::wstring, Shader*> m_shaders;

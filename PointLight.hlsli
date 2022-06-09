@@ -112,14 +112,15 @@ float PointLightShadow(
     float shadowAccumulator = 0.0f;
     
     int samples = 20; //make this configurable?
-    float diskRadius = 0.001f;
+    float diskRadius = pointradius; //
+    //0.01f;
     
-    for (int i = 0; i < samples; i++)
+    for (int k = 0; k < samples; k++)
     {
         shadowAccumulator += shadowMap.SampleCmpLevelZero(
             shadowSampler,
             normalize(pos.xyz - light.position.xyz) +
-                (sampleOffsetDirections[i] * diskRadius),
+                (sampleOffsetDirections[k] * diskRadius),
             current
         ).r;
     }

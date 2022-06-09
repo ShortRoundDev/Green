@@ -12,6 +12,8 @@ cbuffer GlobalCBuffer : register(b0)
     float4 camera;
     
     DirectionalLight sun;
+    
+    float pointradius;
 }
 
 #endif

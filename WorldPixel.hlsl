@@ -37,14 +37,14 @@ float4 Pixel(PixelInput input) : SV_TARGET
         16,     //todo: make this a texture or something
         0.2f    //todo: make this a texture or something
     );
-    float shadowAccumulator = 0.0f;
+    //float shadowAccumulator = 0.0f;
     float3 pointColor = float3(0.0f, 0.0f, 0.0f);
     
-    uint totalLights = nPointLights;
+    //nPointLights;
     
     for (uint i = 0; i < nPointLights; i++)
     {
-        shadowAccumulator += PointLightShadow(
+        float pointShadow = PointLightShadow(
             pointShadowSampler,
             pointLights[i],
             input.pixelPos,
@@ -52,15 +52,24 @@ float4 Pixel(PixelInput input) : SV_TARGET
             pointShadowMaps[i]
         );
         
-        pointColor += CalcPointLight(
-            16,
-            0.2f,
-            input.normal,
-            input.pixelPos,
-            camera,
-            texColor,
-            pointLights[i]
-        );
+        //if (pointShadow < 1.0f)
+        //{
+            //shadowAccumulator += pointShadow;
+            //totalLights++;
+        //}
+        
+        //if (pointShadow < 1.0f)
+        //{
+            pointColor += CalcPointLight(
+                16,
+                0.2f,
+                input.normal,
+                input.pixelPos,
+                camera,
+                texColor,
+                pointLights[i]
+            ) * (1.0f - pointShadow);
+        //}
     }
     
     float3 spotColor = float3(0.0f, 0.0f, 0.0f);
@@ -73,30 +82,25 @@ float4 Pixel(PixelInput input) : SV_TARGET
             camera,
             spotShadowMaps[j]
         );
-        if (spotShadow >= 0) // returns -1 if outside shadowmap
+        /*if (spotShadow >= 0 && spotShadow < 1.0f) // returns -1 if outside shadowmap
         {
             totalLights++;
             shadowAccumulator += spotShadow;
-        }
-        
-        spotColor += CalcSpotLight(
-            16, 0.2f,
-            input.normal,
-            input.pixelPos,
-            camera,
-            texColor,
-            spotLights[j]
-        );
+        }*/
+        //if (spotShadow < 1.0f && spotShadow >= 0.0f)
+        //{
+            spotColor += CalcSpotLight(
+                16, 0.2f,
+                input.normal,
+                input.pixelPos,
+                camera,
+                texColor,
+                spotLights[j]
+            ) * (1.0f - spotShadow);
+        //}
     }
-    
-    float shadow = 0.0f;
         
-    if (totalLights > 0)
-    {
-        shadow = min(1.0f, max(shadowAccumulator / totalLights, 0.0f));
-    }
-    
-    float3 lighting = texColor * (ambient + sunLight + ((pointColor + spotColor) * (1.0f - shadow)));
+    float3 lighting = texColor * (ambient + sunLight + (pointColor + spotColor));
     
     return float4(lighting, 1.0f);
 }

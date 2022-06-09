@@ -19,4 +19,6 @@ struct GlobalBuffer
     XMMATRIX invWorld;
     XMFLOAT4 camera;
     DirectionalLight sun;
+
+    float pointradius;
 };

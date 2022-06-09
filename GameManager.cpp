@@ -10,7 +10,7 @@ bool GameManager::start()
 {
     startPhysX();
 
-    m_scene = new Scene("Boxes.obj", this);
+    m_scene = new Scene("Concrete.obj", this);
     m_scene->generateShadowMaps();
     m_scene->initEntities();
     Graphics.swap();

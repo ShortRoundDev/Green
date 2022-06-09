@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "realisticwallsandfloors/concrete/concretewall2"
+	"$surfaceprop" "Concrete"
+}

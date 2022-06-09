@@ -31,6 +31,7 @@ bool GraphicsManager::start()
 	m_mouse = new Mouse;
 	m_mouse->SetWindow(Graphics.getWindow());
 	m_mouse->SetMode(Mouse::MODE_RELATIVE);
+	m_gBuffer.pointradius = 0.0001f;
 
 	return true;
 }

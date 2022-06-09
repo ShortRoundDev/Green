@@ -19,15 +19,15 @@ Player::Player(XMFLOAT3 pos) :
     auto material = Game.getPhysics()->createMaterial(0.5, 0.5, 0.6);
     PxCapsuleControllerDesc desc;
     //PxControllerDesc
-    desc.radius = 32.0f;
-    desc.height = 48.0f;
+    desc.radius = 16.0f;
+    desc.height = 55.0f;
     desc.invisibleWallHeight = 3.0;
     desc.climbingMode = PxCapsuleClimbingMode::eEASY;
     desc.material = material;
     desc.behaviorCallback = new PlayerBehaviorCallback();
     //desc.call
     m_controller = Game.getControllers()->createController(desc);
-    m_controller->setPosition(PxExtendedVec3(0, 128, 0));
+    m_controller->setPosition(PxExtendedVec3(pos.x, pos.y, pos.z));
     if (!m_controller)
     {
         logger.err("Invalid! %d", desc.isValid());
@@ -121,6 +121,18 @@ void Player::update()
     {
         walk.x += -look.x * 0.7f;
         walk.z += -look.z * 0.7f;
+    }
+
+    if (Graphics.keyDown('U'))
+    {
+        Graphics.m_gBuffer.pointradius += 0.0001f;
+        logger.info("%f", Graphics.m_gBuffer.pointradius);
+    }
+
+    if (Graphics.keyDown('J') && Graphics.m_gBuffer.pointradius > 0.0f)
+    {
+        Graphics.m_gBuffer.pointradius -= 0.0001f;
+        logger.info("%f", Graphics.m_gBuffer.pointradius);
     }
 
     XMVECTOR walkV = XMLoadFloat3(&walk);

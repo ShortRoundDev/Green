@@ -42,10 +42,11 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
 
     //m_light = new SpotLight({ 64, 128.0f, -64, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 800, 800, { -1.0f, 0, 1.0f, 1.0f });
     //m_lights.push_back(new PointLight({ 64, 128, -64, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
-    m_lights.push_back(new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 128, 0.1));
-
-    m_lights.push_back(new SpotLight({ 32, 148, -80, 1 }, { 0.0f, 0.0f, 1.0f, 1 }, 800, 800, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
-    m_lights.push_back(new SpotLight({ 32, 148, -20, 1 }, { 1.0f, 0.0f, 0.0f, 1 }, 800, 800, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
+    m_lights.push_back(new PointLight({ 100, 100, -40, 1 }, { 1.0f, 1.0f, 0, 1 }, 512, 512, 128, 0.1));
+    //m_lights.push_back(new PointLight({ 0, 100, -40, 1 }, { 1.0f, 1.0f, 0, 1 }, 512, 512, 128, 0.1));
+    m_lights.push_back(new PointLight({ 100, 80, -440, 1 }, { 0.3f, 1.0f, 0, 1 }, 512, 512, 128, 0.1));
+    m_lights.push_back(new SpotLight({ 32, 100, -80, 1 }, { 0.0f, 0.0f, 1.0f, 1 }, 512, 512, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
+    m_lights.push_back(new SpotLight({ 32, 100, -20, 1 }, { 1.0f, 0.0f, 0.0f, 1 }, 512, 512, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
     //m_lights.push_back(new SpotLight({ 0, 0, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, { 0, 1, 0, 1 }, 10, 10, 1.0f));
     
     //m_light2 = new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
@@ -86,7 +87,7 @@ void Scene::generateShadowMaps()
 
 void Scene::initEntities()
 {
-    m_gameObjects.push_back(new Player(XMFLOAT3(0, 128, 0)));
+    m_gameObjects.push_back(new Player(XMFLOAT3(0, 90, 0)));
 }
 
 void Scene::draw()
@@ -166,5 +167,9 @@ bool Scene::initSceneTextures()
     Graphics.putTexture("textures\\DevWall2.png", new Texture("textures/DevWall2.png"));
     Graphics.putTexture("textures\\sprites\\001-lightbulb.png", new Texture("textures/sprites/001-lightbulb.png"));
     Graphics.putTexture("textures\\sprites\\002-spotlight.png", new Texture("textures/sprites/002-spotlight.png"));
+    Graphics.putTexture("textures\\concrete\\concretefloor1.png", new Texture("textures/concrete/concretefloor1.png"));
+    Graphics.putTexture("textures\\concrete\\concretefloor7.png", new Texture("textures/concrete/concretefloor7.png"));
+    Graphics.putTexture("textures\\carpet\\carpetfloorwhite.png", new Texture("textures/carpet/carpetfloorwhite.png"));
+    Graphics.putTexture("textures\\paint\\plasterwallwhite.png", new Texture("textures/paint/plasterwallwhite.png"));
     return true;
 }
