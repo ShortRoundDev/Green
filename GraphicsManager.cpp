@@ -70,10 +70,10 @@ void GraphicsManager::bindGlobalBuffer()
 	m_gBuffer.view		 = XMMatrixTranspose(m_view);
 	m_gBuffer.camera	 = { m_camera.x, m_camera.y, m_camera.z, 1.0f };
 
-	m_gBuffer.sun.ambient = { 0.196f / 100.0f, 0.223f / 100.0f, 0.286f / 100.0f, 1 };
-	m_gBuffer.sun.color = { 0.196f / 20.0f, 0.223f / 20.0f, 0.286f / 20.0f, 1 };
-	m_gBuffer.sun.direction = { 0.5, 0.5, 0.5, 1.0f };
 
+	m_gBuffer.sun.ambient = { 0.196f, 0.223f, 0.286f, 0.00f };
+	m_gBuffer.sun.color = { 0.196f, 0.223f, 0.286f, 0.1f };
+	m_gBuffer.sun.direction = { 1.0f, 0.0f, -1.0f, 1.0f };
 	inverseTranspose(m_gBuffer.world, m_gBuffer.invWorld);
 
 	//XMMATRIX tWorld = XMMatrixTranspose(m_gBuffer.world);
@@ -615,8 +615,8 @@ bool GraphicsManager::initRasterizer()
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
 	rasterDesc.MultisampleEnable = true;
 	rasterDesc.ScissorEnable = false;
-	rasterDesc.FrontCounterClockwise = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
+	rasterDesc.FrontCounterClockwise = false;
 
 	if (FAILED(m_device->CreateRasterizerState(&rasterDesc, m_sceneRasterizer.GetAddressOf())))
 	{
@@ -647,8 +647,9 @@ bool GraphicsManager::initRasterizer()
 	float fov = (float)M_PI_4_F;
 	float aspect = (float)vars.width / (float)vars.height;
 
-	m_projection = XMMatrixPerspectiveFovLH(fov, aspect, 0.1f, 1000.0f);
-	m_ortho = XMMatrixOrthographicLH((float)vars.width, (float)vars.height, 0.1f, 1000.0f);
+	m_projection = XMMatrixPerspectiveFovLH(fov, aspect, 0.1f, 10000.0f);
+	m_ortho = XMMatrixOrthographicLH((float)vars.width, (float)vars.height, 0.1f, 10000.0f);
+
 	m_world = XMMatrixIdentity();
 
 	return true;

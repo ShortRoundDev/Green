@@ -43,8 +43,20 @@ bool Mesh::createFromFile(
     GameManager* gameManager
 )
 {
+    return createFromFile(
+        path, meshes, gameManager, false
+    );
+}
+
+bool Mesh::createFromFile(
+    std::string path,
+    std::vector<Mesh*>& meshes,
+    GameManager* gameManager,
+    bool flipX
+)
+{
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs |  (flipX ? aiProcess_FlipWindingOrder : 0));
     if (scene == NULL || gameManager == NULL)
     {
         return false;
@@ -91,17 +103,17 @@ bool Mesh::createFromFile(
                 }
 
                 GVertex vertex = CreateVertex(
-                    mesh->mVertices[k].x,
+                    mesh->mVertices[k].x * (flipX ? -1.0f : 1.0f),
                     mesh->mVertices[k].y,
                     mesh->mVertices[k].z,
-                    mesh->mNormals[k].x,
+                    mesh->mNormals[k].x * (flipX ? -1.0f : 1.0f),
                     mesh->mNormals[k].y,
                     mesh->mNormals[k].z,
                     -u,
                     v
                 );
 
-                auto nodeVertex = PxVec3(mesh->mVertices[k].x, mesh->mVertices[k].y, mesh->mVertices[k].z);
+                auto nodeVertex = PxVec3(mesh->mVertices[k].x * (flipX ? -1.0f : 1.0f), mesh->mVertices[k].y, mesh->mVertices[k].z);
                 if (uniqueNodeVertices.find(nodeVertex) == uniqueNodeVertices.end()) // not found
                 {
                     uniqueNodeVertices.insert(nodeVertex);

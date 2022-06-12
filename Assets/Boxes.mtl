@@ -1,6 +1,9 @@
-newmtl DevFloor1
-map_Kd textures\DevFloor1.png
+newmtl carpet/carpetfloorwhite
+map_Kd textures\carpet\carpetfloorwhite.png
 
-newmtl DevWall1
-map_Kd textures\DevWall1.png
+newmtl concrete/concretefloor7
+map_Kd textures\concrete\concretefloor7.png
+
+newmtl paint/plasterwallwhite
+map_Kd textures\paint\plasterwallwhite.png
 

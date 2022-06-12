@@ -24,6 +24,14 @@ class MeshViewModel;
 class Mesh
 {
 public:
+
+    static bool createFromFile(
+        std::string path,
+        std::vector<Mesh*>& meshes,
+        GameManager* gameManager,
+        bool flipX
+    );
+
     static bool createFromFile(
         std::string path,
         std::vector<Mesh*>& meshes,

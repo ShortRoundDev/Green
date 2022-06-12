@@ -2,6 +2,7 @@
 
 #include "GraphicsManager.h"
 #include "GameManager.h"
+#include "SystemManager.h"
 #include "GTypes.h"
 #include "Logger.h"
 #include "Mesh.h"
@@ -14,15 +15,39 @@
 #include "MeshViewModel.h"
 #include "Player.h"
 
+#include "MapFile.h"
+
 static ::Logger logger = CreateLogger("Scene");
 
 Scene::Scene(std::string fileName, GameManager* gameManager)
 {
     initSceneTextures();
+
+    MF_Map map;
+    size_t mapfileSize;
+    u8* data;
+    System.readFile(fileName + ".map", &data, 0x100000, &mapfileSize); // 1mib max
+    
+    if (!MF_Parse((char*)data, &map))
+    {
+        logger.err("Failed to parse .map file!");
+        return;
+    }
+    MF_BrushDictionary dict;
+
+    MF_GenerateMesh(&map, &dict);
+    
+    initEntities(&map);
+
+    //destroy map
+    //destroy text
+    HeapFree(GetProcessHeap(), HEAP_ZERO_MEMORY, data);
+
     if (!Mesh::createFromFile(
-        fileName,
+        fileName + ".obj",
         m_brushes,
-        gameManager
+        gameManager,
+        true
     ))
     {
         logger.err("Failed to load meshes!");
@@ -42,11 +67,11 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
 
     //m_light = new SpotLight({ 64, 128.0f, -64, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 800, 800, { -1.0f, 0, 1.0f, 1.0f });
     //m_lights.push_back(new PointLight({ 64, 128, -64, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
-    m_lights.push_back(new PointLight({ 100, 100, -40, 1 }, { 1.0f, 1.0f, 0, 1 }, 128, 128, 128, 0.1));
+    //m_lights.push_back(new PointLight({ 100, 100, -40, 1 }, { 1.0f, 1.0f, 0, 1 }, 128, 128, 128, 0.1));
     //m_lights.push_back(new PointLight({ 0, 100, -40, 1 }, { 1.0f, 1.0f, 0, 1 }, 512, 512, 128, 0.1));
-    m_lights.push_back(new PointLight({ 100, 80, -440, 1 }, { 0.3f, 1.0f, 0, 1 }, 128, 128, 128, 0.1));
-    m_lights.push_back(new SpotLight({ 32, 100, -80, 1 }, { 0.0f, 0.0f, 1.0f, 1 }, 128, 128, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
-    m_lights.push_back(new SpotLight({ 32, 100, -20, 1 }, { 1.0f, 0.0f, 0.0f, 1 }, 128, 128, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
+    //m_lights.push_back(new PointLight({ 100, 80, -440, 1 }, { 0.3f, 1.0f, 0, 1 }, 128, 128, 128, 0.1));
+    //m_lights.push_back(new SpotLight({ 32, 100, -80, 1 }, { 0.0f, 0.0f, 1.0f, 1 }, 128, 128, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
+    //m_lights.push_back(new SpotLight({ 32, 100, -20, 1 }, { 1.0f, 0.0f, 0.0f, 1 }, 128, 128, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
     //m_lights.push_back(new SpotLight({ 0, 0, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, { 0, 1, 0, 1 }, 10, 10, 1.0f));
     
     //m_light2 = new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
@@ -85,10 +110,181 @@ void Scene::generateShadowMaps()
     //m_light2->renderShadowMap(this);
 }
 
-void Scene::initEntities()
+void Scene::initEntities(MF_Map* map)
 {
-    m_gameObjects.push_back(new Player(XMFLOAT3(0, 90, 0)));
+    static thread_local char buffer[512];
+    if (map == NULL)
+    {
+        return;
+    }
+    for (int i = 0; i < map->totalItems; i++)
+    {
+        auto item = map->items[i];
+        if (!strcmp(item.classname, "info_player_start"))
+        {
+            XMFLOAT3 pos;
+            for (int j = 0; j < item.totalAttributes; j++)
+            {
+                auto attribute = item.attributes[j];
+                if (!strcmp(attribute.key, "origin"))
+                {
+                    char* next_token = NULL;
+                    strcpy_s(buffer, attribute.value);
+                    
+                    char* token = strtok_s(buffer, " ", &next_token);
+                    float x = -atof(token);
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float z = -atof(token);
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float y = atof(token);
+
+                    pos = XMFLOAT3(x, y, z);
+                    break;
+                }
+            }
+            m_gameObjects.push_back(new Player(pos));
+        }
+        else if (!strcmp(item.classname, "PointLight"))
+        {
+            XMFLOAT4 pos;
+            XMFLOAT4 color;
+            f32 radius;
+            f32 cutoff;
+
+            for (int j = 0; j < item.totalAttributes; j++)
+            {
+                auto attribute = item.attributes[j];
+                
+                if (!strcmp(attribute.key, "origin"))
+                {
+                    char* next_token = NULL;
+                    strcpy_s(buffer, attribute.value);
+
+
+                    char* token = strtok_s(buffer, " ", &next_token);
+                    float x = -atof(token);
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float z = -atof(token);
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float y = atof(token);
+
+                    pos = XMFLOAT4(x, y, z, 1.0f);
+                }
+                else if (!strcmp(attribute.key, "color"))
+                {
+                    char* next_token = NULL;
+                    strcpy_s(buffer, attribute.value);
+
+                    char* token = strtok_s(buffer, " ", &next_token);
+                    float r = atof(token) / 255.0f;
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float g = atof(token) / 255.0f;
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float b = atof(token) / 255.0f;
+                    
+                    token = strtok_s(NULL, " ", &next_token);
+                    float a = atof(token) / 255.0f;
+
+                    color = XMFLOAT4(r, g, b, a);
+                }
+                else if (!strcmp(attribute.key, "radius"))
+                {
+                    radius = atof(attribute.value);
+                }
+                else if (!strcmp(attribute.key, "cutoff"))
+                {
+                    cutoff = atof(attribute.value);
+                }
+            }
+
+            m_lights.push_back(new PointLight(pos, color, 512, 512, radius, cutoff));
+        }
+        else if (!strcmp(item.classname, "SpotLight"))
+        {
+            XMFLOAT4 pos, color, dir;
+            f32 length, radius, cutoff;
+
+            for (int j = 0; j < item.totalAttributes; j++)
+            {
+                auto attribute = item.attributes[j];
+
+                //pos color dir length radius cutoff
+                if (!strcmp(attribute.key, "origin"))
+                {
+                    char* next_token = NULL;
+                    strcpy_s(buffer, attribute.value);
+
+                    char* token = strtok_s(buffer, " ", &next_token);
+                    float x = -atof(token);
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float z = -atof(token);
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float y = atof(token);
+
+                    pos = XMFLOAT4(x, y, z, 1.0f);
+                }
+                else if (!strcmp(attribute.key, "color"))
+                {
+                    char* next_token = NULL;
+                    strcpy_s(buffer, attribute.value);
+
+                    char* token = strtok_s(buffer, " ", &next_token);
+                    float r = atof(token) / 255.0f;
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float g = atof(token) / 255.0f;
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float b = atof(token) / 255.0f;
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float a = atof(token) / 255.0f;
+
+                    color = XMFLOAT4(r, g, b, a);
+                }
+                else if (!strcmp(attribute.key, "radius"))
+                {
+                    radius = atof(attribute.value);
+                }
+                else if (!strcmp(attribute.key, "cutoff"))
+                {
+                    cutoff = atof(attribute.value);
+                }
+                else if (!strcmp(attribute.key, "height"))
+                {
+
+                    length = atof(attribute.value);
+                }
+                else if (!strcmp(attribute.key, "dir"))
+                {
+                    char* next_token = NULL;
+                    strcpy_s(buffer, attribute.value);
+
+                    char* token = strtok_s(buffer, " ", &next_token);
+                    float x = -atof(token);
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float z = -atof(token);
+
+                    token = strtok_s(NULL, " ", &next_token);
+                    float y = atof(token);
+                    
+                    dir = XMFLOAT4(x, y, z, 1.0f);
+                }
+            }
+            m_lights.push_back(new SpotLight(pos, color, 128, 128, dir, length, radius, cutoff));
+        }
+    }
 }
+
 
 void Scene::draw()
 {
@@ -99,6 +295,7 @@ void Scene::draw()
     Graphics.setCameraPos(m_camera->getPosition());
 
     renderViewModels();
+    return;
     for (auto l : m_lights)
     {
         l->draw();
@@ -167,9 +364,16 @@ bool Scene::initSceneTextures()
     Graphics.putTexture("textures\\DevWall2.png", new Texture("textures/DevWall2.png"));
     Graphics.putTexture("textures\\sprites\\001-lightbulb.png", new Texture("textures/sprites/001-lightbulb.png"));
     Graphics.putTexture("textures\\sprites\\002-spotlight.png", new Texture("textures/sprites/002-spotlight.png"));
-    Graphics.putTexture("textures\\concrete\\concretefloor1.png", new Texture("textures/concrete/concretefloor1.png"));
-    Graphics.putTexture("textures\\concrete\\concretefloor7.png", new Texture("textures/concrete/concretefloor7.png"));
+
+    Graphics.putTexture("textures\\carpet\\carpetfloorblack.png", new Texture("textures/carpet/carpetfloorblack.png"));
+    Graphics.putTexture("textures\\carpet\\carpetfloorred.png", new Texture("textures/carpet/carpetfloorred.png"));
     Graphics.putTexture("textures\\carpet\\carpetfloorwhite.png", new Texture("textures/carpet/carpetfloorwhite.png"));
+    Graphics.putTexture("textures\\paint\\plasterwallbrown2.png", new Texture("textures/paint/plasterwallbrown2.png"));
+    Graphics.putTexture("textures\\paint\\plasterwallpink.png", new Texture("textures/paint/plasterwallpink.png"));
     Graphics.putTexture("textures\\paint\\plasterwallwhite.png", new Texture("textures/paint/plasterwallwhite.png"));
+    Graphics.putTexture("textures\\tile\\tilefloor1.png", new Texture("textures/tile/tilefloor1.png"));
+
+
+
     return true;
 }

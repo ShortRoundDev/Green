@@ -1,6 +1,8 @@
 #include "GameManager.h"
 #include "GraphicsManager.h"
 
+#include "MapFile.h"
+
 #include "Scene.h"
 
 constexpr u64 timeStepU = 16;
@@ -9,13 +11,15 @@ constexpr f32 timeStepF = (f32)timeStepU / 1000.0f;
 bool GameManager::start()
 {
     startPhysX();
+    MF_Init();
 
-    m_scene = new Scene("Concrete.obj", this);
+    m_scene = new Scene("OfficeTest", this);
     m_scene->generateShadowMaps();
-    m_scene->initEntities();
+    //m_scene->initEntities();
     Graphics.swap();
 
     m_time = GetTickCount64();
+
     return true;
 }
 

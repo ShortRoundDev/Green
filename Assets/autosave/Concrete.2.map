@@ -1,0 +1,180 @@
+// Game: Generic
+// Format: Standard
+// entity 0
+{
+"classname" "worldspawn"
+"_tb_textures" "textures/brick;textures/carpet;textures/concrete;textures/metal;textures/paint;textures/roof"
+// brush 0
+{
+( -352 -64 -16 ) ( -352 -63 -16 ) ( -352 -64 -15 ) concrete/concretefloor7 0 0 0 0.5 0.5
+( -64 -288 -16 ) ( -64 -288 -15 ) ( -63 -288 -16 ) concrete/concretefloor7 0 0 0 0.5 0.5
+( -64 -64 -32 ) ( -63 -64 -32 ) ( -64 -63 -32 ) concrete/concretefloor7 0 0 0 0.5 0.5
+( 64 64 0 ) ( 64 65 0 ) ( 65 64 0 ) concrete/concretefloor7 0 0 0 0.5 0.5
+( 64 352 16 ) ( 65 352 16 ) ( 64 352 17 ) concrete/concretefloor7 0 0 0 0.5 0.5
+( 256 64 16 ) ( 256 64 17 ) ( 256 65 16 ) concrete/concretefloor7 0 0 0 0.5 0.5
+}
+// brush 1
+{
+( -352 352 80 ) ( -352 368 -16 ) ( -352 368 80 ) paint/plasterwallwhite 0 -32 0 1 1
+( -16 320 80 ) ( -352 320 -16 ) ( -352 320 80 ) paint/plasterwallwhite 0 -32 0 1 1
+( -16 368 0 ) ( -352 352 0 ) ( -16 352 0 ) paint/plasterwallwhite 0 0 0 1 1
+( -16 368 128 ) ( -352 352 128 ) ( -352 368 128 ) paint/plasterwallwhite 0 0 0 1 1
+( -16 352 80 ) ( -352 352 -16 ) ( -16 352 -16 ) paint/plasterwallwhite 0 -32 0 1 1
+( -176 368 80 ) ( -176 352 -16 ) ( -176 352 80 ) paint/plasterwallwhite 0 -32 0 1 1
+}
+// brush 2
+{
+( -48 320 96 ) ( -48 352 0 ) ( -48 352 96 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 320 96 ) ( 32 320 0 ) ( 32 320 96 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 352 0 ) ( 32 320 0 ) ( 256 320 0 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 352 128 ) ( 32 320 128 ) ( 32 352 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 352 96 ) ( 32 352 0 ) ( 256 352 0 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 352 96 ) ( 256 320 0 ) ( 256 320 96 ) paint/plasterwallwhite 0 0 0 1 1
+}
+// brush 3
+{
+( -352 320 160 ) ( -352 352 128 ) ( -352 352 160 ) paint/plasterwallwhite 0 32 0 1 1
+( 256 320 160 ) ( -352 320 128 ) ( -352 320 160 ) paint/plasterwallwhite 0 32 0 1 1
+( 256 352 128 ) ( -352 320 128 ) ( 256 320 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 352 160 ) ( -352 320 160 ) ( -352 352 160 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 352 160 ) ( -352 352 128 ) ( 256 352 128 ) paint/plasterwallwhite 0 32 0 1 1
+( 256 352 160 ) ( 256 320 128 ) ( 256 320 160 ) paint/plasterwallwhite 0 32 0 1 1
+}
+// brush 4
+{
+( -352 -288 128 ) ( -352 320 0 ) ( -352 320 128 ) paint/plasterwallwhite 0 0 0 1 1
+( -320 -288 128 ) ( -352 -288 0 ) ( -352 -288 128 ) paint/plasterwallwhite 0 0 0 1 1
+( -320 320 0 ) ( -352 -288 0 ) ( -320 -288 0 ) paint/plasterwallwhite 0 0 0 1 1
+( -320 320 160 ) ( -352 -288 160 ) ( -352 320 160 ) paint/plasterwallwhite 0 0 0 1 1
+( -320 320 128 ) ( -352 320 0 ) ( -320 320 0 ) paint/plasterwallwhite 0 0 0 1 1
+( -320 320 128 ) ( -320 -288 0 ) ( -320 -288 128 ) paint/plasterwallwhite 0 0 0 1 1
+}
+// brush 5
+{
+( -320 -288 128 ) ( -320 -256 0 ) ( -320 -256 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 -288 128 ) ( -320 -288 0 ) ( -320 -288 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 -256 0 ) ( -320 -288 0 ) ( 256 -288 0 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 -256 160 ) ( -320 -288 160 ) ( -320 -256 160 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 -256 128 ) ( -320 -256 0 ) ( 256 -256 0 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 -256 128 ) ( 256 -288 0 ) ( 256 -288 128 ) paint/plasterwallwhite 0 0 0 1 1
+}
+// brush 6
+{
+( 224 -256 128 ) ( 224 320 0 ) ( 224 320 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 -256 128 ) ( 224 -256 0 ) ( 224 -256 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 320 0 ) ( 224 -256 0 ) ( 256 -256 0 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 320 160 ) ( 224 -256 160 ) ( 224 320 160 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 320 128 ) ( 224 320 0 ) ( 256 320 0 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 320 128 ) ( 256 -256 0 ) ( 256 -256 128 ) paint/plasterwallwhite 0 0 0 1 1
+}
+// brush 7
+{
+( -160 96 96 ) ( -160 128 0 ) ( -160 128 96 ) concrete/concretefloor7 0 0 0 1 1
+( -128 96 96 ) ( -160 96 0 ) ( -160 96 96 ) concrete/concretefloor7 0 0 0 1 1
+( -128 128 0 ) ( -160 96 0 ) ( -128 96 0 ) concrete/concretefloor7 0 0 0 1 1
+( -128 128 160 ) ( -160 96 160 ) ( -160 128 160 ) concrete/concretefloor7 0 0 0 1 1
+( -128 128 96 ) ( -160 128 0 ) ( -128 128 0 ) concrete/concretefloor7 0 0 0 1 1
+( -128 128 96 ) ( -128 96 0 ) ( -128 96 96 ) concrete/concretefloor7 0 0 0 1 1
+}
+// brush 8
+{
+( -160 -128 96 ) ( -160 -96 0 ) ( -160 -96 96 ) concrete/concretefloor7 224 0 0 1 1
+( -128 -128 96 ) ( -160 -128 0 ) ( -160 -128 96 ) concrete/concretefloor7 0 0 0 1 1
+( -128 -96 0 ) ( -160 -128 0 ) ( -128 -128 0 ) concrete/concretefloor7 0 -224 0 1 1
+( -128 -96 160 ) ( -160 -128 160 ) ( -160 -96 160 ) concrete/concretefloor7 0 -224 0 1 1
+( -128 -96 96 ) ( -160 -96 0 ) ( -128 -96 0 ) concrete/concretefloor7 0 0 0 1 1
+( -128 -96 96 ) ( -128 -128 0 ) ( -128 -128 96 ) concrete/concretefloor7 224 0 0 1 1
+}
+// brush 9
+{
+( 32 -128 96 ) ( 32 -96 0 ) ( 32 -96 96 ) concrete/concretefloor7 224 0 0 1 1
+( 64 -128 96 ) ( 32 -128 0 ) ( 32 -128 96 ) concrete/concretefloor7 -192 0 0 1 1
+( 64 -96 0 ) ( 32 -128 0 ) ( 64 -128 0 ) concrete/concretefloor7 -192 -224 0 1 1
+( 64 -96 160 ) ( 32 -128 160 ) ( 32 -96 160 ) concrete/concretefloor7 -192 -224 0 1 1
+( 64 -96 96 ) ( 32 -96 0 ) ( 64 -96 0 ) concrete/concretefloor7 -192 0 0 1 1
+( 64 -96 96 ) ( 64 -128 0 ) ( 64 -128 96 ) concrete/concretefloor7 224 0 0 1 1
+}
+// brush 10
+{
+( 32 96 96 ) ( 32 128 0 ) ( 32 128 96 ) concrete/concretefloor7 0 0 0 1 1
+( 64 96 96 ) ( 32 96 0 ) ( 32 96 96 ) concrete/concretefloor7 -192 0 0 1 1
+( 64 128 0 ) ( 32 96 0 ) ( 64 96 0 ) concrete/concretefloor7 -192 0 0 1 1
+( 64 128 160 ) ( 32 96 160 ) ( 32 128 160 ) concrete/concretefloor7 -192 0 0 1 1
+( 64 128 96 ) ( 32 128 0 ) ( 64 128 0 ) concrete/concretefloor7 -192 0 0 1 1
+( 64 128 96 ) ( 64 96 0 ) ( 64 96 96 ) concrete/concretefloor7 0 0 0 1 1
+}
+// brush 11
+{
+( -352 352 0 ) ( -352 672 -32 ) ( -352 672 0 ) concrete/concretefloor7 0 0 0 1 1
+( 256 352 0 ) ( -352 352 -32 ) ( -352 352 0 ) concrete/concretefloor7 0 0 0 1 1
+( 256 672 -32 ) ( -352 352 -32 ) ( 256 352 -32 ) concrete/concretefloor7 0 0 0 1 1
+( 256 672 0 ) ( -352 352 0 ) ( -352 672 0 ) concrete/concretefloor7 0 0 0 1 1
+( 256 672 0 ) ( -352 672 -32 ) ( 256 672 -32 ) concrete/concretefloor7 0 0 0 1 1
+( 256 672 0 ) ( 256 352 -32 ) ( 256 352 0 ) concrete/concretefloor7 0 0 0 1 1
+}
+// brush 12
+{
+( 224 352 128 ) ( 224 928 0 ) ( 224 928 128 ) paint/plasterwallwhite -96 0 0 1 1
+( 256 352 128 ) ( 224 352 0 ) ( 224 352 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 928 0 ) ( 224 352 0 ) ( 256 352 0 ) paint/plasterwallwhite 0 96 0 1 1
+( 256 928 160 ) ( 224 352 160 ) ( 224 928 160 ) paint/plasterwallwhite 0 96 0 1 1
+( 256 672 128 ) ( 224 672 0 ) ( 256 672 0 ) paint/plasterwallwhite 0 0 0 1 1
+( 256 928 128 ) ( 256 352 0 ) ( 256 352 128 ) paint/plasterwallwhite -96 0 0 1 1
+}
+// brush 13
+{
+( -352 352 128 ) ( -352 928 0 ) ( -352 928 128 ) paint/plasterwallwhite -96 0 0 1 1
+( -320 352 128 ) ( -352 352 0 ) ( -352 352 128 ) paint/plasterwallwhite 64 0 0 1 1
+( -320 928 0 ) ( -352 352 0 ) ( -320 352 0 ) paint/plasterwallwhite 64 96 0 1 1
+( -320 928 160 ) ( -352 352 160 ) ( -352 928 160 ) paint/plasterwallwhite 64 96 0 1 1
+( -320 672 128 ) ( -352 672 0 ) ( -320 672 0 ) paint/plasterwallwhite 64 0 0 1 1
+( -320 928 128 ) ( -320 352 0 ) ( -320 352 128 ) paint/plasterwallwhite -96 0 0 1 1
+}
+// brush 14
+{
+( -320 640 128 ) ( -320 672 0 ) ( -320 672 128 ) concrete/concretefloor7 0 0 0 1 1
+( 224 640 128 ) ( -320 640 0 ) ( -320 640 128 ) concrete/concretefloor7 0 0 0 1 1
+( 224 672 0 ) ( -320 640 0 ) ( 224 640 0 ) concrete/concretefloor7 0 0 0 1 1
+( 224 672 160 ) ( -320 640 160 ) ( -320 672 160 ) concrete/concretefloor7 0 0 0 1 1
+( 224 672 128 ) ( -320 672 0 ) ( 224 672 0 ) concrete/concretefloor7 0 0 0 1 1
+( 224 672 128 ) ( 224 640 0 ) ( 224 640 128 ) concrete/concretefloor7 0 0 0 1 1
+}
+// brush 15
+{
+( -1264 656 192 ) ( -1264 1296 160 ) ( -1264 1296 192 ) carpet/carpetfloorwhite 160 64 0 0.5 0.5
+( -656 656 192 ) ( -1264 656 160 ) ( -1264 656 192 ) carpet/carpetfloorwhite 32 64 0 0.5 0.5
+( -656 1296 160 ) ( -1264 656 160 ) ( -656 656 160 ) carpet/carpetfloorwhite 32 -160 0 0.5 0.5
+( -656 1296 192 ) ( -1264 656 192 ) ( -1264 1296 192 ) carpet/carpetfloorwhite 32 -160 0 0.5 0.5
+( -656 976 192 ) ( -1264 976 160 ) ( -656 976 160 ) carpet/carpetfloorwhite 32 64 0 0.5 0.5
+( -656 1296 192 ) ( -656 656 160 ) ( -656 656 192 ) carpet/carpetfloorwhite 160 64 0 0.5 0.5
+}
+}
+// entity 1
+{
+"classname" "PointLight"
+"origin" "-152 -24 104"
+"color" "0 255 0 255"
+"radius" "512"
+"cutoff" "0.8"
+}
+// entity 2
+{
+"classname" "PointLight"
+"origin" "-248 488 120"
+"color" "255 0 0 255"
+"radius" "256"
+"cutoff" "0.5"
+}
+// entity 3
+{
+"classname" "info_player_start"
+"origin" "-48 0 43"
+}
+// entity 4
+{
+"classname" "PointLight"
+"origin" "136 136 120"
+"color" "255 255 0 255"
+"cutoff" "0.2"
+"radius" "128"
+}

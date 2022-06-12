@@ -1,0 +1,21 @@
+newmtl carpet/carpetfloorblack
+map_Kd textures\carpet\carpetfloorblack.png
+
+newmtl carpet/carpetfloorred
+map_Kd textures\carpet\carpetfloorred.png
+
+newmtl carpet/carpetfloorwhite
+map_Kd textures\carpet\carpetfloorwhite.png
+
+newmtl paint/plasterwallbrown2
+map_Kd textures\paint\plasterwallbrown2.png
+
+newmtl paint/plasterwallpink
+map_Kd textures\paint\plasterwallpink.png
+
+newmtl paint/plasterwallwhite
+map_Kd textures\paint\plasterwallwhite.png
+
+newmtl tile/tilefloor1
+map_Kd textures\tile\tilefloor1.png
+

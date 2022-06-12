@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "MapFile_Types.h"
+
 class Mesh;
 class Shader;
 class Camera;
@@ -24,7 +26,7 @@ public:
     ~Scene();
 
     void generateShadowMaps();
-    void initEntities();
+    void initEntities(MF_Map* map);
     void draw();
     void renderMeshes();
     void renderViewModels();

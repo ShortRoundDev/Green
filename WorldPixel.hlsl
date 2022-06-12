@@ -27,14 +27,14 @@ SamplerState spotShadowSampler : register(s2);
 float4 Pixel(PixelInput input) : SV_TARGET
 {
     float3 texColor = albedo.Sample(sampleType, input.tex).rgb;
-    float3 ambient = sun.ambient.rgb;
+    float3 ambient = sun.ambient.rgb * sun.ambient.a;
     float3 sunLight = CalculateDirectionalColor(
         sun,
         texColor,
         camera.xyz,
         input.pixelPos,
         input.normal,
-        16,     //todo: make this a texture or something
+        0,     //todo: make this a texture or something
         0.2f    //todo: make this a texture or something
     );
     //float shadowAccumulator = 0.0f;
@@ -61,7 +61,7 @@ float4 Pixel(PixelInput input) : SV_TARGET
         //if (pointShadow < 1.0f)
         //{
             pointColor += CalcPointLight(
-                16,
+                0,
                 0.2f,
                 input.normal,
                 input.pixelPos,
@@ -90,7 +90,7 @@ float4 Pixel(PixelInput input) : SV_TARGET
         //if (spotShadow < 1.0f && spotShadow >= 0.0f)
         //{
             spotColor += CalcSpotLight(
-                16, 0.2f,
+                0, 0.2f,
                 input.normal,
                 input.pixelPos,
                 camera,

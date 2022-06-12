@@ -10,8 +10,8 @@ struct DirectionalLight
 
 float3 DiffuseDirectionalLight(DirectionalLight light, float3 normal, float roughness)
 {
-    float diffMagnitude = max(dot(light.direction.xyz, normal), roughness); // 0.2f configurable?
-    return light.color.rgb * diffMagnitude;
+    float diffMagnitude = max(dot(normalize(light.direction.xyz), normal), roughness);
+    return (light.color.rgb * light.color.a) * diffMagnitude;
 }
 
 float3 SpecularDirectionalLight(
@@ -23,9 +23,9 @@ float3 SpecularDirectionalLight(
 )
 {
     float3 viewDir = normalize(camera - position);
-    float3 reflectDir = reflect(-light.direction.xyz, normal);
+    float3 reflectDir = reflect(-normalize(light.direction.xyz), normal);
     float specularStrength = pow(max(dot(viewDir, reflectDir), 0.0f), shininess);
-    return light.color.rgb * (0.5f * specularStrength);
+    return (light.color.rgb * light.color.a) * (0.5f * specularStrength);
 }
 
 float3 CalculateDirectionalColor(

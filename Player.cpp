@@ -65,7 +65,7 @@ void Player::update()
 
     auto pos = m_controller->getPosition();
 
-    Game.getScene()->getCamera()->setPosition(pos.x, pos.y, pos.z);
+    Game.getScene()->getCamera()->setPosition(pos.x, pos.y + 16.0f, pos.z);
 
     if (m_onGround)
     {
@@ -83,6 +83,11 @@ void Player::update()
     {
         walk.x += look.x * 0.7f;
         walk.z += look.z * 0.7f;
+    }
+
+    if (Graphics.keyDownEdge('E'))
+    {
+        logger.info("%f, %f, %f", m_pos.x, m_pos.y, m_pos.z);
     }
 
     if (Graphics.keyDown('A'))
@@ -173,6 +178,10 @@ void Player::update()
     }
     
     m_controller->move(m_move, 0.1f, 0, filters);
+    pos = m_controller->getPosition();
+    m_pos.x = pos.x;
+    m_pos.y = pos.y;
+    m_pos.z = pos.z;
 }
 
 void Player::draw()
