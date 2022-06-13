@@ -9,6 +9,7 @@
 #include "MapFile_System.h"
 #include "MapFile_Types.h"
 #include "MapFile_List.h"
+#include "MapFile_Geometry.h"
 
 // Have to #define in C because you can't | a const with another const. Has to be known at runtime (constexpr or #define)
 // This is probably a bad solution and I welcome contribution
@@ -131,3 +132,27 @@ PRIVATE BOOL MF_DestroyKeyValuePair(_In_ MF_KeyValuePair_t* kvp);
 PRIVATE BOOL MF_DestroyBrush(_In_ MF_Brush_t* brush);
 
 PRIVATE BOOL MF_DestroyFace(_In_ MF_Face_t* face);
+
+PRIVATE BOOL MF_ParseVecN(_In_ const char* text, size_t n, _Out_ float* vecN);
+
+_Success_(return)
+DLL BOOL MF_ParseVec3(_In_ const char* text, _Out_ MF_Vector3_t* vec3);
+
+_Success_(return)
+DLL BOOL MF_ParseVec4(_In_ const char* text, _Out_ MF_Vector4_t * vec4);
+
+_Success_(return)
+DLL BOOL MF_ParseFloat(_In_ const char* text, _Out_ float* number);
+
+DLL MF_KeyValuePair_t* MF_GetAttribute(_In_ MF_Entity_t * entity, _In_ const char* key);
+
+DLL char* MF_GetAttributeValue(_In_ MF_Entity_t * entity, _In_ const char* key);
+
+_Success_(return)
+DLL BOOL MF_GetAttributeVec3(_In_ MF_Entity_t * entity, _In_ const char* key, _Out_ MF_Vector3_t * vec3);
+
+_Success_(return)
+DLL BOOL MF_GetAttributeVec4(_In_ MF_Entity_t * entity, _In_ const char* key, _Out_ MF_Vector4_t * vec4);
+
+_Success_(return)
+DLL BOOL MF_GetAttributeFloat(_In_ MF_Entity_t * entity, _In_ const char* key, _Out_ float* number);

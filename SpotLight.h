@@ -18,11 +18,16 @@ struct SpotLightBuffer
     float cosFullAngle;
 };
 
+struct MF_Entity;
+
 class Sprite;
 
 class SpotLight : public ILight
 {
 public:
+
+    static SpotLight* Create(MF_Entity* entity);
+
     SpotLight(
         XMFLOAT4 pos,
         XMFLOAT4 color,

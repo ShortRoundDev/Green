@@ -5,6 +5,43 @@
 #include "Shader.h"
 #include "Sprite.h"
 
+#include "MapFile_Parse.h"
+
+PointLight* PointLight::Create(MF_Entity* entity)
+{
+    MF_Vector3 pos;
+    MF_Vector4 color;
+    f32 radius;
+    f32 cutoff;
+
+    if (!MF_GetAttributeVec3(entity, "origin", &pos))
+    {
+        return nullptr;
+    }
+
+    if (!MF_GetAttributeVec4(entity, "color", &color))
+    {
+        return nullptr;
+    }
+
+    if (!MF_GetAttributeFloat(entity, "radius", &radius))
+    {
+        return nullptr;
+    }
+
+    if (!MF_GetAttributeFloat(entity, "cutoff", &cutoff))
+    {
+        return nullptr;
+    }
+
+    return new PointLight(
+        MF3_TO_XM4(pos),
+        MFCOL_TO_XM4(color),
+        SHADOW_RES, SHADOW_RES,
+        radius, cutoff
+    );
+}
+
 PointLight::PointLight(
     XMFLOAT4 pos,
     XMFLOAT4 color,

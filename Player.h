@@ -6,9 +6,13 @@
 
 using namespace physx;
 
+struct MF_Entity;
+
 class Player : public GameObject
 {
 public:
+    static Player* Create(MF_Entity* entity);
+
     Player(XMFLOAT3 pos);
     ~Player();
 

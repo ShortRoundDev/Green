@@ -6,6 +6,57 @@
 #include "Scene.h"
 #include "Sprite.h"
 
+#include "MapFile_Parse.h"
+
+SpotLight* SpotLight::Create(MF_Entity* entity)
+{
+    MF_Vector3 pos;
+    MF_Vector4 color;
+    MF_Vector3 dir;
+    f32 height;
+    f32 radius;
+    f32 cutoff;
+
+    if (!MF_GetAttributeVec3(entity, "origin", &pos))
+    {
+        return nullptr;
+    }
+    if (!MF_GetAttributeVec4(entity, "color", &color))
+    {
+        return nullptr;
+    }
+
+    if (!MF_GetAttributeVec3(entity, "dir", &dir))
+    {
+        return nullptr;
+    }
+
+    if (!MF_GetAttributeFloat(entity, "height", &height))
+    {
+        return nullptr;
+    }
+
+    if (!MF_GetAttributeFloat(entity, "radius", &radius))
+    {
+        return nullptr;
+    }
+
+    if (!MF_GetAttributeFloat(entity, "cutoff", &cutoff))
+    {
+        return nullptr;
+    }
+
+    return new SpotLight(
+        MF3_TO_XM4(pos),
+        MFCOL_TO_XM4(color),
+        SHADOW_RES, SHADOW_RES,
+        MF3_TO_XM4(dir),
+        height,
+        radius,
+        cutoff
+    );
+}
+
 SpotLight::SpotLight(
     XMFLOAT4 pos,
     XMFLOAT4 color,

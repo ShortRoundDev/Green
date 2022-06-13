@@ -8,6 +8,8 @@ constexpr u32 POINT_LIGHT = 0;
 
 class Sprite;
 
+struct MF_Entity;
+
 struct PointLightBuffer
 {
     XMMATRIX lightSpace[6];
@@ -20,6 +22,8 @@ struct PointLightBuffer
 class PointLight : public ILight
 {
 public:
+    static PointLight* Create(MF_Entity* entity);
+
     PointLight(XMFLOAT4 pos, XMFLOAT4 color, u32 width, u32 height, f32 radius, f32 cutoff);
     ~PointLight();
 

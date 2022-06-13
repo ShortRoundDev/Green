@@ -15,6 +15,8 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+constexpr u32 SHADOW_RES = 128;
+
 struct KeyState
 {
     bool down;

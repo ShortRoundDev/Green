@@ -122,165 +122,28 @@ void Scene::initEntities(MF_Map* map)
         auto item = map->items[i];
         if (!strcmp(item.classname, "info_player_start"))
         {
-            XMFLOAT3 pos;
-            for (int j = 0; j < item.totalAttributes; j++)
+            auto player = Player::Create(&item);
+            if (player)
             {
-                auto attribute = item.attributes[j];
-                if (!strcmp(attribute.key, "origin"))
-                {
-                    char* next_token = NULL;
-                    strcpy_s(buffer, attribute.value);
-                    
-                    char* token = strtok_s(buffer, " ", &next_token);
-                    float x = -atof(token);
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float z = -atof(token);
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float y = atof(token);
-
-                    pos = XMFLOAT3(x, y, z);
-                    break;
-                }
+                m_gameObjects.push_back(player);
             }
-            m_gameObjects.push_back(new Player(pos));
         }
         else if (!strcmp(item.classname, "PointLight"))
         {
-            XMFLOAT4 pos;
-            XMFLOAT4 color;
-            f32 radius;
-            f32 cutoff;
-
-            for (int j = 0; j < item.totalAttributes; j++)
+            auto light = PointLight::Create(&item);
+            if (light)
             {
-                auto attribute = item.attributes[j];
-                
-                if (!strcmp(attribute.key, "origin"))
-                {
-                    char* next_token = NULL;
-                    strcpy_s(buffer, attribute.value);
-
-
-                    char* token = strtok_s(buffer, " ", &next_token);
-                    float x = -atof(token);
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float z = -atof(token);
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float y = atof(token);
-
-                    pos = XMFLOAT4(x, y, z, 1.0f);
-                }
-                else if (!strcmp(attribute.key, "color"))
-                {
-                    char* next_token = NULL;
-                    strcpy_s(buffer, attribute.value);
-
-                    char* token = strtok_s(buffer, " ", &next_token);
-                    float r = atof(token) / 255.0f;
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float g = atof(token) / 255.0f;
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float b = atof(token) / 255.0f;
-                    
-                    token = strtok_s(NULL, " ", &next_token);
-                    float a = atof(token) / 255.0f;
-
-                    color = XMFLOAT4(r, g, b, a);
-                }
-                else if (!strcmp(attribute.key, "radius"))
-                {
-                    radius = atof(attribute.value);
-                }
-                else if (!strcmp(attribute.key, "cutoff"))
-                {
-                    cutoff = atof(attribute.value);
-                }
+                m_lights.push_back(light);
             }
-
-            m_lights.push_back(new PointLight(pos, color, 512, 512, radius, cutoff));
         }
         else if (!strcmp(item.classname, "SpotLight"))
         {
-            XMFLOAT4 pos, color, dir;
-            f32 length, radius, cutoff;
-
-            for (int j = 0; j < item.totalAttributes; j++)
+            
+            auto light = SpotLight::Create(&item);
+            if (light)
             {
-                auto attribute = item.attributes[j];
-
-                //pos color dir length radius cutoff
-                if (!strcmp(attribute.key, "origin"))
-                {
-                    char* next_token = NULL;
-                    strcpy_s(buffer, attribute.value);
-
-                    char* token = strtok_s(buffer, " ", &next_token);
-                    float x = -atof(token);
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float z = -atof(token);
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float y = atof(token);
-
-                    pos = XMFLOAT4(x, y, z, 1.0f);
-                }
-                else if (!strcmp(attribute.key, "color"))
-                {
-                    char* next_token = NULL;
-                    strcpy_s(buffer, attribute.value);
-
-                    char* token = strtok_s(buffer, " ", &next_token);
-                    float r = atof(token) / 255.0f;
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float g = atof(token) / 255.0f;
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float b = atof(token) / 255.0f;
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float a = atof(token) / 255.0f;
-
-                    color = XMFLOAT4(r, g, b, a);
-                }
-                else if (!strcmp(attribute.key, "radius"))
-                {
-                    radius = atof(attribute.value);
-                }
-                else if (!strcmp(attribute.key, "cutoff"))
-                {
-                    cutoff = atof(attribute.value);
-                }
-                else if (!strcmp(attribute.key, "height"))
-                {
-
-                    length = atof(attribute.value);
-                }
-                else if (!strcmp(attribute.key, "dir"))
-                {
-                    char* next_token = NULL;
-                    strcpy_s(buffer, attribute.value);
-
-                    char* token = strtok_s(buffer, " ", &next_token);
-                    float x = -atof(token);
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float z = -atof(token);
-
-                    token = strtok_s(NULL, " ", &next_token);
-                    float y = atof(token);
-                    
-                    dir = XMFLOAT4(x, y, z, 1.0f);
-                }
+                m_lights.push_back(light);
             }
-            m_lights.push_back(new SpotLight(pos, color, 128, 128, dir, length, radius, cutoff));
         }
     }
 }
@@ -295,7 +158,6 @@ void Scene::draw()
     Graphics.setCameraPos(m_camera->getPosition());
 
     renderViewModels();
-    return;
     for (auto l : m_lights)
     {
         l->draw();
@@ -372,8 +234,6 @@ bool Scene::initSceneTextures()
     Graphics.putTexture("textures\\paint\\plasterwallpink.png", new Texture("textures/paint/plasterwallpink.png"));
     Graphics.putTexture("textures\\paint\\plasterwallwhite.png", new Texture("textures/paint/plasterwallwhite.png"));
     Graphics.putTexture("textures\\tile\\tilefloor1.png", new Texture("textures/tile/tilefloor1.png"));
-
-
 
     return true;
 }

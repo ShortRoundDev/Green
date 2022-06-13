@@ -9,9 +9,22 @@
 #include "Camera.h"
 #include "PointLight.h"
 
+#include "MapFile_Parse.h"
+
 static ::Logger logger = CreateLogger("Player");
 
 const PxControllerFilters filters;
+
+Player* Player::Create(MF_Entity* entity)
+{
+    MF_Vector3 pos;
+    if (MF_GetAttributeVec3(entity, "origin", &pos))
+    {
+        return new Player(MF3_TO_XM3(pos));
+    }
+    return nullptr;
+}
+
 
 Player::Player(XMFLOAT3 pos) :
     GameObject(pos, TYPE_ID(Player), &Game)
