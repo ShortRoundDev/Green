@@ -12,6 +12,8 @@
 
 #include <unordered_map>
 
+#include "imgui.h"
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -38,6 +40,7 @@ public:
     void swap();
     void bindGlobalBuffer();
     bool update();
+    void draw();
 
     void putShader(std::wstring name, Shader* shader);
     Shader* getShader(std::wstring name);
@@ -64,6 +67,11 @@ public:
 
     GlobalBuffer m_gBuffer;
 
+    f32 getClientWidth();
+    f32 getClientHeight();
+
+    bool getMouseLook();
+    void setMouseLook(bool mouseLook);
 
     LRESULT CALLBACK messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
 
@@ -96,7 +104,6 @@ private:
 
     ComPtr<ID3D11Buffer> m_gBufferBuffer;
 
-
     ///// FRAMEWORK STUFF /////
     std::unordered_map<std::wstring, Shader*> m_shaders;
     std::unordered_map<std::string, Texture*> m_textures;
@@ -122,8 +129,14 @@ private:
     bool initShaders();
     bool initGlobalBuffer();
 
+    f32 m_clientWidth;
+    f32 m_clientHeight;
+
+    bool m_mouseLook;
+
     inline void inverseTranspose(const XMMATRIX& world, XMMATRIX& invWorld);
 
+    void drawLightMenu();
 };
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsh, WPARAM wParam, LPARAM lParam);

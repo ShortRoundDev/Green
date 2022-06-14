@@ -352,7 +352,11 @@ MeshViewModel* Mesh::getViewModel()
             XMStoreFloat(&bLength, bLengthV);
 
             return aLength > bLength;
-            });
+        });
+        if (spotLights.size() > 3)
+        {
+            logger.warn("Spot Light limit threshold exceeded!");
+        }
         spotLights.erase(spotLights.begin() + 3, spotLights.end());
     }
 
@@ -376,7 +380,11 @@ MeshViewModel* Mesh::getViewModel()
             XMStoreFloat(&bLength, bLengthV);
 
             return aLength > bLength;
-            });
+        });
+        if (pointLights.size() > 3)
+        {
+            logger.warn("Point Light limit threshold exceeded!");
+        }
         pointLights.erase(pointLights.begin() + 3, pointLights.end());
     }
 

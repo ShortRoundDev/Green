@@ -100,7 +100,7 @@ void Player::update()
 
     if (Graphics.keyDownEdge('E'))
     {
-        logger.info("%f, %f, %f", m_pos.x, m_pos.y, m_pos.z);
+        Graphics.setMouseLook(!Graphics.getMouseLook());
     }
 
     if (Graphics.keyDown('A'))

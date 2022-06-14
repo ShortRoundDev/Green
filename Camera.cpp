@@ -31,7 +31,6 @@ Camera::~Camera()
 
 void Camera::update()
 {
-
 	///// MOUSE LOOK /////
 	f32 dX = (f32)Graphics.diffX() * sensitivity;
 	f32 dY = (f32)Graphics.diffY() * sensitivity;

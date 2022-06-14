@@ -10,11 +10,17 @@
 
 #include "MeshLightBuffer.h"
 
+#include "imgui.h"
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_win32.h"
+
 static ::Logger logger = CreateLogger("GraphicsManager");
 
 ////////// PUBLIC //////////
+
 bool GraphicsManager::start()
 {
+	///// WINDOWS /////
 	if (!initWindow())
 	{
 		logger.err("Failed to initialize window!");
@@ -25,13 +31,29 @@ bool GraphicsManager::start()
 		logger.err("Failed to initialize DirectX!");
 		return false;
 	}
+	m_gBuffer.pointradius = 0.0001f;
+	m_gBuffer.sun.ambient = { 192 / 255.0f, 118 / 255.0f, 118 / 255.0f, 0.2f };
+	m_gBuffer.sun.color = { 0.196f, 0.223f, 0.286f, 0.0f };
+	m_gBuffer.sun.direction = { 1.0f, 0.0f, -1.0f, 1.0f };
 
+	///// IMGUI /////
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplWin32_Init(getWindow());
+	ImGui_ImplDX11_Init(m_device.Get(), m_deviceContext.Get());
+
+	///// INPUT /////
 	ZeroMemory(&m_keys, sizeof(m_keys));
 
 	m_mouse = new Mouse;
 	m_mouse->SetWindow(Graphics.getWindow());
 	m_mouse->SetMode(Mouse::MODE_RELATIVE);
-	m_gBuffer.pointradius = 0.0001f;
+
+	m_mouseLook = true;
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 
 	return true;
 }
@@ -70,10 +92,6 @@ void GraphicsManager::bindGlobalBuffer()
 	m_gBuffer.view		 = XMMatrixTranspose(m_view);
 	m_gBuffer.camera	 = { m_camera.x, m_camera.y, m_camera.z, 1.0f };
 
-
-	m_gBuffer.sun.ambient = { 0.196f, 0.223f, 0.286f, 0.00f };
-	m_gBuffer.sun.color = { 0.196f, 0.223f, 0.286f, 0.1f };
-	m_gBuffer.sun.direction = { 1.0f, 0.0f, -1.0f, 1.0f };
 	inverseTranspose(m_gBuffer.world, m_gBuffer.invWorld);
 
 	//XMMATRIX tWorld = XMMatrixTranspose(m_gBuffer.world);
@@ -123,12 +141,37 @@ bool GraphicsManager::update()
 		}
 	}
 
-	auto state = m_mouse->GetState();
+	if (m_mouseLook)
+	{
+		auto state = m_mouse->GetState();
 
-	m_mouseX = state.x;
-	m_mouseY = state.y;
+		m_mouseX = state.x;
+		m_mouseY = state.y;
+	}
 
 	return false;
+}
+
+void GraphicsManager::draw()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	drawLightMenu();
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void GraphicsManager::drawLightMenu()
+{
+	ImGui::Begin("Global Light");
+
+	//float rgba[4] = { 0, 0, 0, 0 };
+	ImGui::ColorPicker4("Ambient Color", (float*)(&m_gBuffer.sun.ambient), ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB);
+	//logger.info("%f %f %f %f", rgba[0], rgba[1], rgba[2], rgba[3]);
+	ImGui::End();
 }
 
 void GraphicsManager::putShader(std::wstring name, Shader* shader)
@@ -234,6 +277,28 @@ void GraphicsManager::setShadowRasterizer(bool shadowRasterizer)
 		m_deviceContext->RSSetState(m_sceneRasterizer.Get());
 
 	}
+}
+
+f32 GraphicsManager::getClientWidth()
+{
+	return m_clientWidth;
+}
+
+f32 GraphicsManager::getClientHeight()
+{
+	return m_clientHeight;
+}
+
+bool GraphicsManager::getMouseLook()
+{
+	return m_mouseLook;
+}
+
+void GraphicsManager::setMouseLook(bool mouseLook)
+{
+	m_mouseLook = mouseLook;
+	m_mouse->SetMode(mouseLook ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
+	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 }
 
 LRESULT CALLBACK GraphicsManager::messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
@@ -362,6 +427,11 @@ bool GraphicsManager::initWindow()
 	SetForegroundWindow(m_window);
 	SetFocus(m_window);
 
+	RECT rect;
+	::GetClientRect(getWindow(), &rect);
+	m_clientWidth = (f32)rect.right;
+	m_clientHeight = (f32)rect.bottom;
+
 	HRESULT result = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	if (FAILED(result))
 	{
@@ -477,8 +547,8 @@ bool GraphicsManager::initSwapchain()
 	DXGI_SWAP_CHAIN_DESC swapchainDesc = { };
 	ZeroMemory(&swapchainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 	swapchainDesc.BufferCount = 1;
-	swapchainDesc.BufferDesc.Width = vars.width;
-	swapchainDesc.BufferDesc.Height = vars.height;
+	swapchainDesc.BufferDesc.Width = m_clientWidth;
+	swapchainDesc.BufferDesc.Height = m_clientHeight;
 	swapchainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapchainDesc.BufferDesc.RefreshRate.Numerator = m_numerator; // or 0 if !vsync
 	swapchainDesc.BufferDesc.RefreshRate.Denominator = m_denominator; // or 1 if !vsync
@@ -544,8 +614,8 @@ bool GraphicsManager::initDepthStencilBuffer()
 	auto vars = System.getVars();
 	D3D11_TEXTURE2D_DESC depthBufferDesc = { };
 	ZeroMemory(&depthBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	depthBufferDesc.Width = vars.width;
-	depthBufferDesc.Height = vars.height;
+	depthBufferDesc.Width = m_clientWidth;
+	depthBufferDesc.Height = m_clientHeight;
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -636,8 +706,8 @@ bool GraphicsManager::initRasterizer()
 	m_deviceContext->RSSetState(m_sceneRasterizer.Get());
 
 	ZeroMemory(&m_viewport, sizeof(D3D11_VIEWPORT));
-	m_viewport.Width = (float)vars.width;
-	m_viewport.Height = (float)vars.height;
+	m_viewport.Width = m_clientWidth;
+	m_viewport.Height = m_clientHeight;
 	m_viewport.MinDepth = 0.0f;
 	m_viewport.MaxDepth = 1.0f;
 	m_viewport.TopLeftX = 0.0f;
@@ -645,7 +715,7 @@ bool GraphicsManager::initRasterizer()
 
 	m_deviceContext->RSSetViewports(1, &m_viewport);
 	float fov = (float)M_PI_4_F;
-	float aspect = (float)vars.width / (float)vars.height;
+	float aspect = m_clientWidth / m_clientHeight;
 
 	m_projection = XMMatrixPerspectiveFovLH(fov, aspect, 0.1f, 10000.0f);
 	m_ortho = XMMatrixOrthographicLH((float)vars.width, (float)vars.height, 0.1f, 10000.0f);
@@ -718,8 +788,15 @@ inline void GraphicsManager::inverseTranspose(const XMMATRIX& world, XMMATRIX& i
 	invWorld = XMMatrixTranspose(XMMatrixInverse(&determinant, invWorld));
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+	{
+		return true;
+	}
+
 	switch (uMsg)
 	{
 	case WM_DESTROY:

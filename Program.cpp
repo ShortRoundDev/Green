@@ -33,6 +33,7 @@ int WINAPI WinMain(
 
         Game.update();
         Game.draw();
+        Graphics.draw();
         
         Graphics.swap();
     }
