@@ -100,6 +100,15 @@
     <Filter Include="Resource Files\Shaders\Sprite">
       <UniqueIdentifier>{9b7f421f-6d7b-45e5-8fc4-6c153ad8f5e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Managers\Game\Entities\MeshEntities">
+      <UniqueIdentifier>{12fd390f-3c4f-4a42-99d1-95b7e5bc9c85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Game\Entities\MeshEntities">
+      <UniqueIdentifier>{23fc2ac8-c633-4955-afc2-7bbe20e9edfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Post">
+      <UniqueIdentifier>{9943071f-2484-464d-a940-eb4f03c87f31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -182,6 +191,15 @@
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldSpawn.cpp">
+      <Filter>Source Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshEntity.cpp">
+      <Filter>Source Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="AmbientLightVolume.cpp">
+      <Filter>Source Files\Managers\Game\Entities\MeshEntities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +293,15 @@
     <ClInclude Include="Sprite.h">
       <Filter>Header Files\Managers\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="MeshEntity.h">
+      <Filter>Header Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldSpawn.h">
+      <Filter>Header Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="AmbientLightVolume.h">
+      <Filter>Header Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="WorldVertex.hlsl">
@@ -316,6 +343,12 @@
     <FxCompile Include="SpriteVertex.hlsl">
       <Filter>Resource Files\Shaders\Sprite</Filter>
     </FxCompile>
+    <FxCompile Include="GaussianPixel.hlsl">
+      <Filter>Resource Files\Shaders\Post</Filter>
+    </FxCompile>
+    <FxCompile Include="PostProcessVertex.hlsl">
+      <Filter>Resource Files\Shaders\Post</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shadertoolsconfig.json">
@@ -342,6 +375,9 @@
     </None>
     <None Include="Assets\Sprite.mtl">
       <Filter>Resource Files\Assets</Filter>
+    </None>
+    <None Include="Light.hlsli">
+      <Filter>Resource Files\Shaders\Util\Light</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

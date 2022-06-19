@@ -82,16 +82,22 @@ bool Mesh::createFromFile(
         //std::vector<PolygonVertexArray::PolygonFace> nodeFaces = std::vector<PolygonVertexArray::PolygonFace>();
 
         auto child = root->mChildren[i];
+        logger.info("Node: %s", child->mName.C_Str());
         u32 faceIndexOffset = 0;
 
         //For each MESH in NODE
+        bool skip = false;
         for (u32 j = 0; j < child->mNumMeshes; j++)
         {
             std::vector<GVertex> meshVertices = std::vector<GVertex>();
             std::vector<u32> meshIndices = std::vector<u32>();
 
             auto mesh = scene->mMeshes[child->mMeshes[j]];
-
+            if (scene->mMaterials[mesh->mMaterialIndex]->GetName() == aiString("__TB_empty"))
+            {
+                skip = true;
+                break;
+            }
             //For each VERTEX in MESH
             for (u32 k = 0; k < mesh->mNumVertices; k++)
             {
@@ -154,13 +160,14 @@ bool Mesh::createFromFile(
             if (mesh->mMaterialIndex >= 0)
             {
                 aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+                logger.info("\t%s", material->GetName().C_Str());
                 auto diffuseCount = material->GetTextureCount(aiTextureType_DIFFUSE);
                 if (diffuseCount > 0)
                 {
                     aiString str;
                     material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
 
-                    texture = Graphics.getTexture(std::string(str.C_Str()));
+                    texture = Graphics.lazyLoadTexture(std::string(str.C_Str()));
                 }
             }
 
@@ -174,6 +181,10 @@ bool Mesh::createFromFile(
                 texture
             );
             meshes.push_back(_mesh);
+        }
+        if (skip)
+        {
+            continue;
         }
 
         PxVec3* convexVertices = new PxVec3[nodeVertices.size()];
@@ -200,7 +211,8 @@ bool Mesh::createFromFile(
         auto shape = PxRigidActorExt::createExclusiveShape(*actor, PxConvexMeshGeometry(mesh), *material);
         
         gameManager->getPxScene()->addActor(*actor);
-
+    Skip:
+        continue;
         //physicsMeshes.push_back(gameManager->getPhysics()->createConvexMesh(input));
         
 
@@ -302,6 +314,12 @@ Mesh::Mesh()
 
 }
 
+Mesh::Mesh(AABB aabb)
+    : m_box(aabb)
+{
+
+}
+
 Mesh::~Mesh()
 {
 
@@ -314,6 +332,7 @@ AABB Mesh::getBox()
 
 void Mesh::addLight(ILight* light)
 {
+
     m_lights.push_back(light);
 }
 
@@ -332,7 +351,7 @@ MeshViewModel* Mesh::getViewModel()
     std::copy_if(m_lights.begin(), m_lights.end(), std::back_inserter(pointLights), [](ILight* val) {
         return val->getLightType() == POINT_LIGHT;
     });
-    if (spotLights.size() > 3)
+    if (spotLights.size() > MAX_LIGHT)
     {
         std::sort(spotLights.begin(), spotLights.end(), [centroidV](ILight* a, ILight* b) {
             auto aPos = a->getPos();
@@ -353,14 +372,14 @@ MeshViewModel* Mesh::getViewModel()
 
             return aLength > bLength;
         });
-        if (spotLights.size() > 3)
+        if (spotLights.size() > MAX_LIGHT)
         {
             logger.warn("Spot Light limit threshold exceeded!");
         }
         spotLights.erase(spotLights.begin() + 3, spotLights.end());
     }
 
-    if (pointLights.size() > 3)
+    if (pointLights.size() > MAX_LIGHT)
     {
         std::sort(pointLights.begin(), pointLights.end(), [centroidV](ILight* a, ILight* b) {
             auto aPos = a->getPos();
@@ -381,7 +400,7 @@ MeshViewModel* Mesh::getViewModel()
 
             return aLength > bLength;
         });
-        if (pointLights.size() > 3)
+        if (pointLights.size() > MAX_LIGHT)
         {
             logger.warn("Point Light limit threshold exceeded!");
         }

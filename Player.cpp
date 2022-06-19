@@ -11,6 +11,9 @@
 
 #include "MapFile_Parse.h"
 
+#include "MeshEntity.h"
+#include "AmbientLightVolume.h"
+
 static ::Logger logger = CreateLogger("Player");
 
 const PxControllerFilters filters;
@@ -27,13 +30,18 @@ Player* Player::Create(MF_Entity* entity)
 
 
 Player::Player(XMFLOAT3 pos) :
-    GameObject(pos, TYPE_ID(Player), &Game)
+    GameObject(pos, TYPE_ID(Player), &Game),
+    m_lastPos(pos.x, pos.y, pos.z)
 {
     auto material = Game.getPhysics()->createMaterial(0.5, 0.5, 0.6);
     PxCapsuleControllerDesc desc;
     //PxControllerDesc
     desc.radius = 16.0f;
+    m_radius = desc.radius;
+
     desc.height = 55.0f;
+    m_height = desc.height;
+    
     desc.invisibleWallHeight = 3.0;
     desc.climbingMode = PxCapsuleClimbingMode::eEASY;
     desc.material = material;
@@ -48,6 +56,22 @@ Player::Player(XMFLOAT3 pos) :
     }
 
     m_filter = new SingleActorExclusionFilter(m_controller->getActor());
+
+    ///// Move constants /////
+    XMFLOAT3 minMove = XMFLOAT3(-3.0f, -9999, -3.0f);
+    XMFLOAT3 maxMove = XMFLOAT3(3.0f, 9999, 3.0f);
+
+    m_minMove = XMLoadFloat3(&minMove);
+    m_maxMove = XMLoadFloat3(&maxMove);
+
+    XMFLOAT3 friction = XMFLOAT3(0.8f, 0.0f, 0.8f);
+    m_friction = XMLoadFloat3(&friction);
+
+    XMFLOAT3 jump = XMFLOAT3(0.0f, 5.0f, 0.0f);
+    m_jump = XMLoadFloat3(&jump);
+
+    XMFLOAT3 gravity = XMFLOAT3(0.0f, -0.25f, 0.0f);
+    m_gravity = XMLoadFloat3(&gravity);
 }
 
 Player::~Player()
@@ -57,6 +81,99 @@ Player::~Player()
 
 void Player::update()
 {
+    setVectors();
+    checkFloor();
+
+    PxExtendedVec3 pos = m_controller->getPosition();
+    XMFLOAT3 moveVec = XMFLOAT3(pos.x - m_lastPos.x, pos.y - m_lastPos.y, pos.z - m_lastPos.z);
+    XMVECTOR moveVecV = XMLoadFloat3(&moveVec);
+
+    if (m_onGround)
+    {
+        moveVecV = XMVectorMultiply(moveVecV, m_friction);
+    }
+    else
+    {
+        moveVecV = XMVectorAdd(moveVecV, m_gravity);
+    }
+    
+    inputMove(moveVecV);
+
+    XMStoreFloat3(&moveVec, moveVecV);
+    auto move = PxVec3(moveVec.x, moveVec.y, moveVec.z);
+    logger.info("%f, %f, %f", move.x, move.y, move.x);
+    m_lastPos = pos;
+    m_controller->move(move, 0.0f, 0, filters);
+    
+    pos = m_controller->getPosition();
+    Game.getScene()->getCamera()->setPosition(pos.x, pos.y + 16.0f, pos.z);
+}
+
+void Player::setVectors()
+{
+    ///// FORWARD /////
+    auto view = Game.getScene()->getCamera()->getView();
+    view = XMMatrixTranspose(view);
+    auto look = XMFLOAT3(
+        view.r[2].m128_f32[0],
+        0,
+        view.r[2].m128_f32[2]
+    );    
+    m_forward = XMLoadFloat3(&look);
+    m_forward = XMVector3Normalize(m_forward);
+
+    ///// UP /////
+    auto up = m_controller->getUpDirection();
+    auto upF3 = XMFLOAT3(up.x, up.y, up.z);
+    m_up = XMLoadFloat3(&upF3);
+
+    ///// RIGHT /////
+    m_right = XMVector3Cross(m_up, m_forward);
+}
+
+void Player::inputMove(XMVECTOR& moveVec)
+{
+    if (Graphics.keyDown('W'))
+    {
+        moveVec = XMVectorAdd(XMVectorScale(m_forward, 0.7f), moveVec);
+    }
+
+    if (Graphics.keyDown('S'))
+    {
+        moveVec = XMVectorAdd(XMVectorScale(m_forward, -0.7f), moveVec);
+    }
+    
+    if (m_onGround && Graphics.keyDownEdge(32))
+    {
+        moveVec = XMVectorAdd(m_jump, moveVec);
+    }
+
+    XMFLOAT3 move3;
+    XMStoreFloat3(&move3, moveVec);
+    
+    XMFLOAT2 moveXZ = XMFLOAT2(move3.x, move3.z);
+    XMVECTOR moveXZV = XMLoadFloat2(&moveXZ);
+    
+    XMVECTOR lengthV = XMVector2Length(moveXZV);
+
+    XMFLOAT2 length2;
+    XMStoreFloat2(&length2, lengthV);
+
+    moveXZV = XMVectorScale(XMVector2Normalize(moveXZV), std::min(3.0f, std::max(-3.0f, length2.x)));
+    XMStoreFloat2(&moveXZ, moveXZV);
+    move3.x = moveXZ.x;
+    move3.z = moveXZ.y;
+
+    moveVec = XMLoadFloat3(&move3);
+    //moveVec = XMVectorClamp(moveVec, m_minMove, m_maxMove);
+}
+
+void Player::_update()
+{
+    thread_local static AmbientLightVolume* myLight;
+    thread_local static f32 t = 0.0f;
+    thread_local static DirectionalLight targetLightFrame, prevLightFrame;
+
     checkFloor();
     auto view = Game.getScene()->getCamera()->getView();
     view = XMMatrixTranspose(view);
@@ -179,6 +296,60 @@ void Player::update()
         }*/
     }
 
+    std::vector<MeshEntity*> lights;
+    Game.getScene()->getTree()->queryType(m_pos, lights, AMBIENT_LIGHT_VOLUME);
+    if (lights.size() > 0)
+    {
+        AmbientLightVolume* light = (AmbientLightVolume*)lights[0];
+
+        if (myLight != light)
+        {
+            if (myLight == NULL)
+            {
+                prevLightFrame = light->getLightDesc();
+                targetLightFrame = light->getLightDesc();
+            }
+            else
+            {
+                prevLightFrame = targetLightFrame;
+                targetLightFrame = light->getLightDesc();
+            }
+
+            myLight = light;
+            t = 0.0f;
+        }
+
+        XMVECTOR    prevAmbientA = XMLoadFloat4(&prevLightFrame.ambientA), targetAmbientA = XMLoadFloat4(&targetLightFrame.ambientA),
+                    prevAmbientB = XMLoadFloat4(&prevLightFrame.ambientB), targetAmbientB = XMLoadFloat4(&targetLightFrame.ambientB),
+                    prevAmbientDirection    = XMLoadFloat4(&prevLightFrame.ambientDirection),
+                    targetAmbientDirection  = XMLoadFloat4(&targetLightFrame.ambientDirection);
+
+        XMVECTOR lerpedAmbientAV = XMVectorLerp(prevAmbientA, targetAmbientA, t);
+        XMVECTOR lerpedAmbientBV = XMVectorLerp(prevAmbientB, targetAmbientB, t);
+        XMVECTOR lerpedAmbientDirV = XMVectorLerp(prevAmbientDirection, targetAmbientDirection, t);
+
+        XMFLOAT4 lerpedAmbientA, lerpedAmbientB, lerpedAmbientDir;
+        XMStoreFloat4(&lerpedAmbientA, lerpedAmbientAV);
+        XMStoreFloat4(&lerpedAmbientB, lerpedAmbientBV);
+        XMStoreFloat4(&lerpedAmbientDir, lerpedAmbientDirV);
+
+        f32 lerpedHardness = prevLightFrame.hardness + ((targetLightFrame.hardness - prevLightFrame.hardness) * t);
+
+        DirectionalLight lightDesc;
+        Graphics.m_gBuffer.sun.ambientA = lerpedAmbientA;
+        Graphics.m_gBuffer.sun.ambientB = lerpedAmbientB;
+        Graphics.m_gBuffer.sun.ambientDirection = lerpedAmbientDir;
+        Graphics.m_gBuffer.sun.hardness = lerpedHardness;
+    }
+
+    if (t < 1.0f)
+    {
+        t += 0.02f;
+        if (t > 1.0f)
+        {
+            t = 1.0f;
+        }
+    }
 
     if (m_onGround && Graphics.keyDown(32))
     {
@@ -191,6 +362,7 @@ void Player::update()
     }
     
     m_controller->move(m_move, 0.1f, 0, filters);
+
     pos = m_controller->getPosition();
     m_pos.x = pos.x;
     m_pos.y = pos.y;
@@ -211,9 +383,9 @@ void Player::checkFloor()
     PxVec3 origin = PxVec3(foot.x, foot.y, foot.z);
 
     PxOverlapBuffer hit;
-    float radius = 31.0f;
+    float radius = m_radius - 1.0f;
     PxSphereGeometry sphere = PxSphereGeometry(radius);
-    PxTransform pose = PxTransform(origin + (PxVec3(0, 30, 0)));
+    PxTransform pose = PxTransform(origin + (PxVec3(0, m_radius - 2.0f, 0)));
 
     if (Game.getPxScene()->overlap(sphere, pose, hit, fd, m_filter))
     {

@@ -31,8 +31,12 @@ bool GraphicsManager::start()
 		logger.err("Failed to initialize DirectX!");
 		return false;
 	}
+
 	m_gBuffer.pointradius = 0.0001f;
-	m_gBuffer.sun.ambient = { 192 / 255.0f, 118 / 255.0f, 118 / 255.0f, 0.2f };
+	m_gBuffer.sun.ambientA = { 192 / 255.0f, 118 / 255.0f, 118 / 255.0f, 0.2f };
+	m_gBuffer.sun.ambientB = { 192 / 255.0f, 118 / 255.0f, 118 / 255.0f, 0.2f };
+	m_gBuffer.sun.hardness = 3.0f;
+	m_gBuffer.sun.ambientDirection = { 0, -1.0f, 0.0f, 0.0f };
 	m_gBuffer.sun.color = { 0.196f, 0.223f, 0.286f, 0.0f };
 	m_gBuffer.sun.direction = { 1.0f, 0.0f, -1.0f, 1.0f };
 
@@ -55,6 +59,8 @@ bool GraphicsManager::start()
 	m_mouseLook = true;
 	io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 
+	initQuad();
+
 	return true;
 }
 
@@ -65,24 +71,14 @@ bool GraphicsManager::shutDown()
 
 void GraphicsManager::clear()
 {
-	float color[4] = { 0, 0.5f, 0, 1.0f };
-	m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), color);
+	m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), (f32*)(&clearColor));
 	m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void GraphicsManager::swap()
 {
 	//todo: add vsync option
-	//auto vars = System.getVars();
-	//if (SYSTEM->vsync)
-	//{
 	m_swapchain->Present(1, 0);
-	//}
-	//else
-	//{
-	//	swapchain->Present(0, 0);
-	//}
-
 }
 
 void GraphicsManager::bindGlobalBuffer()
@@ -144,7 +140,6 @@ bool GraphicsManager::update()
 	if (m_mouseLook)
 	{
 		auto state = m_mouse->GetState();
-
 		m_mouseX = state.x;
 		m_mouseY = state.y;
 	}
@@ -158,20 +153,9 @@ void GraphicsManager::draw()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	drawLightMenu();
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-}
-
-void GraphicsManager::drawLightMenu()
-{
-	ImGui::Begin("Global Light");
-
-	//float rgba[4] = { 0, 0, 0, 0 };
-	ImGui::ColorPicker4("Ambient Color", (float*)(&m_gBuffer.sun.ambient), ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB);
-	//logger.info("%f %f %f %f", rgba[0], rgba[1], rgba[2], rgba[3]);
-	ImGui::End();
 }
 
 void GraphicsManager::putShader(std::wstring name, Shader* shader)
@@ -217,6 +201,18 @@ Texture* GraphicsManager::getTexture(std::string name)
 	}
 
 	return texture->second;
+}
+
+Texture* GraphicsManager::lazyLoadTexture(std::string path)
+{
+	auto texture = getTexture(path);
+	if (texture == NULL)
+	{
+		texture = new Texture(path);
+		putTexture(path, texture);
+	}
+
+	return texture;
 }
 
 ID3D11Device* GraphicsManager::getDevice()
@@ -299,6 +295,17 @@ void GraphicsManager::setMouseLook(bool mouseLook)
 	m_mouseLook = mouseLook;
 	m_mouse->SetMode(mouseLook ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
 	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+}
+
+void GraphicsManager::drawQuad()
+{
+	UINT stride = sizeof(GVertex);
+	UINT offset = 0;
+
+	m_deviceContext->IASetVertexBuffers(0, 1, m_quadVertexBuffer.GetAddressOf(), &stride, &offset);
+	m_deviceContext->IASetIndexBuffer(m_quadIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->DrawIndexed(6, 0, 0);
 }
 
 LRESULT CALLBACK GraphicsManager::messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
@@ -725,6 +732,8 @@ bool GraphicsManager::initRasterizer()
 	return true;
 }
 
+
+
 bool GraphicsManager::initShaders()
 {
 	/*auto status = RegisterShaders(device.Get(), &shaders);
@@ -755,6 +764,14 @@ bool GraphicsManager::initShaders()
 		L"SpritePixel.cso",
 		sizeof(SpriteBuffer)
 	));
+
+	putShader(L"DepthBlur", new Shader(
+		m_device.Get(),
+		L"PostProcessVertex.cso",
+		//L"SpotLightShadowMapVertex.cso",
+		L"GaussianPixel.cso",
+		sizeof(OrthoView)
+	));
 	
 	return true;
 }
@@ -777,6 +794,61 @@ bool GraphicsManager::initGlobalBuffer()
 
 	ZeroMemory(&m_gBuffer, sizeof(GlobalBuffer));
 	return true;
+}
+
+bool GraphicsManager::initQuad()
+{
+	GVertex quadVertexData[4] = {
+		{ {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f} },
+		{ {4096, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f} },
+		{ {4096, 4096, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f} },
+		{ {0.0f, 4096, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f} },
+	};
+
+	D3D11_BUFFER_DESC vertexDesc;
+	vertexDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexDesc.ByteWidth = (UINT)(4 * sizeof(GVertex));
+	vertexDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexDesc.CPUAccessFlags = 0;
+	vertexDesc.MiscFlags = 0;
+	vertexDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA vertexData;
+	vertexData.pSysMem = quadVertexData;
+	vertexData.SysMemPitch = 0;
+	vertexData.SysMemSlicePitch = 0;
+	
+	HRESULT result = Graphics.getDevice()->CreateBuffer(&vertexDesc, &vertexData, m_quadVertexBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		logger.err("Failed to create vertex buffer!");
+		return false;
+	}
+
+	u32 indices[6] = {
+		0, 1, 2,
+		0, 2, 3
+	};
+
+	D3D11_BUFFER_DESC indexDesc;
+	indexDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexDesc.ByteWidth = (u32)(sizeof(u32) * 6);
+	indexDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexDesc.CPUAccessFlags = 0;
+	indexDesc.MiscFlags = 0;
+	indexDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA indexData;
+	indexData.pSysMem = indices;
+	indexData.SysMemPitch = 0;
+	indexData.SysMemSlicePitch = 0;
+
+	result = Graphics.getDevice()->CreateBuffer(&indexDesc, &indexData, m_quadIndexBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		logger.err("Failed to create index buffer!");
+		return false;
+	}
 }
 
 

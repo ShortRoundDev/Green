@@ -14,35 +14,20 @@
 #include "MeshLightBuffer.h"
 #include "MeshViewModel.h"
 #include "Player.h"
-
 #include "MapFile.h"
+
+#include "MeshEntity.h"
+#include "WorldSpawn.h"
+#include "AmbientLightVolume.h"
+
+#include <algorithm>
 
 static ::Logger logger = CreateLogger("Scene");
 
 Scene::Scene(std::string fileName, GameManager* gameManager)
 {
-    initSceneTextures();
-
-    MF_Map map;
-    size_t mapfileSize;
-    u8* data;
-    System.readFile(fileName + ".map", &data, 0x100000, &mapfileSize); // 1mib max
-    
-    if (!MF_Parse((char*)data, &map))
-    {
-        logger.err("Failed to parse .map file!");
-        return;
-    }
-    MF_BrushDictionary dict;
-
-    MF_GenerateMesh(&map, &dict);
-    
-    initEntities(&map);
-
-    //destroy map
-    //destroy text
-    HeapFree(GetProcessHeap(), HEAP_ZERO_MEMORY, data);
-
+    std::vector<MeshEntity*> meshEntities;
+    initFromMapFile(fileName, meshEntities);
     if (!Mesh::createFromFile(
         fileName + ".obj",
         m_brushes,
@@ -65,6 +50,11 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     m_camera = new Camera();
     m_shader = Graphics.getShader(L"World");
 
+
+    std::transform(m_brushes.begin(), m_brushes.end(), std::back_inserter(meshEntities), [](Mesh* mesh) {
+        return new WorldSpawn(mesh);
+    });
+
     //m_light = new SpotLight({ 64, 128.0f, -64, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 800, 800, { -1.0f, 0, 1.0f, 1.0f });
     //m_lights.push_back(new PointLight({ 64, 128, -64, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
     //m_lights.push_back(new PointLight({ 100, 100, -40, 1 }, { 1.0f, 1.0f, 0, 1 }, 128, 128, 128, 0.1));
@@ -76,17 +66,17 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     
     //m_light2 = new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
 
-    m_tree = new Octree(m_brushes);
+    m_tree = new Octree(meshEntities);
     for (auto light : m_lights)
     {
         auto box = light->getBounds();
-        std::vector<Mesh*> result;
+        std::vector<MeshEntity*> result;
 
-        m_tree->query(&box, result);
+        m_tree->querySolid(&box, result);
 
         for (auto mesh : result)
         {
-            mesh->addLight(light);
+            mesh->getMesh()->addLight(light);
         }
     }
 
@@ -110,7 +100,31 @@ void Scene::generateShadowMaps()
     //m_light2->renderShadowMap(this);
 }
 
-void Scene::initEntities(MF_Map* map)
+void Scene::initFromMapFile(std::string fileName, std::vector<MeshEntity*>& meshEntities)
+{
+    thread_local static char errBuff[1024];
+
+    MF_Map map;
+    size_t mapfileSize;
+    u8* data;
+    System.readFile(fileName + ".map", &data, 0x100000, &mapfileSize); // 1mib max
+    logger.info("%s", (char*)data);
+    if (!MF_Parse((char*)data, &map))
+    {
+        MF_GetErrMessage(errBuff);
+        logger.err("Failed to parse .map file! %s", errBuff);
+        return;
+    }
+
+    MF_BrushDictionary dict;
+    MF_GenerateMesh(&map, &dict);
+
+    initEntities(&map, &dict, meshEntities);
+    
+    HeapFree(GetProcessHeap(), HEAP_ZERO_MEMORY, data);
+}
+
+void Scene::initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<MeshEntity*>& meshEntities)
 {
     static thread_local char buffer[512];
     if (map == NULL)
@@ -144,6 +158,16 @@ void Scene::initEntities(MF_Map* map)
             {
                 m_lights.push_back(light);
             }
+        }
+    }
+
+    for (int i = 0; i < dict->totalBrushes; i++)
+    {
+        auto item = dict->brushes + i;
+        std::string name = std::string(item->name);
+        if (name.starts_with("AmbientLight"))
+        {
+            meshEntities.push_back(AmbientLightVolume::Create(item));
         }
     }
 }
@@ -216,24 +240,7 @@ const std::vector<ILight*>& Scene::getLights()
     return m_lights;
 }
 
-////////// PRIVATE //////////
-
-bool Scene::initSceneTextures()
+Octree* Scene::getTree()
 {
-    Graphics.putTexture("textures\\DevFloor1.png", new Texture("textures/DevFloor1.png"));
-    Graphics.putTexture("textures\\DevFloor2.png", new Texture("textures/DevFloor2.png"));
-    Graphics.putTexture("textures\\DevWall1.png", new Texture("textures/DevWall1.png"));
-    Graphics.putTexture("textures\\DevWall2.png", new Texture("textures/DevWall2.png"));
-    Graphics.putTexture("textures\\sprites\\001-lightbulb.png", new Texture("textures/sprites/001-lightbulb.png"));
-    Graphics.putTexture("textures\\sprites\\002-spotlight.png", new Texture("textures/sprites/002-spotlight.png"));
-
-    Graphics.putTexture("textures\\carpet\\carpetfloorblack.png", new Texture("textures/carpet/carpetfloorblack.png"));
-    Graphics.putTexture("textures\\carpet\\carpetfloorred.png", new Texture("textures/carpet/carpetfloorred.png"));
-    Graphics.putTexture("textures\\carpet\\carpetfloorwhite.png", new Texture("textures/carpet/carpetfloorwhite.png"));
-    Graphics.putTexture("textures\\paint\\plasterwallbrown2.png", new Texture("textures/paint/plasterwallbrown2.png"));
-    Graphics.putTexture("textures\\paint\\plasterwallpink.png", new Texture("textures/paint/plasterwallpink.png"));
-    Graphics.putTexture("textures\\paint\\plasterwallwhite.png", new Texture("textures/paint/plasterwallwhite.png"));
-    Graphics.putTexture("textures\\tile\\tilefloor1.png", new Texture("textures/tile/tilefloor1.png"));
-
-    return true;
+    return m_tree;
 }

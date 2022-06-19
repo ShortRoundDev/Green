@@ -31,7 +31,6 @@ MeshViewModel::MeshViewModel(
     {
         m_spotLights[i] = spotLights[i];
     }
-
     m_pointLightBuffer = new ID3D11ShaderResourceView*[m_numPointLights];
     m_spotLightBuffer = new ID3D11ShaderResourceView*[m_numSpotLights];
 }
@@ -63,7 +62,7 @@ void MeshViewModel::draw()
         SpotLightBuffer buffer = m_spotLights[i]->getCBuffer();
         lightBuffer.spotLights[i] = buffer;
     }
-    Graphics.getContext()->PSSetShaderResources(4, m_numSpotLights, m_spotLightBuffer);
+    Graphics.getContext()->PSSetShaderResources(17, m_numSpotLights, m_spotLightBuffer);
 
     m_shader->bindCBuffer(&lightBuffer);
     m_mesh->draw();

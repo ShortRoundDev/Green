@@ -20,6 +20,7 @@ public:
     const XMFLOAT3& getMax();
 
     bool collides(AABB* other);
+    bool contains(XMFLOAT3 point);
 
 private:
     XMFLOAT3 m_min;

@@ -39,7 +39,7 @@ public:
     );
     void draw();
 
-    Mesh();
+    Mesh(AABB aabb);
     ~Mesh();
 
     AABB getBox();
@@ -52,7 +52,7 @@ public:
     void setTexture(Texture* texture);
 
 private:
-
+    Mesh();
     bool initialize(const std::vector<GVertex>& vertices, size_t vertCount, const std::vector<u32>& indices, size_t indexCount, Texture* texture);
 
     ComPtr<ID3D11Buffer> m_vertexBuffer;

@@ -7,9 +7,10 @@
 #include <string>
 #include <vector>
 
-#include "MapFile_Types.h"
-
+struct MF_Map;
+struct MF_BrushDictionary;
 class Mesh;
+class MeshEntity;
 class Shader;
 class Camera;
 class ILight;
@@ -26,13 +27,13 @@ public:
     ~Scene();
 
     void generateShadowMaps();
-    void initEntities(MF_Map* map);
     void draw();
     void renderMeshes();
     void renderViewModels();
     void update();
 
     Camera* getCamera();
+    Octree* getTree();
 
     const std::vector<GameObject*>& getGameObjects();
     const std::vector<ILight*>& getLights();
@@ -53,5 +54,6 @@ private:
 
     Octree* m_tree;
 
-    bool initSceneTextures();
+    void initFromMapFile(std::string fileName, std::vector<MeshEntity*>& meshEntities);
+    void initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<MeshEntity*>& meshEntities);
 };

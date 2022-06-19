@@ -21,6 +21,7 @@ SpotLight* SpotLight::Create(MF_Entity* entity)
     {
         return nullptr;
     }
+
     if (!MF_GetAttributeVec4(entity, "color", &color))
     {
         return nullptr;
@@ -108,7 +109,7 @@ SpotLight::SpotLight(
     srv.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     srv.Texture2D.MipLevels = desc.MipLevels;
     srv.Texture2D.MostDetailedMip = 0;
-    
+
     Graphics.getDevice()->CreateShaderResourceView(depthMap, &srv, m_depthMapSrv.GetAddressOf());
 
     XMFLOAT4 rightFloat4 = { 1.0f, 0, 0, 1.0f };

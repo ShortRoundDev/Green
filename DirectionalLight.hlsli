@@ -3,9 +3,12 @@
 
 struct DirectionalLight
 {
-    float4 ambient;
+    float4 ambientA;
+    float4 ambientB;
+    float4 ambientDirection;
     float4 color;
     float4 direction;
+    float hardness;
 };
 
 float3 DiffuseDirectionalLight(DirectionalLight light, float3 normal, float roughness)

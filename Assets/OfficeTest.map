@@ -3,15 +3,15 @@
 // entity 0
 {
 "classname" "worldspawn"
-"_tb_textures" "textures;textures/Forest Cliff;textures/Forest Dirt;textures/Forest Grass;textures/Forest Moss;textures/Forest Mud;textures/Forest Road;textures/Forest Rock;textures/Forest Soil;textures/Forest WetMud;textures/brick;textures/carpet;textures/concrete;textures/metal;textures/nature;textures/paint;textures/roof;textures/tile;textures/wood"
+"_tb_textures" "textures;textures/Forest Cliff;textures/Forest Dirt;textures/Forest Grass;textures/Forest Moss;textures/Forest Mud;textures/Forest Road;textures/Forest Rock;textures/Forest Soil;textures/Forest WetMud;textures/brick;textures/carpet;textures/concrete;textures/metal;textures/nature;textures/paint;textures/poly;textures/roof;textures/tile;textures/wood"
 // brush 0
 {
-( -64 -144 -48 ) ( -64 -143 -48 ) ( -64 -144 -47 ) carpet/carpetfloorblack 80 -32 0 1 1
-( -64 -224 -48 ) ( -64 -224 -47 ) ( -63 -224 -48 ) carpet/carpetfloorblack 0 -32 0 1 1
-( -64 -144 -32 ) ( -63 -144 -32 ) ( -64 -143 -32 ) carpet/carpetfloorblack 0 -80 0 1 1
-( 64 -16 0 ) ( 64 -15 0 ) ( 65 -16 0 ) carpet/carpetfloorblack 0 -80 0 1 1
-( 64 384 -16 ) ( 65 384 -16 ) ( 64 384 -15 ) carpet/carpetfloorblack 0 -32 0 1 1
-( 320 -16 -16 ) ( 320 -16 -15 ) ( 320 -15 -16 ) carpet/carpetfloorblack 80 -32 0 1 1
+( -64 -144 -48 ) ( -64 -143 -48 ) ( -64 -144 -47 ) poly/weathered_brown_planks_diff_4k 80 -32 0 0.05 0.05
+( -64 -224 -48 ) ( -64 -224 -47 ) ( -63 -224 -48 ) poly/weathered_brown_planks_diff_4k 0 -32 0 0.05 0.05
+( -64 -144 -32 ) ( -63 -144 -32 ) ( -64 -143 -32 ) poly/weathered_brown_planks_diff_4k 0 -80 0 0.05 0.05
+( 64 -16 0 ) ( 64 -15 0 ) ( 65 -16 0 ) poly/weathered_brown_planks_diff_4k 0 -80 0 0.05 0.05
+( 64 384 -16 ) ( 65 384 -16 ) ( 64 384 -15 ) poly/weathered_brown_planks_diff_4k 0 -32 0 0.05 0.05
+( 320 -16 -16 ) ( 320 -16 -15 ) ( 320 -15 -16 ) poly/weathered_brown_planks_diff_4k 80 -32 0 0.05 0.05
 }
 // brush 1
 {
@@ -19,44 +19,44 @@
 ( 64 -224 128 ) ( -64 -224 0 ) ( -64 -224 128 ) paint/plasterwallpink 0 0 0 1 1
 ( 64 -192 0 ) ( -64 -224 0 ) ( 64 -224 0 ) paint/plasterwallwhite 0 0 0 1 1
 ( 64 -192 128 ) ( -64 -224 128 ) ( -64 -192 128 ) paint/plasterwallwhite 0 0 0 1 1
-( 64 -192 128 ) ( -64 -192 0 ) ( 64 -192 0 ) paint/plasterwallwhite 0 0 0 1 1
-( 64 -192 128 ) ( 64 -224 0 ) ( 64 -224 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 64 -192 128 ) ( -64 -192 0 ) ( 64 -192 0 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( 64 -192 128 ) ( 64 -224 0 ) ( 64 -224 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
 }
 // brush 2
 {
-( 192 -224 128 ) ( 192 -192 0 ) ( 192 -192 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 192 -224 128 ) ( 192 -192 0 ) ( 192 -192 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
 ( 320 -224 128 ) ( 192 -224 0 ) ( 192 -224 128 ) paint/plasterwallpink 0 0 0 1 1
 ( 320 -192 0 ) ( 192 -224 0 ) ( 320 -224 0 ) paint/plasterwallwhite 0 0 0 1 1
 ( 320 -192 128 ) ( 192 -224 128 ) ( 192 -192 128 ) paint/plasterwallwhite 0 0 0 1 1
-( 320 -192 128 ) ( 192 -192 0 ) ( 320 -192 0 ) paint/plasterwallwhite 0 0 0 1 1
+( 320 -192 128 ) ( 192 -192 0 ) ( 320 -192 0 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
 ( 736 -192 128 ) ( 736 -224 0 ) ( 736 -224 128 ) paint/plasterwallbrown2 0 0 0 1 1
 }
 // brush 3
 {
-( 288 -192 128 ) ( 288 224 0 ) ( 288 224 128 ) paint/plasterwallwhite 0 0 0 1 1
-( 320 -192 128 ) ( 288 -192 0 ) ( 288 -192 128 ) paint/plasterwallwhite 0 0 0 1 1
-( 320 224 0 ) ( 288 -192 0 ) ( 320 -192 0 ) paint/plasterwallwhite 0 0 0 1 1
-( 320 224 128 ) ( 288 -192 128 ) ( 288 224 128 ) paint/plasterwallwhite 0 0 0 1 1
-( 320 384 128 ) ( 288 384 0 ) ( 320 384 0 ) paint/plasterwallwhite 0 0 0 1 1
-( 320 224 128 ) ( 320 -192 0 ) ( 320 -192 128 ) paint/plasterwallwhite 0 0 0 1 1
+( 288 -192 128 ) ( 288 224 0 ) ( 288 224 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( 320 -192 128 ) ( 288 -192 0 ) ( 288 -192 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( 320 224 0 ) ( 288 -192 0 ) ( 320 -192 0 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( 320 224 128 ) ( 288 -192 128 ) ( 288 224 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( 320 384 128 ) ( 288 384 0 ) ( 320 384 0 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( 320 224 128 ) ( 320 -192 0 ) ( 320 -192 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
 }
 // brush 4
 {
-( -64 352 128 ) ( -64 384 0 ) ( -64 384 128 ) paint/plasterwallwhite -160 0 0 1 1
-( 288 352 128 ) ( -64 352 0 ) ( -64 352 128 ) paint/plasterwallwhite 0 0 0 1 1
-( 288 384 0 ) ( -64 352 0 ) ( 288 352 0 ) paint/plasterwallwhite 0 160 0 1 1
-( 288 384 128 ) ( -64 352 128 ) ( -64 384 128 ) paint/plasterwallwhite 0 160 0 1 1
-( 288 384 128 ) ( -64 384 0 ) ( 288 384 0 ) paint/plasterwallwhite 0 0 0 1 1
-( 288 384 128 ) ( 288 352 0 ) ( 288 352 128 ) paint/plasterwallwhite -160 0 0 1 1
+( -64 352 128 ) ( -64 384 0 ) ( -64 384 128 ) poly/medieval_blocks_03_diff_4k -160 0 0 0.025 0.025
+( 288 352 128 ) ( -64 352 0 ) ( -64 352 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( 288 384 0 ) ( -64 352 0 ) ( 288 352 0 ) poly/medieval_blocks_03_diff_4k 0 160 0 0.025 0.025
+( 288 384 128 ) ( -64 352 128 ) ( -64 384 128 ) poly/medieval_blocks_03_diff_4k 0 160 0 0.025 0.025
+( 288 384 128 ) ( -64 384 0 ) ( 288 384 0 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( 288 384 128 ) ( 288 352 0 ) ( 288 352 128 ) poly/medieval_blocks_03_diff_4k -160 0 0 0.025 0.025
 }
 // brush 5
 {
-( -64 -192 128 ) ( -64 192 0 ) ( -64 192 128 ) paint/plasterwallwhite 0 0 0 1 1
-( -32 -192 128 ) ( -64 -192 0 ) ( -64 -192 128 ) paint/plasterwallwhite 0 0 0 1 1
-( -32 192 0 ) ( -64 -192 0 ) ( -32 -192 0 ) paint/plasterwallwhite 0 0 0 1 1
-( -32 192 128 ) ( -64 -192 128 ) ( -64 192 128 ) paint/plasterwallwhite 0 0 0 1 1
-( -32 352 128 ) ( -64 352 0 ) ( -32 352 0 ) paint/plasterwallwhite 0 0 0 1 1
-( -32 192 128 ) ( -32 -192 0 ) ( -32 -192 128 ) paint/plasterwallwhite 0 0 0 1 1
+( -64 -192 128 ) ( -64 192 0 ) ( -64 192 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( -32 -192 128 ) ( -64 -192 0 ) ( -64 -192 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( -32 192 0 ) ( -64 -192 0 ) ( -32 -192 0 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( -32 192 128 ) ( -64 -192 128 ) ( -64 192 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( -32 352 128 ) ( -64 352 0 ) ( -32 352 0 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
+( -32 192 128 ) ( -32 -192 0 ) ( -32 -192 128 ) poly/medieval_blocks_03_diff_4k 0 0 0 0.025 0.025
 }
 // brush 6
 {
@@ -144,7 +144,7 @@
 ( -64 -192 160 ) ( -64 384 128 ) ( -64 384 160 ) tile/tilefloor1 0 -64 0 1 1
 ( 320 -192 160 ) ( -64 -192 128 ) ( -64 -192 160 ) tile/tilefloor1 0 -64 0 1 1
 ( 320 384 128 ) ( -64 -192 128 ) ( 320 -192 128 ) tile/tilefloor1 0 0 0 1 1
-( 320 384 160 ) ( -64 -192 160 ) ( -64 384 160 ) tile/tilefloor1 0 0 0 1 1
+( 320 384 176 ) ( -64 -192 176 ) ( -64 384 176 ) tile/tilefloor1 0 0 0 1 1
 ( 320 384 160 ) ( -64 384 128 ) ( 320 384 128 ) tile/tilefloor1 0 -64 0 1 1
 ( 320 384 160 ) ( 320 -192 128 ) ( 320 -192 160 ) tile/tilefloor1 0 -64 0 1 1
 }
@@ -215,7 +215,7 @@
 // entity 1
 {
 "classname" "info_player_start"
-"origin" "0 0 43"
+"origin" "112 128 59"
 }
 // entity 2
 {
@@ -300,14 +300,35 @@
 // entity 10
 {
 "classname" "AmbientLight"
-"color" "s"
+"color" "255 255 255 255"
+"ambientA" "15 11 44 15"
+"ambientB" "4 4 8 70"
+"ambientDirection" "1.0 -1.0 0.0"
+"hardness" "1.142"
 // brush 0
 {
-( -32 -192 48 ) ( -32 -48 0 ) ( -32 -48 48 ) __TB_empty 16 0 0 1 1
-( 16 -192 48 ) ( -32 -192 0 ) ( -32 -192 48 ) __TB_empty 0 0 0 1 1
-( 16 -48 0 ) ( -32 -192 0 ) ( 16 -192 0 ) __TB_empty 0 -16 0 1 1
-( 16 -48 128 ) ( -32 -192 128 ) ( -32 -48 128 ) __TB_empty 0 -16 0 1 1
-( 16 352 48 ) ( -32 352 0 ) ( 16 352 0 ) __TB_empty 0 0 0 1 1
-( 288 -48 48 ) ( 288 -192 0 ) ( 288 -192 48 ) __TB_empty 16 0 0 1 1
+( -32 -192 256 ) ( -32 176 0 ) ( -32 176 256 ) __TB_empty 0 0 0 1 1
+( 288 -208 256 ) ( -32 -208 0 ) ( -32 -208 256 ) __TB_empty 0 0 0 1 1
+( 288 176 0 ) ( -32 -192 0 ) ( 288 -192 0 ) __TB_empty 0 0 0 1 1
+( 288 176 128 ) ( -32 -192 128 ) ( -32 176 128 ) __TB_empty 0 0 0 1 1
+( 288 352 256 ) ( -32 352 0 ) ( 288 352 0 ) __TB_empty 0 0 0 1 1
+( 288 176 256 ) ( 288 -192 0 ) ( 288 -192 256 ) __TB_empty 0 0 0 1 1
+}
+}
+// entity 11
+{
+"classname" "AmbientLight"
+"ambientA" "116 45 15 10"
+"ambientB" "23 9 2 19"
+"ambientDirection" "1 -1 0"
+"hardness" "1.285"
+// brush 0
+{
+( -32 -384 128 ) ( -32 -208 0 ) ( -32 -208 128 ) __TB_empty 0 0 0 1 1
+( 176 -384 128 ) ( -32 -384 0 ) ( -32 -384 128 ) __TB_empty 0 0 0 1 1
+( 176 -208 0 ) ( -32 -384 0 ) ( 176 -384 0 ) __TB_empty 0 0 0 1 1
+( 176 -208 128 ) ( -32 -384 128 ) ( -32 -208 128 ) __TB_empty 0 0 0 1 1
+( 176 -208 128 ) ( -32 -208 0 ) ( 176 -208 0 ) __TB_empty 0 0 0 1 1
+( 736 -208 128 ) ( 736 -384 0 ) ( 736 -384 128 ) __TB_empty 0 0 0 1 1
 }
 }

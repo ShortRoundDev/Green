@@ -1,5 +1,5 @@
-newmtl carpet/carpetfloorblack
-map_Kd textures\carpet\carpetfloorblack.png
+newmtl __TB_empty
+map_Kd textures\__TB_empty.png
 
 newmtl carpet/carpetfloorred
 map_Kd textures\carpet\carpetfloorred.png
@@ -15,6 +15,12 @@ map_Kd textures\paint\plasterwallpink.png
 
 newmtl paint/plasterwallwhite
 map_Kd textures\paint\plasterwallwhite.png
+
+newmtl poly/medieval_blocks_03_diff_4k
+map_Kd textures\poly\medieval_blocks_03_diff_4k.jpg
+
+newmtl poly/weathered_brown_planks_diff_4k
+map_Kd textures\poly\weathered_brown_planks_diff_4k.jpg
 
 newmtl tile/tilefloor1
 map_Kd textures\tile\tilefloor1.png

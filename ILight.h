@@ -10,6 +10,8 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+constexpr u32 MAX_LIGHT = 16;
+
 struct LightSpaceBuffer
 {
     XMMATRIX lightSpace;
@@ -75,6 +77,9 @@ protected:
 
     ComPtr<ID3D11ShaderResourceView> m_depthMapSrv;
     ComPtr<ID3D11DepthStencilView> m_depthMapDsv;
+
+    ComPtr<ID3D11ShaderResourceView> m_blurredDepthMapSrv;
+    ComPtr<ID3D11RenderTargetView> m_blurredRtv;
 
     D3D11_VIEWPORT m_viewport;
 };

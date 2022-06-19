@@ -32,5 +32,5 @@ constexpr float TO_RAD = 0.0174532925f;
 
 #define MF3_TO_XM3(a) (XMFLOAT3(-(a).x, (a).z, -(a).y))
 #define MF3_TO_XM4(a) (XMFLOAT4(-(a).x, (a).z, -(a).y, 1.0f))
-#define MF4_TO_XM4(a) (XMFLOAT4(-(a).x, (a).z, -(a).y))
+#define MF4_TO_XM4(a) (XMFLOAT4(-(a).x, (a).z, -(a).y, 1.0f))
 #define MFCOL_TO_XM4(a) (XMFLOAT4((a).x / 255.0f, (a).y / 255.0f, (a).z / 255.0f, (a).w / 255.0f))

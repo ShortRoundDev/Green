@@ -17,7 +17,12 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-constexpr u32 SHADOW_RES = 128;
+constexpr u32 SHADOW_RES = 4096L;
+
+struct OrthoView
+{
+    XMMATRIX ortho;
+};
 
 struct KeyState
 {
@@ -47,6 +52,7 @@ public:
 
     void putTexture(std::string name, Texture* texture);
     Texture* getTexture(std::string name);
+    Texture* lazyLoadTexture(std::string name);
 
     ID3D11Device* getDevice();
     ID3D11DeviceContext* getContext();
@@ -73,7 +79,17 @@ public:
     bool getMouseLook();
     void setMouseLook(bool mouseLook);
 
+    XMFLOAT4 clearColor = { 4.0f / 255.0f, 3.0f / 255.0f, 30.0f / 255.0f, 1.0f };
+
     LRESULT CALLBACK messageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
+
+    void drawQuad();
+
+    XMMATRIX m_projection;
+    XMMATRIX m_ortho;
+    XMMATRIX m_world;
+    XMMATRIX m_view;
+    XMFLOAT3 m_camera;
 
 private:
     ///// WIN32 STUFF /////
@@ -96,11 +112,6 @@ private:
     i32 m_numerator;
     i32 m_denominator;
 
-    XMMATRIX m_projection;
-    XMMATRIX m_ortho;
-    XMMATRIX m_world;
-    XMMATRIX m_view;
-    XMFLOAT3 m_camera;
 
     ComPtr<ID3D11Buffer> m_gBufferBuffer;
 
@@ -128,6 +139,10 @@ private:
     bool initRasterizer();
     bool initShaders();
     bool initGlobalBuffer();
+    bool initQuad();
+
+    ComPtr<ID3D11Buffer> m_quadVertexBuffer;
+    ComPtr<ID3D11Buffer> m_quadIndexBuffer;
 
     f32 m_clientWidth;
     f32 m_clientHeight;
@@ -135,8 +150,6 @@ private:
     bool m_mouseLook;
 
     inline void inverseTranspose(const XMMATRIX& world, XMMATRIX& invWorld);
-
-    void drawLightMenu();
 };
 
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsh, WPARAM wParam, LPARAM lParam);

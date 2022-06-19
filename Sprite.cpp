@@ -30,7 +30,7 @@ Sprite::Sprite(std::string textureName, XMFLOAT3 position, XMFLOAT4 color) :
     }
 
     m_mesh = meshes[0];
-    m_texture = Graphics.getTexture(textureName);
+    m_texture = Graphics.lazyLoadTexture(textureName);
     m_mesh->setTexture(m_texture);
     m_shader = Graphics.getShader(L"Sprite");
 }

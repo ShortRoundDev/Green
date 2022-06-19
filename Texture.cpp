@@ -25,6 +25,8 @@ Texture::Texture(std::string path)
         return;
     }
 
+    Graphics.getContext()->GenerateMips(m_view.Get());
+
     result = m_resource->QueryInterface(IID_ID3D11Texture2D, (void**)m_texture.GetAddressOf());
     if (FAILED(result))
     {

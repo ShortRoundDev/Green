@@ -166,6 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="AmbientLightVolume.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameManager.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="ILight.cpp" />
     <ClCompile Include="IManager.cpp" />
+    <ClCompile Include="MeshEntity.cpp" />
     <ClCompile Include="MeshViewModel.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
@@ -192,9 +194,11 @@
     <ClCompile Include="SystemManager.cpp" />
     <ClCompile Include="SystemVars.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="WorldSpawn.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="AmbientLightVolume.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameManager.h" />
@@ -205,6 +209,7 @@
     <ClInclude Include="GVertex.h" />
     <ClInclude Include="ILight.h" />
     <ClInclude Include="IManager.h" />
+    <ClInclude Include="MeshEntity.h" />
     <ClInclude Include="MeshLightBuffer.h" />
     <ClInclude Include="MeshViewModel.h" />
     <ClInclude Include="Octree.h" />
@@ -224,8 +229,16 @@
     <ClInclude Include="SystemManager.h" />
     <ClInclude Include="SystemVars.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="WorldSpawn.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="GaussianPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</EntryPointName>
+    </FxCompile>
     <FxCompile Include="GlobalCBuffer.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
@@ -237,6 +250,13 @@
     </FxCompile>
     <FxCompile Include="PixelInput.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="PostProcessVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</EntryPointName>
     </FxCompile>
     <FxCompile Include="SpotLightShadowMapPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -312,6 +332,7 @@
     <None Include="Gamma.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
+    <None Include="Light.hlsli" />
     <None Include="LightUtil.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>

@@ -2,6 +2,8 @@
 #include "Pixel.hlsl"
 #include "Gamma.hlsl"
 
+#include "Light.hlsli"
+
 #include "DirectionalLight.hlsli"
 #include "PointLight.hlsli"
 #include "SpotLight.hlsli"
@@ -17,8 +19,9 @@ cbuffer Lights : register(b1)
 
 Texture2D albedo : register(t0);
 
-TextureCube pointShadowMaps[3] : register(t1);
-Texture2D spotShadowMaps[3] : register(t4);
+TextureCube pointShadowMaps[MAX_LIGHTS] : register(t1);
+Texture2D spotShadowMaps[MAX_LIGHTS] : register(SLOT_OFF(t, SPOTLIGHT_OFFSET));
+
 
 SamplerState sampleType : register(s0);
 SamplerComparisonState pointShadowSampler : register(s1);
@@ -27,7 +30,7 @@ SamplerState spotShadowSampler : register(s2);
 float4 Pixel(PixelInput input) : SV_TARGET
 {
     float3 texColor = albedo.Sample(sampleType, input.tex).rgb;
-    float3 ambient = sun.ambient.rgb * sun.ambient.a;
+    float3 ambient = (dot(normalize(sun.ambientDirection.xyz), input.normal) * 0.5f + 0.5f - sun.hardness) / (1.0f - sun.hardness) * (sun.ambientA.rgb * sun.ambientA.a) + (sun.ambientB.rgb * sun.ambientB.a);
     float3 sunLight = CalculateDirectionalColor(
         sun,
         texColor,

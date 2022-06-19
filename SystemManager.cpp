@@ -119,7 +119,7 @@ bool SystemManager::readFileHandle(HANDLE file, u8** buffer, size_t maxSize, siz
 
     *outSize = size;
 
-    *buffer = (u8*) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
+    *buffer = (u8*) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + 1);
 
     return ::ReadFile(file, *buffer, size, NULL, NULL);
 }

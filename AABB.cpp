@@ -73,3 +73,10 @@ bool AABB::collides(AABB* other)
         (m_min.y <= bMax.y && m_max.y >= bMin.y) &&
         (m_min.z <= bMax.z && m_max.z >= bMin.z);
 }
+
+bool AABB::contains(XMFLOAT3 point)
+{
+    return  point.x > m_min.x && point.x < m_max.x &&
+            point.y > m_min.y && point.y < m_max.y &&
+            point.z > m_min.z && point.z < m_max.z;
+}

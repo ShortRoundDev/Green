@@ -1,0 +1,16 @@
+newmtl __TB_empty
+newmtl paint/beige_wall_001_diff_4k
+map_Kd textures\paint\beige_wall_001_diff_4k.jpg
+
+newmtl paint/beige_wall_002_diff_4k
+map_Kd textures\paint\beige_wall_002_diff_4k.jpg
+
+newmtl paint/dk_gray_wall_001_diff_4k
+map_Kd textures\paint\dk_gray_wall_001_diff_4k.jpg
+
+newmtl paint/gray_wall_002_diff_4k
+map_Kd textures\paint\gray_wall_002_diff_4k.jpg
+
+newmtl wood/weathered_brown_planks_diff_4k
+map_Kd textures\wood\weathered_brown_planks_diff_4k.jpg
+
