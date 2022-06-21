@@ -25,16 +25,19 @@ AmbientLightVolume* AmbientLightVolume::Create(MF_MeshEntity* meshEntity)
         logger.err("No ambient A component!");
         return NULL;
     }
+
     if (!MF_GetAttributeVec4(entity, "ambientB", &ambientB))
     {
         logger.err("No ambient B component!");
         return NULL;
     }
+    
     if (!MF_GetAttributeVec3(entity, "ambientDirection", &ambientDirection))
     {
         logger.err("No ambient direction!");
         return NULL;
     }
+    
     if (!MF_GetAttributeFloat(entity, "hardness", &hardness))
     {
         logger.err("No Ambient hardness!");

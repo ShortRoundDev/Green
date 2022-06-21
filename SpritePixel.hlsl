@@ -3,7 +3,7 @@
 Texture2D albedo : register(t0);
 SamplerState sampleType : register(s0);
 
-cbuffer Sprite : register(b1)
+cbuffer Sprite : register(b2)
 {
     float4 pos;
     float4 color;

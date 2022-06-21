@@ -33,7 +33,6 @@ float3 SpecularDirectionalLight(
 
 float3 CalculateDirectionalColor(
     DirectionalLight light,
-    float3 textureColor,
     float3 camera,
     float3 position,
     float3 normal,

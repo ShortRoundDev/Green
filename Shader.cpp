@@ -307,8 +307,46 @@ bool Shader::initCBuffer(ID3D11Device* device, size_t bufferSize)
     {
         return false;
     }
+    // model buffer
+    ZeroMemory(&matrixBufferDesc, sizeof(D3D11_BUFFER_DESC));
+    matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    matrixBufferDesc.ByteWidth = (u32)(std::ceil((float)sizeof(ModelBuffer) / 16.0f) * 16.0f);
+    matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    matrixBufferDesc.MiscFlags = 0;
+    matrixBufferDesc.StructureByteStride = 0;
+
+    result = Graphics.getDevice()->CreateBuffer(&matrixBufferDesc, NULL, m_modelBuffer.GetAddressOf());
+    if (FAILED(result))
+    {
+        return false;
+    }
+
 
     return true;
+}
+
+bool Shader::bindModelMatrix(const XMMATRIX& modelTransform)
+{
+    ModelBuffer model;
+    model.modelTransform = XMMatrixTranspose(modelTransform);
+
+    D3D11_MAPPED_SUBRESOURCE mBufferResource;
+    HRESULT result = Graphics.getContext()->Map(m_modelBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mBufferResource);
+    if (FAILED(result))
+    {
+        logger.err("Failed to lock model buffer! Got 0x%x", result);
+        return false;
+    }
+
+    void* localBuffer = (void*)mBufferResource.pData;
+    CopyMemory(localBuffer, &model, sizeof(ModelBuffer));
+    Graphics.getContext()->Unmap(m_modelBuffer.Get(), 0);
+    ////////// END CRITICAL SECTION //////////
+
+    // Put CBuffer in correct register slot
+    Graphics.getContext()->VSSetConstantBuffers(1, 1, m_modelBuffer.GetAddressOf());
+    Graphics.getContext()->PSSetConstantBuffers(1, 1, m_modelBuffer.GetAddressOf());
 }
 
 bool Shader::bindCBuffer(void* cBuffer)
@@ -328,8 +366,8 @@ bool Shader::bindCBuffer(void* cBuffer)
     ////////// END CRITICAL SECTION //////////
 
     // Put CBuffer in correct register slot
-    Graphics.getContext()->VSSetConstantBuffers(1, 1, m_cBuffer.GetAddressOf());
-    Graphics.getContext()->PSSetConstantBuffers(1, 1, m_cBuffer.GetAddressOf());
+    Graphics.getContext()->VSSetConstantBuffers(2, 1, m_cBuffer.GetAddressOf());
+    Graphics.getContext()->PSSetConstantBuffers(2, 1, m_cBuffer.GetAddressOf());
 
     return true;
 }

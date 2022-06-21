@@ -25,3 +25,8 @@ struct GlobalBuffer
 
     float pointradius;
 };
+
+struct ModelBuffer
+{
+    XMMATRIX modelTransform;
+};

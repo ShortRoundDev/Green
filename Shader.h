@@ -4,10 +4,12 @@
 
 #include <d3d11.h>
 #include <wrl/client.h>
+#include "DirectXMath.h"
 
 #include <string>
 
 using namespace Microsoft::WRL;
+using namespace DirectX;
 
 class PointLight;
 
@@ -26,6 +28,8 @@ public:
     bool getStatus();
     bool bindCBuffer(void* cBuffer);
     bool bindPointLight(PointLight* pointLight);
+
+    bool bindModelMatrix(const XMMATRIX& modelTransform);
     void use();
 private:
 
@@ -41,6 +45,7 @@ private:
     ComPtr<ID3D11SamplerState> m_spotShadowSampler;
     ComPtr<ID3D11BlendState> m_blendState;
     ComPtr<ID3D11Buffer> m_cBuffer;
+    ComPtr<ID3D11Buffer> m_modelBuffer;
 
     bool initShaderCode(
         ID3D11Device* device,

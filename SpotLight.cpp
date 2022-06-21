@@ -118,9 +118,15 @@ SpotLight::SpotLight(
     XMVECTOR _pos = XMLoadFloat4(&pos);
     XMVECTOR _dir = XMLoadFloat4(&dir);
     _dir = XMVector3Normalize(_dir);
+    XMStoreFloat4(&dir, _dir); // store for up check
+
     XMVECTOR left;
     
-    XMFLOAT4 upFloat4 = { 0, 1.0f, 0, 1.0f };
+    XMFLOAT4 upFloat4 = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+    if (dir.y == -1.0f || dir.y == 1.0f)
+    {
+        upFloat4 = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+    }
     XMVECTOR up = XMLoadFloat4(&upFloat4);
 
     XMFLOAT3 rightDP;
@@ -224,6 +230,7 @@ void SpotLight::renderShadowMap(Scene* scene)
         m_pos
     };
     
+    m_shader->bindModelMatrix(XMMatrixIdentity());
     m_shader->bindCBuffer(&buffer);
 
     scene->renderMeshes();

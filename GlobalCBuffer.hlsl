@@ -16,4 +16,9 @@ cbuffer GlobalCBuffer : register(b0)
     float pointradius;
 }
 
+cbuffer ModelBuffer : register(b1)
+{
+    matrix modelTransform;
+}
+
 #endif

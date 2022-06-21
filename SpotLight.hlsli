@@ -53,7 +53,6 @@ float3 CalcSpotLight(
     float3 normal,
     float3 pixelPos,
     float4 camera,
-    float3 textureColor,
     SpotLight light
 )
 {
@@ -70,7 +69,13 @@ float3 CalcSpotLight(
     float intensity = clamp((theta - 0.91f) / epsilon, 0.0f, 1.0f);
     
     float diffMagnitude = diffuse(pixelPos, normal, light.pos.xyz, roughness);
-    float specularMagnitude = specular(camera.xyz - pixelPos, normal, light.pos.xyz, pixelPos, shininess);
+    float specularMagnitude = specular(
+        camera.xyz - pixelPos,
+        normal,
+        light.pos.xyz,
+        pixelPos,
+        shininess
+    );
 
     //dropoff
     float distance = dot(pixelPos, lightDir);
@@ -86,11 +91,11 @@ float3 CalcSpotLight(
     attenuation = max(attenuation, 0);
     
     //diffuse color
-    float3 diffuseLight = textureColor * (0.2f * diffMagnitude * (1.0f - attenuation)) * light.color.rgb;
+    float3 diffuseLight = ((0.5f * diffMagnitude * (1.0f - attenuation)) * light.color.rgb) * light.color.a;
     //specular color
-    float3 specularLight = textureColor * (0.5f * specularMagnitude * (1.0f - attenuation)) * light.color.rgb;
+    float3 specularLight = ((0.2f * specularMagnitude * (1.0f - attenuation)) * light.color.rgb) * light.color.a;
     
-    return (diffuseLight) + (specularLight);
+    return (diffuseLight + specularLight);
 }
 
 #endif

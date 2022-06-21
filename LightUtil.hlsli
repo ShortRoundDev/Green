@@ -9,7 +9,7 @@ float diffuse(
 )
 {
     float3 dir = normalize(lightPos - pixelPos);
-    float diffMag = max(dot(normal, dir), roughness);
+    float diffMag = max(dot(normal, dir), 0.0f);
 
     return diffMag;
 }
@@ -27,7 +27,7 @@ float specular(
     float3 dir = normalize(lightPos - pixelPos);
     float3 reflectDir = reflect(-dir, normal);
 
-    float specularMag = pow(max(dot(normalizedViewDir, reflectDir), 0.0), shininess);
+    float specularMag = pow(max(dot(normalizedViewDir, reflectDir), 0.0), 4);
     
     return specularMag;
 }

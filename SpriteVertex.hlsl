@@ -4,7 +4,7 @@
 
 #include "Pixel.hlsl"
 
-cbuffer Sprite : register(b1)
+cbuffer Sprite : register(b2)
 {
     float4 pos;
     float4 color;

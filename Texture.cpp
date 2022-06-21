@@ -11,7 +11,7 @@ using namespace DirectX;
 Texture::Texture(std::string path)
 {
     std::wstring winPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(path);
-    
+
     HRESULT result = CreateWICTextureFromFile(
         Graphics.getDevice(),
         winPath.c_str(),
@@ -35,6 +35,33 @@ Texture::Texture(std::string path)
     }
     m_status = true;
 }
+
+Texture::Texture(u8* data, size_t size)
+{
+    HRESULT result = CreateWICTextureFromMemory(
+        Graphics.getDevice(),
+        data,
+        size,
+        m_resource.GetAddressOf(),
+        m_view.GetAddressOf()
+        //size
+    );
+    if (FAILED(result))
+    {
+        m_status = false;
+        return;
+    }
+
+    Graphics.getContext()->GenerateMips(m_view.Get());
+    result = m_resource->QueryInterface(IID_ID3D11Texture2D, (void**)m_texture.GetAddressOf());
+    if (FAILED(result))
+    {
+        m_status = false;
+        return;
+    }
+    m_status = true;
+}
+
 
 Texture::~Texture()
 {

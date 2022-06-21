@@ -27,7 +27,6 @@ float3 CalcPointLight(
     float3 normal,
     float3 pixelPos,
     float4 camera,
-    float3 textureColor,
     PointLight light
 )
 {
@@ -45,9 +44,9 @@ float3 CalcPointLight(
     attenuation = max(attenuation, 0); // = 
 
     //diffuse color
-    float3 diffuseLight = textureColor * (0.2f * diffMagnitude) * attenuation * light.color.rgb;
+    float3 diffuseLight = (0.2f * diffMagnitude) * attenuation * light.color.rgb;
     //specular color
-    float3 specularLight = textureColor * (0.5f * specularMagnitude * attenuation) * light.color.rgb;
+    float3 specularLight = (0.5f * specularMagnitude * attenuation) * light.color.rgb;
     
     return (diffuseLight + specularLight);
 }

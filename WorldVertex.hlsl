@@ -7,12 +7,14 @@
 PixelInput Vertex(VertexInput input)
 {
     PixelInput output;
-    output.pixelPos = float4(input.position.xyz, 1.0);
+    output.position = float4(input.position.xyz, 1.0);
+    output.pixelPos = mul(output.position, modelTransform);
+    output.position = mul(output.position, modelTransform);
     output.normal = input.normal;
     output.tex = input.tex;
     
     output.position = PerspectiveTransform(
-		input.position,
+		output.position,
 		world,
 		view,
 		projection

@@ -13,6 +13,7 @@
 
 #include "MeshEntity.h"
 #include "AmbientLightVolume.h"
+#include "SimpleGameObject.h"
 
 static ::Logger logger = CreateLogger("Player");
 
@@ -81,6 +82,10 @@ Player::~Player()
 
 void Player::update()
 {
+    thread_local static AmbientLightVolume* myLight;
+    thread_local static f32 t = 0.0f;
+    thread_local static DirectionalLight targetLightFrame, prevLightFrame;
+
     setVectors();
     checkFloor();
 
@@ -101,12 +106,71 @@ void Player::update()
 
     XMStoreFloat3(&moveVec, moveVecV);
     auto move = PxVec3(moveVec.x, moveVec.y, moveVec.z);
-    logger.info("%f, %f, %f", move.x, move.y, move.x);
     m_lastPos = pos;
     m_controller->move(move, 0.0f, 0, filters);
     
     pos = m_controller->getPosition();
+    m_pos = XMFLOAT3(pos.x, pos.y, pos.z);
     Game.getScene()->getCamera()->setPosition(pos.x, pos.y + 16.0f, pos.z);
+
+    std::vector<MeshEntity*> lights;
+
+    Game.getScene()->getTree()->queryType(m_pos, lights, AMBIENT_LIGHT_VOLUME);
+    if (lights.size() > 0)
+    {
+        AmbientLightVolume* light = (AmbientLightVolume*)lights[0];
+
+        if (myLight != light)
+        {
+            logger.info("New ambient");
+            if (myLight == NULL)
+            {
+                prevLightFrame = light->getLightDesc();
+                targetLightFrame = light->getLightDesc();
+            }
+            else
+            {
+                prevLightFrame = targetLightFrame;
+                targetLightFrame = light->getLightDesc();
+            }
+
+            myLight = light;
+            t = 0.0f;
+        }
+
+        XMVECTOR    prevAmbientA = XMLoadFloat4(&prevLightFrame.ambientA), targetAmbientA = XMLoadFloat4(&targetLightFrame.ambientA),
+            prevAmbientB = XMLoadFloat4(&prevLightFrame.ambientB), targetAmbientB = XMLoadFloat4(&targetLightFrame.ambientB),
+            prevAmbientDirection = XMLoadFloat4(&prevLightFrame.ambientDirection),
+            targetAmbientDirection = XMLoadFloat4(&targetLightFrame.ambientDirection);
+
+        XMVECTOR lerpedAmbientAV = XMVectorLerp(prevAmbientA, targetAmbientA, t);
+        XMVECTOR lerpedAmbientBV = XMVectorLerp(prevAmbientB, targetAmbientB, t);
+        XMVECTOR lerpedAmbientDirV = XMVectorLerp(prevAmbientDirection, targetAmbientDirection, t);
+
+        XMFLOAT4 lerpedAmbientA, lerpedAmbientB, lerpedAmbientDir;
+        XMStoreFloat4(&lerpedAmbientA, lerpedAmbientAV);
+        XMStoreFloat4(&lerpedAmbientB, lerpedAmbientBV);
+        XMStoreFloat4(&lerpedAmbientDir, lerpedAmbientDirV);
+
+        f32 lerpedHardness = prevLightFrame.hardness + ((targetLightFrame.hardness - prevLightFrame.hardness) * t);
+
+        DirectionalLight lightDesc;
+        Graphics.m_gBuffer.sun.ambientA = lerpedAmbientA;
+        Graphics.m_gBuffer.sun.ambientB = lerpedAmbientB;
+        Graphics.m_gBuffer.sun.ambientDirection = lerpedAmbientDir;
+        Graphics.m_gBuffer.sun.hardness = lerpedHardness;
+    }
+
+    if (t < 1.0f)
+    {
+        t += 0.02f;
+        if (t > 1.0f)
+        {
+            t = 1.0f;
+        }
+    }
+
+
 }
 
 void Player::setVectors()
@@ -135,17 +199,40 @@ void Player::inputMove(XMVECTOR& moveVec)
 {
     if (Graphics.keyDown('W'))
     {
-        moveVec = XMVectorAdd(XMVectorScale(m_forward, 0.7f), moveVec);
+        moveVec = XMVectorAdd(XMVectorScale(m_forward, m_onGround ? 0.7f : 0.2f), moveVec);
     }
 
     if (Graphics.keyDown('S'))
     {
-        moveVec = XMVectorAdd(XMVectorScale(m_forward, -0.7f), moveVec);
+        moveVec = XMVectorAdd(XMVectorScale(m_forward, -(m_onGround ? 0.7f : 0.2f)), moveVec);
+    }
+
+    if (Graphics.keyDown('D'))
+    {
+        moveVec = XMVectorAdd(XMVectorScale(m_right, m_onGround ? 0.7f : 0.2f), moveVec);
+    }
+
+    if (Graphics.keyDown('A'))
+    {
+        moveVec = XMVectorAdd(XMVectorScale(m_right, -(m_onGround ? 0.7f : 0.2f)), moveVec);
     }
     
     if (m_onGround && Graphics.keyDownEdge(32))
     {
         moveVec = XMVectorAdd(m_jump, moveVec);
+    }
+
+    if (Graphics.keyDownEdge('E'))
+    {
+        Graphics.setMouseLook(!Graphics.getMouseLook());
+    }
+
+    if (Graphics.keyDownEdge('P'))
+    {
+        
+        auto foot = m_controller->getFootPosition();
+        auto newPos = XMFLOAT3(foot.x, foot.y, foot.z);
+        Game.getScene()->putGameObject(new SimpleGameObject(newPos));
     }
 
     XMFLOAT3 move3;
@@ -165,6 +252,7 @@ void Player::inputMove(XMVECTOR& moveVec)
     move3.z = moveXZ.y;
 
     moveVec = XMLoadFloat3(&move3);
+
     //moveVec = XMVectorClamp(moveVec, m_minMove, m_maxMove);
 }
 

@@ -225,11 +225,13 @@ void PointLight::renderShadowMap(Scene* scene)
         };
 
         m_shader->bindCBuffer(&buffer);
+        m_shader->bindModelMatrix(XMMatrixIdentity());
         scene->renderMeshes();
     }
     Graphics.resetRenderTarget();
     Graphics.resetViewport();
     Graphics.setShadowRasterizer(false);
+
 }
 
 void PointLight::bindShadowMap(u32 face)

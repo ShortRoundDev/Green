@@ -6,14 +6,15 @@
 
 #include <string>
 
+#include "GTypes.h"
+
 using namespace Microsoft::WRL;
-
-
 
 class Texture
 {
 public:
     Texture(std::string path);
+    Texture(u8* data, size_t size);
     ~Texture();
 
     void use();

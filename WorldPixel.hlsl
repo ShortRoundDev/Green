@@ -8,7 +8,7 @@
 #include "PointLight.hlsli"
 #include "SpotLight.hlsli"
 
-cbuffer Lights : register(b1)
+cbuffer Lights : register(b2)
 {
     uint nPointLights;
     PointLight pointLights[3];
@@ -33,7 +33,6 @@ float4 Pixel(PixelInput input) : SV_TARGET
     float3 ambient = (dot(normalize(sun.ambientDirection.xyz), input.normal) * 0.5f + 0.5f - sun.hardness) / (1.0f - sun.hardness) * (sun.ambientA.rgb * sun.ambientA.a) + (sun.ambientB.rgb * sun.ambientB.a);
     float3 sunLight = CalculateDirectionalColor(
         sun,
-        texColor,
         camera.xyz,
         input.pixelPos,
         input.normal,
@@ -69,7 +68,6 @@ float4 Pixel(PixelInput input) : SV_TARGET
                 input.normal,
                 input.pixelPos,
                 camera,
-                texColor,
                 pointLights[i]
             ) * (1.0f - pointShadow);
         //}
@@ -97,13 +95,12 @@ float4 Pixel(PixelInput input) : SV_TARGET
                 input.normal,
                 input.pixelPos,
                 camera,
-                texColor,
                 spotLights[j]
             ) * (1.0f - spotShadow);
         //}
     }
         
-    float3 lighting = texColor * (ambient + sunLight + (pointColor + spotColor));
+    float3 lighting = texColor * (ambient + sunLight + pointColor + spotColor);
     
     return float4(lighting, 1.0f);
 }

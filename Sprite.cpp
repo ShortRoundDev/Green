@@ -21,7 +21,7 @@ Sprite::Sprite(std::string textureName, XMFLOAT3 position, XMFLOAT4 color) :
     })
 {
     std::vector<Mesh*> meshes;
-    Mesh::createFromFile("Sprite.obj", meshes, &Game);
+    Mesh::createMapFromFile("Sprite.obj", meshes, &Game);
     if (meshes.size() == 0)
     {
         logger.err("Failed to load sprite obj!");
@@ -52,6 +52,7 @@ void Sprite::draw()
         return;
     }
     m_shader->use();
+    m_shader->bindModelMatrix(XMMatrixIdentity());
     m_shader->bindCBuffer(&m_cBuffer);
     m_mesh->draw();
 }

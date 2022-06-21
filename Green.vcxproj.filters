@@ -109,6 +109,12 @@
     <Filter Include="Resource Files\Shaders\Post">
       <UniqueIdentifier>{9943071f-2484-464d-a940-eb4f03c87f31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Managers\Graphics\Animation">
+      <UniqueIdentifier>{5b3d8090-5f37-4073-b409-0377181561cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Graphics\Animation">
+      <UniqueIdentifier>{0ff3d5c6-f659-45dd-99d7-e68c8490540a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -200,6 +206,18 @@
     </ClCompile>
     <ClCompile Include="AmbientLightVolume.cpp">
       <Filter>Source Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleGameObject.cpp">
+      <Filter>Source Files\Managers\Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationAction.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyFrame.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -301,6 +319,21 @@
     </ClInclude>
     <ClInclude Include="AmbientLightVolume.h">
       <Filter>Header Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleGameObject.h">
+      <Filter>Header Files\Managers\Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldEntityBuffer.h">
+      <Filter>Header Files\Managers\Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationAction.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyFrame.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

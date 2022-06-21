@@ -19,6 +19,7 @@
 #include "MeshEntity.h"
 #include "WorldSpawn.h"
 #include "AmbientLightVolume.h"
+#include "SimpleGameObject.h"
 
 #include <algorithm>
 
@@ -28,7 +29,7 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
 {
     std::vector<MeshEntity*> meshEntities;
     initFromMapFile(fileName, meshEntities);
-    if (!Mesh::createFromFile(
+    if (!Mesh::createMapFromFile(
         fileName + ".obj",
         m_brushes,
         gameManager,
@@ -49,7 +50,6 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
 
     m_camera = new Camera();
     m_shader = Graphics.getShader(L"World");
-
 
     std::transform(m_brushes.begin(), m_brushes.end(), std::back_inserter(meshEntities), [](Mesh* mesh) {
         return new WorldSpawn(mesh);
@@ -115,7 +115,6 @@ void Scene::initFromMapFile(std::string fileName, std::vector<MeshEntity*>& mesh
         logger.err("Failed to parse .map file! %s", errBuff);
         return;
     }
-
     MF_BrushDictionary dict;
     MF_GenerateMesh(&map, &dict);
 
@@ -131,6 +130,7 @@ void Scene::initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<Mesh
     {
         return;
     }
+
     for (int i = 0; i < map->totalItems; i++)
     {
         auto item = map->items[i];
@@ -167,7 +167,11 @@ void Scene::initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<Mesh
         std::string name = std::string(item->name);
         if (name.starts_with("AmbientLight"))
         {
-            meshEntities.push_back(AmbientLightVolume::Create(item));
+            auto light = AmbientLightVolume::Create(item);
+            if (light)
+            {
+                meshEntities.push_back(light);
+            }
         }
     }
 }
@@ -182,10 +186,17 @@ void Scene::draw()
     Graphics.setCameraPos(m_camera->getPosition());
 
     renderViewModels();
+
+    for (auto ent : m_gameObjects)
+    {
+        ent->draw();
+    }
+
     for (auto l : m_lights)
     {
         l->draw();
     }
+
 }
 
 void Scene::renderMeshes()
@@ -223,6 +234,11 @@ void Scene::update()
     {
         object->update();
     }
+    for (auto add : m_addGameObjects)
+    {
+        m_gameObjects.push_back(add);
+    }
+    m_addGameObjects.clear();
 }
 
 Camera* Scene::getCamera()
@@ -238,6 +254,11 @@ const std::vector<GameObject*>& Scene::getGameObjects()
 const std::vector<ILight*>& Scene::getLights()
 {
     return m_lights;
+}
+
+void Scene::putGameObject(GameObject* gameObject)
+{
+    m_addGameObjects.push_back(gameObject);
 }
 
 Octree* Scene::getTree()

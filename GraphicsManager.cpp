@@ -153,7 +153,6 @@ void GraphicsManager::draw()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
@@ -232,12 +231,16 @@ HWND GraphicsManager::getWindow()
 
 i32 GraphicsManager::diffX()
 {
-	return m_mouseX;
+	if(m_mouseLook)
+		return m_mouseX;
+	return 0.0f;
 }
 
 i32 GraphicsManager::diffY()
 {
-	return m_mouseY;
+	if(m_mouseLook)
+		return m_mouseY;
+	return 0.0f;
 }
 
 
@@ -295,6 +298,7 @@ void GraphicsManager::setMouseLook(bool mouseLook)
 	m_mouseLook = mouseLook;
 	m_mouse->SetMode(mouseLook ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
 	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+	::ShowCursor(!mouseLook);
 }
 
 void GraphicsManager::drawQuad()
@@ -700,7 +704,7 @@ bool GraphicsManager::initRasterizer()
 		return false;
 	}
 
-	rasterDesc.DepthBias = 100;
+	rasterDesc.DepthBias = 10;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.SlopeScaledDepthBias = 1.0f;
 	//rasterDesc.CullMode = D3D11_CULL_FRONT;
@@ -799,10 +803,10 @@ bool GraphicsManager::initGlobalBuffer()
 bool GraphicsManager::initQuad()
 {
 	GVertex quadVertexData[4] = {
-		{ {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f} },
-		{ {4096, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f} },
-		{ {4096, 4096, 0.0f}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f} },
-		{ {0.0f, 4096, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f} },
+		GVertex(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+		GVertex(4096, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f),
+		GVertex(4096, 4096, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f),
+		GVertex(0.0f, 4096, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f)
 	};
 
 	D3D11_BUFFER_DESC vertexDesc;

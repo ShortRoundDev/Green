@@ -64,6 +64,7 @@ void MeshViewModel::draw()
     }
     Graphics.getContext()->PSSetShaderResources(17, m_numSpotLights, m_spotLightBuffer);
 
+    m_shader->bindModelMatrix(XMMatrixIdentity());
     m_shader->bindCBuffer(&lightBuffer);
     m_mesh->draw();
 }

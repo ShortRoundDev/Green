@@ -37,18 +37,18 @@ public:
     }
 };
 
-bool Mesh::createFromFile(
+bool Mesh::createMapFromFile(
     std::string path,
     std::vector<Mesh*>& meshes,
     GameManager* gameManager
 )
 {
-    return createFromFile(
+    return createMapFromFile(
         path, meshes, gameManager, false
     );
 }
 
-bool Mesh::createFromFile(
+bool Mesh::createMapFromFile(
     std::string path,
     std::vector<Mesh*>& meshes,
     GameManager* gameManager,
@@ -108,7 +108,7 @@ bool Mesh::createFromFile(
                     v = mesh->mTextureCoords[0][k].y;
                 }
 
-                GVertex vertex = CreateVertex(
+                GVertex vertex = GVertex(
                     mesh->mVertices[k].x * (flipX ? -1.0f : 1.0f),
                     mesh->mVertices[k].y,
                     mesh->mVertices[k].z,
@@ -292,6 +292,132 @@ bool Mesh::createFromFile(
     return true;
 }
 
+bool Mesh::loadGltf(
+    std::string path,
+    Mesh** mesh,
+    GameManager* gameManager
+)
+{
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+    if (scene == NULL || gameManager == NULL || scene->mNumMeshes < 1)
+    {
+        return false;
+    }
+
+    *mesh = new Mesh;
+
+    auto root = scene->mRootNode;
+    auto node = scene->mRootNode;
+
+    //std::vector<PxVec3> nodeVertices;
+    //std::unordered_set<PxVec3, HashPxVector3, EqualsPxVector3> uniqueNodeVertices;
+
+    //For each MESH in SCENE
+    bool skip = false;
+    std::vector<GVertex> meshVertices = std::vector<GVertex>();
+    std::vector<u32> meshIndices = std::vector<u32>();
+
+    auto _mesh = scene->mMeshes[0];
+    //For each VERTEX in MESH
+    for (u32 i = 0; i < _mesh->mNumVertices; i++)
+    {
+        f32 u = 0.0f, v = 0.0f;
+        if (_mesh->mTextureCoords[0])
+        {
+            u = _mesh->mTextureCoords[0][i].x;
+            v = _mesh->mTextureCoords[0][i].y;
+        }
+
+        GVertex vertex = GVertex(
+            _mesh->mVertices[i].x,
+            _mesh->mVertices[i].y,
+            _mesh->mVertices[i].z,
+            _mesh->mNormals[i].x,
+            _mesh->mNormals[i].y,
+            _mesh->mNormals[i].z,
+            u,
+            v
+        );
+
+        meshVertices.push_back(vertex);
+    }
+
+    //For each FACE in MESH
+    for (u32 i = 0; i < _mesh->mNumFaces; i++)
+    {
+        auto face = _mesh->mFaces[i];
+
+        //For each INDEX in FACE
+        for (u32 j = 0; j < face.mNumIndices; j++)
+        {
+            meshIndices.push_back(face.mIndices[j]);
+        }
+    }
+
+    //Get texture from material list on mesh
+    Texture* texture = NULL;
+    int texIdx = 0;
+    if (_mesh->mMaterialIndex >= 0)
+    {
+        aiMaterial* material = scene->mMaterials[_mesh->mMaterialIndex];
+        logger.info("\t%s", material->GetName().C_Str());
+        auto diffuseCount = material->GetTextureCount(aiTextureType_DIFFUSE);
+        if (diffuseCount > 0)
+        {
+            aiString str;
+            material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+
+            if (auto _texture = scene->GetEmbeddedTexture(str.C_Str()))
+            {
+                logger.info("Embedded! %dx%d", _texture->mWidth, _texture->mHeight);
+                texture = new Texture((u8*)_texture->pcData, _texture->mWidth);
+            }
+            else
+            {
+                texture = Graphics.lazyLoadTexture(std::string(str.C_Str()));
+            }
+        }
+    }
+
+    // Create MESH for Rendering
+    *mesh = new Mesh();
+    (*mesh)->initialize(
+        meshVertices,
+        meshVertices.size(),
+        meshIndices,
+        meshIndices.size(),
+        texture
+    );
+    return true;
+
+    /*PxVec3* convexVertices = new PxVec3[nodeVertices.size()];
+    CopyMemory(convexVertices, nodeVertices.data(), nodeVertices.size() * sizeof(PxVec3));
+
+    PxConvexMeshDesc meshDesc;
+    meshDesc.points.count = nodeVertices.size();
+    meshDesc.points.stride = sizeof(PxVec3);
+    meshDesc.points.data = convexVertices;
+    meshDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+
+    PxDefaultMemoryOutputStream buffer;
+    PxConvexMeshCookingResult::Enum result;
+    if (!gameManager->getCooking()->cookConvexMesh(meshDesc, buffer, &result))
+    {
+        logger.err("Failed to cook convex mesh!");
+        return false;
+    }
+    PxDefaultMemoryInputData input(buffer.getData(), buffer.getSize());
+    auto mesh = gameManager->getPhysics()->createConvexMesh(input);
+    auto actor = gameManager->getPhysics()->createRigidStatic(PxTransform(PxVec3(0, 0, 0)));
+    auto material = gameManager->getPhysics()->createMaterial(0.5f, 0.5f, 0.6f);
+
+    auto shape = PxRigidActorExt::createExclusiveShape(*actor, PxConvexMeshGeometry(mesh), *material);
+
+    gameManager->getPxScene()->addActor(*actor);*/
+}
+
 void Mesh::draw()
 {
     if (m_texture != NULL)
@@ -332,7 +458,6 @@ AABB Mesh::getBox()
 
 void Mesh::addLight(ILight* light)
 {
-
     m_lights.push_back(light);
 }
 
@@ -419,6 +544,37 @@ MeshViewModel* Mesh::getViewModel()
     });
 
     return new MeshViewModel(this, spotLightsSorted, pointLightsSorted);
+}
+
+void Mesh::getTransforms(const std::string& name, f32 timePos, std::vector<XMMATRIX>& transforms)
+{
+    u32 numBones = m_boneOffsets.size();
+    std::vector<XMMATRIX> toParentTransforms(numBones);
+
+    auto clip = m_animations.find(name);
+    clip->second.interpolate(timePos, toParentTransforms);
+
+    std::vector<XMMATRIX> toRootTransforms(numBones);
+
+    toRootTransforms[0] = toParentTransforms[0];
+
+    for (u32 i = 1; i < numBones; i++)
+    {
+        XMMATRIX toParent = toParentTransforms[i];
+        int parentIndex = m_boneHierarchy[i];
+
+        XMMATRIX parentToRoot = toRootTransforms[parentIndex];
+        XMMATRIX toRoot = XMMatrixMultiply(toParent, parentToRoot);
+
+        toRootTransforms[i] = toRoot;
+    }
+
+    for (u32 i = 0; i < numBones; i++)
+    {
+        XMMATRIX offset = m_boneOffsets[i];
+        XMMATRIX toRoot = toRootTransforms[i];
+        transforms[i] = XMMatrixMultiply(offset, toRoot);
+    }
 }
 
 Texture* Mesh::getTexture()

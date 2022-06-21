@@ -37,6 +37,7 @@ public:
 
     const std::vector<GameObject*>& getGameObjects();
     const std::vector<ILight*>& getLights();
+    void putGameObject(GameObject* gameObject);
 
     bool lights = true;
 
@@ -51,6 +52,7 @@ private:
 
     //std::vector<btRigidBody*> m_walls;
     std::vector<GameObject*> m_gameObjects;
+    std::vector<GameObject*> m_addGameObjects;
 
     Octree* m_tree;
 

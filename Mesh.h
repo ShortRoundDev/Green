@@ -3,6 +3,7 @@
 #include "GTypes.h"
 #include "GVertex.h"
 #include "AABB.h"
+#include "AnimationAction.h"
 
 #include <d3d11.h>
 #include <wrl/client.h>
@@ -11,6 +12,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 using namespace Microsoft::WRL;
 using namespace physx;
@@ -25,18 +27,25 @@ class Mesh
 {
 public:
 
-    static bool createFromFile(
+    static bool createMapFromFile(
         std::string path,
         std::vector<Mesh*>& meshes,
         GameManager* gameManager,
         bool flipX
     );
 
-    static bool createFromFile(
+    static bool loadGltf(
+        std::string path,
+        Mesh** mesh,
+        GameManager* gameManager
+    );
+
+    static bool createMapFromFile(
         std::string path,
         std::vector<Mesh*>& meshes,
         GameManager* gameManager
     );
+
     void draw();
 
     Mesh(AABB aabb);
@@ -47,6 +56,7 @@ public:
     void addLight(ILight* light);
 
     MeshViewModel* getViewModel();
+    void getTransforms(const std::string& name, f32 timePos, std::vector<XMMATRIX>& transforms);
 
     Texture* getTexture();
     void setTexture(Texture* texture);
@@ -72,6 +82,10 @@ private:
 
     std::vector<GVertex> m_vertices;
     std::vector<ILight*> m_lights;
+
+    std::vector<u32> m_boneHierarchy;
+    std::vector<XMMATRIX> m_boneOffsets;
+    std::map<std::string, AnimationAction> m_animations;
 
     void initAABB(const std::vector<GVertex>& vertices);
     void concatenateVertices(std::vector<GVertex>& out, const std::vector<GVertex>& a, const std::vector<GVertex>& b);
