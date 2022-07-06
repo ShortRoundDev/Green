@@ -8,6 +8,8 @@
 #include "SpotLight.h"
 #include "PointLight.h"
 #include "MeshViewModel.h"
+#include "NavMesh.h"
+#include "Util.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -20,7 +22,7 @@ static ::Logger logger = CreateLogger("Mesh");
 struct HashPxVector3
 {
 public:
-    size_t operator()(const PxVec3& vector) const
+    sz operator()(const PxVec3& vector) const
     {
         return (std::bit_cast<u32>(vector.x) * 73856093) ^
                (std::bit_cast<u32>(vector.y) * 19349663) ^
@@ -40,17 +42,99 @@ public:
 bool Mesh::createMapFromFile(
     std::string path,
     std::vector<Mesh*>& meshes,
+    NavMesh* navMesh,
     GameManager* gameManager
 )
 {
     return createMapFromFile(
-        path, meshes, gameManager, false
+        path, meshes, navMesh, gameManager, false
+    );
+}
+
+bool Mesh::createBbox(
+    AABB aabb,
+    Texture* texture,
+    Mesh*& mesh
+)
+{
+    auto min = aabb.getMin();
+    auto max = aabb.getMax();
+
+    f32
+        x1 = min.x,
+        y1 = min.y,
+        z1 = min.z;
+
+    f32
+        x2 = max.x,// -((max.x - min.x) / 2.0f),
+        y2 = max.y,// -((max.y - min.y) / 2.0f),
+        z2 = max.z;// -((max.z - min.z) / 2.0f);
+
+    std::vector<GVertex> vertices = std::vector<GVertex>({
+        GVertex(x1, y1, z1, 0, 0, 0, 0, 0), // min
+        GVertex(x1, y2, z1, 0, 0, 0, 0, 0),
+        GVertex(x2, y2, z1, 0, 0, 0, 0, 0),
+        GVertex(x2, y1, z1, 0, 0, 0, 0, 0),
+        GVertex(x2, y2, z2, 0, 0, 0, 0, 0), // max
+        GVertex(x2, y1, z2, 0, 0, 0, 0, 0),
+        GVertex(x1, y1, z2, 0, 0, 0, 0, 0),
+        GVertex(x1, y2, z2, 0, 0, 0, 0, 0),
+    });
+
+    std::vector<u32> indices = std::vector<u32>({
+        //front
+        0, 1, 2,
+        0, 2, 3,
+        //right
+        3, 2, 4,
+        3, 4, 5,
+        //back
+        4, 6, 5,
+        4, 7, 6,
+        //left
+        7, 1, 6,
+        1, 0, 6,
+        //top
+        1, 7, 2,
+        7, 4, 2,
+        //bottom
+        6, 3, 5,
+        6, 0, 3
+    });
+
+    return createFromMemory(
+        vertices,
+        vertices.size(),
+        indices,
+        indices.size(),
+        texture,
+        mesh
+    );
+}
+
+bool Mesh::createFromMemory(
+    std::vector<GVertex>& vertices,
+    sz vertCount,
+    std::vector<u32>& indices,
+    sz indexCount,
+    Texture* texture,
+    Mesh*& mesh
+)
+{
+    mesh = new Mesh;
+    return mesh->initialize(
+        vertices,
+        vertCount,
+        indices,
+        indexCount,
+        texture
     );
 }
 
 bool Mesh::createMapFromFile(
     std::string path,
     std::vector<Mesh*>& meshes,
+    NavMesh* navMesh,
     GameManager* gameManager,
     bool flipX
 )
@@ -135,23 +219,11 @@ bool Mesh::createMapFromFile(
                 auto face = mesh->mFaces[k];
 
                 //For each INDEX in FACE
-                //PolygonVertexArray::PolygonFace nodeFace = PolygonVertexArray::PolygonFace();
-                //nodeFace.indexBase = faceIndexOffset;
-                //nodeFace.nbVertices = face.mNumIndices;
-                //nodeFaces.push_back(nodeFace);
                 for (u32 l = 0; l < face.mNumIndices; l++)
                 {
                     meshIndices.push_back(face.mIndices[l]);
-
-                    //remap node index
-                   // auto uniquePos = meshVertices[face.mIndices[l]];
-                    //auto vertexIterator = std::find_if(nodeVertices.begin(), nodeVertices.end(), [uniquePos](const XMFLOAT3& a) {
-                    //    return a.x == uniquePos.pos.x && a.y == uniquePos.pos.y && a.z == uniquePos.pos.z;
-                    //});
-                    //auto index = std::distance(nodeVertices.begin(), vertexIterator);
-                    //nodeIndices.push_back(index);
+                   
                 }
-                //faceIndexOffset = nodeIndices.size();
             }
 
             //Get texture from material list on mesh
@@ -209,86 +281,17 @@ bool Mesh::createMapFromFile(
         auto material = gameManager->getPhysics()->createMaterial(0.5f, 0.5f, 0.6f);
 
         auto shape = PxRigidActorExt::createExclusiveShape(*actor, PxConvexMeshGeometry(mesh), *material);
-        
+
         gameManager->getPxScene()->addActor(*actor);
     Skip:
         continue;
-        //physicsMeshes.push_back(gameManager->getPhysics()->createConvexMesh(input));
-        
+    }    
 
-
-        //PxRigidStatic* st = gameManager->getPhysics()->createRigidStatic(PxTransform(PxVec3(0, 0, 0));
-        //PxRigidActorExt::createExclusiveShape(*st, PxConvexMeshGeometry(mesh), nullptr);
-        
-
-        //physicsMeshes.push_back(new btConvexHullShape((btScalar*)vertices, nodeVertices.size(), sizeof(btVector3)));
-        //PolyhedronMesh* nodeMesh = gameManager->getPhysicsCommon()->createPolyhedronMesh(nodeVertexArray);
-        //physicsMeshes.push_back(gameManager->getPhysicsCommon()->createConvexMeshShape(nodeMesh));
+    if (navMesh)
+    {
+        GenerateNavMesh(&Game, navMesh, meshes);
     }
 
-
-    /*for (u32 i = 0; i < scene->mNumMeshes; i++)
-    {
-        auto mesh = scene->mMeshes[i];
-        
-        size_t vertCount = mesh->mNumVertices;
-        std::vector<GVertex> vertices = std::vector<GVertex>(vertCount);
-        std::vector<u32> indices = std::vector<u32>();
-       
-        for (u32 j = 0;  j< vertCount; j++)
-        {
-            f32 u = 0.0f, v = 0.0f;
-            if (mesh->mTextureCoords[0])
-            {
-                u = mesh->mTextureCoords[0][j].x;
-                v = mesh->mTextureCoords[0][j].y;
-            }
-            vertices[j] = CreateVertex(
-                mesh->mVertices[j].x,
-                mesh->mVertices[j].y,
-                mesh->mVertices[j].z,
-                mesh->mNormals[j].x,
-                mesh->mNormals[j].y,
-                mesh->mNormals[j].z,
-                -u,
-                v
-            );
-        }
-
-        size_t indexCount = 0;
-        for (u32 j = 0; j < mesh->mNumFaces; j++)
-        {
-            auto face = mesh->mFaces[j];
-            indexCount += face.mNumIndices;
-            for (u32 k = 0; k < face.mNumIndices; k++)
-            {
-                indices.push_back(face.mIndices[k]);
-            }
-        }
-
-        Texture* texture = NULL;
-        int texIdx = 0;
-        if (mesh->mMaterialIndex >= 0)
-        {
-            aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-            auto diffuseCount = material->GetTextureCount(aiTextureType_DIFFUSE);
-            if (diffuseCount > 0)
-            {
-                aiString str;
-                material->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-
-                texture = Graphics.getTexture(std::string(str.C_Str()));
-            }
-        }
-
-        (*meshes)[i].initialize(
-            vertices,
-            vertCount,
-            indices,
-            indexCount,
-            texture
-        );
-    }*/
     return true;
 }
 
@@ -435,7 +438,9 @@ void Mesh::draw()
     context->DrawIndexed(m_indexCount, 0, 0);
 }
 
-Mesh::Mesh()
+Mesh::Mesh():
+    m_indexBuffer(nullptr),
+    m_vertexBuffer(nullptr)
 {
 
 }
@@ -589,12 +594,13 @@ void Mesh::setTexture(Texture* texture)
 
 bool Mesh::initialize(
     const std::vector<GVertex>& vertices,
-    size_t vertCount,
+    sz vertCount,
     const std::vector<u32>& indices,
-    size_t indexCount,
+    sz indexCount,
     Texture* texture
 )
 {
+    m_indices = indices;
     m_vertices = vertices;
     m_texture = texture;
 
@@ -627,7 +633,7 @@ bool Mesh::initialize(
 
     D3D11_BUFFER_DESC indexDesc;
     indexDesc.Usage = D3D11_USAGE_DEFAULT;
-    indexDesc.ByteWidth = (u32)(sizeof(u64) * indexCount);
+    indexDesc.ByteWidth = (u32)(sizeof(u32) * indexCount);
     indexDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
     indexDesc.CPUAccessFlags = 0;
     indexDesc.MiscFlags = 0;
@@ -695,7 +701,7 @@ void Mesh::concatenateIndices(
     const std::vector<u32>& b
 )
 {
-    size_t initialSize = out.size();
+    sz initialSize = out.size();
     for (u32 i = 0; i < a.size(); i++)
     {
         out.push_back(a[i] + initialSize);
@@ -705,4 +711,62 @@ void Mesh::concatenateIndices(
     {
         out.push_back(b[i] + initialSize);
     }
+}
+
+bool Mesh::GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh*> meshes)
+{
+    const static f32 INTERVAL = 64.0f;
+    XMFLOAT3 _up = XMFLOAT3(0, 1.0f, 0);
+    XMVECTOR up = XMLoadFloat3(&_up);
+
+    auto scene = game->getPxScene();
+
+    for (const auto& mesh : meshes)
+    {
+        for (u32 i = 0; i < mesh->m_indexCount; i += 3)
+        {
+            XMVECTOR normal = XMLoadFloat3(&mesh->m_vertices[mesh->m_indices[i]].normal);
+            f32 cosTheta = XMVectorGetX(XMVector3Dot(normal, up));
+            if (cosTheta >= 0.7f)
+            {
+                std::vector<GVertex> triangle({
+                    mesh->m_vertices[mesh->m_indices[i]],
+                    mesh->m_vertices[mesh->m_indices[i + 1]],
+                    mesh->m_vertices[mesh->m_indices[i + 2]]
+                });
+
+                auto bbox = AABB(triangle);
+
+                for (int x = ((i32)(bbox.getMin().x / INTERVAL)) * (int)INTERVAL; x < ((i32)(bbox.getMax().x / INTERVAL)) * (int)INTERVAL; x += (int)INTERVAL)
+                {
+                    for (int z = ((i32)(bbox.getMin().z / INTERVAL)) * (int)INTERVAL; z < ((i32)(bbox.getMax().z / INTERVAL)) * (int)INTERVAL; z += (int)INTERVAL)
+                    {
+                        auto origin = PxVec3((f32)x, bbox.getMax().y + 16.0f, (f32)z);
+                        auto dir = PxVec3(0.0f, -1.0f, 0.0f);
+                        PxReal dist = 1000.0f;
+                        PxRaycastBuffer hit;
+
+                        XMFLOAT3 pos(0.0f, 0.0f, 0.0f);
+
+                        if (scene->raycast(origin, dir, dist, hit))
+                        {
+                            if (hit.block.position.y == bbox.getMax().y + 16.0f)
+                            {
+                                logger.warn("IN WALL!");
+                                continue;
+                            }
+                            pos.x = hit.block.position.x;
+                            pos.y = hit.block.position.y;
+                            pos.z = hit.block.position.z;
+                            navMesh->addNode(pos);
+                        }
+
+                        logger.info("Node: %f, %f, %f", pos.x, pos.y, pos.z);
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
 }

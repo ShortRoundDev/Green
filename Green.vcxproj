@@ -170,6 +170,7 @@
     <ClCompile Include="AnimationAction.cpp" />
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DebugMarkerEntity.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameWorldObject.cpp" />
@@ -179,6 +180,8 @@
     <ClCompile Include="KeyFrame.cpp" />
     <ClCompile Include="MeshEntity.cpp" />
     <ClCompile Include="MeshViewModel.cpp" />
+    <ClCompile Include="NavMesh.cpp" />
+    <ClCompile Include="NavNode.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="OctreeNode.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -198,6 +201,7 @@
     <ClCompile Include="SystemManager.cpp" />
     <ClCompile Include="SystemVars.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Util.cpp" />
     <ClCompile Include="WorldSpawn.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +210,7 @@
     <ClInclude Include="AnimationAction.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="DebugMarkerEntity.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameWorldObject.h" />
@@ -219,6 +224,8 @@
     <ClInclude Include="MeshEntity.h" />
     <ClInclude Include="MeshLightBuffer.h" />
     <ClInclude Include="MeshViewModel.h" />
+    <ClInclude Include="NavMesh.h" />
+    <ClInclude Include="NavNode.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="OctreeNode.h" />
     <ClInclude Include="Player.h" />
@@ -237,6 +244,8 @@
     <ClInclude Include="SystemManager.h" />
     <ClInclude Include="SystemVars.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Util.h" />
+    <ClInclude Include="WireframeDebugColor.h" />
     <ClInclude Include="WorldEntityBuffer.h" />
     <ClInclude Include="WorldSpawn.h" />
   </ItemGroup>
@@ -250,6 +259,20 @@
     </FxCompile>
     <FxCompile Include="GlobalCBuffer.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="OctreePixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="OctreeVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</EntryPointName>
     </FxCompile>
     <FxCompile Include="Perspective.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

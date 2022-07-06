@@ -14,7 +14,7 @@ class Texture
 {
 public:
     Texture(std::string path);
-    Texture(u8* data, size_t size);
+    Texture(u8* data, sz size);
     ~Texture();
 
     void use();

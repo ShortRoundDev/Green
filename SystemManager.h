@@ -20,10 +20,10 @@ public:
     bool isRunning();
     void setRunning(bool running);
 
-    bool readFile(std::string fileName, u8** buffer, size_t maxSize, size_t* outSize);
-    bool readFile(const char* fileName, u8** buffer, size_t maxSize, size_t* outSize);
-    bool readFile(std::wstring fileName, u8** buffer, size_t maxSize, size_t* outSize);
-    bool readFile(const wchar_t* fileName, u8** buffer, size_t maxSize, size_t* outSize);
+    bool readFile(std::string fileName, u8** buffer, sz maxSize, sz* outSize);
+    bool readFile(const char* fileName, u8** buffer, sz maxSize, sz* outSize);
+    bool readFile(std::wstring fileName, u8** buffer, sz maxSize, sz* outSize);
+    bool readFile(const wchar_t* fileName, u8** buffer, sz maxSize, sz* outSize);
 private:
     std::wstring    m_configFilePath = L"Default.cfg";
     SystemVars      m_systemVars;
@@ -34,7 +34,7 @@ private:
     bool loadCfg(std::wstring filename);
     bool parseCfgLine(wchar_t* wBuffer, std::wstring& key, std::wstring& value);
     bool parseParameters();
-    bool readFileHandle(HANDLE file, u8** buffer, size_t maxSize, size_t* outSize);
+    bool readFileHandle(HANDLE file, u8** buffer, sz maxSize, sz* outSize);
 
 
 

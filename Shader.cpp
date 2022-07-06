@@ -19,12 +19,12 @@ Shader::Shader(
     ID3D11Device* device,
     std::wstring vertexPath,
     std::wstring pixelPath,
-    size_t bufferSize
+    sz bufferSize
 ):
     m_bufferSize(bufferSize)
 {
     u8* byteCode;
-    size_t byteCodeLength;
+    sz byteCodeLength;
     m_status = initShaderCode(device, vertexPath, pixelPath, &byteCode, &byteCodeLength);
     if (!m_status)
     {
@@ -87,7 +87,7 @@ bool Shader::initShaderCode(
     std::wstring vertexPath,
     std::wstring pixelPath,
     u8** vertexByteCode,
-    size_t* vertexByteCodeLength
+    sz* vertexByteCodeLength
 )
 {
     m_status = false;
@@ -117,7 +117,7 @@ bool Shader::initShaderCode(
     }
 
     u8* buffer;
-    size_t size = 0;
+    sz size = 0;
 
     if (!System.readFile(pixelPath.c_str(), &buffer, 0, &size))
     {
@@ -146,7 +146,7 @@ bool Shader::initShaderCode(
     return true;
 }
 
-bool Shader::initLayout(ID3D11Device* device, u8* byteCode, size_t byteCodeLength)
+bool Shader::initLayout(ID3D11Device* device, u8* byteCode, sz byteCodeLength)
 {
     D3D11_INPUT_ELEMENT_DESC polygonLayout[3];
     ZeroMemory(polygonLayout, sizeof(D3D11_INPUT_ELEMENT_DESC) * 3);
@@ -219,7 +219,7 @@ bool Shader::initSampler(ID3D11Device* device)
     }
 
     ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
-    samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
     samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
@@ -291,7 +291,7 @@ bool Shader::initBlendState(ID3D11Device* device)
     return true;
 }
 
-bool Shader::initCBuffer(ID3D11Device* device, size_t bufferSize)
+bool Shader::initCBuffer(ID3D11Device* device, sz bufferSize)
 {
     D3D11_BUFFER_DESC matrixBufferDesc;
     ZeroMemory(&matrixBufferDesc, sizeof(D3D11_BUFFER_DESC));

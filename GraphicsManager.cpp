@@ -9,6 +9,7 @@
 #include "Sprite.h"
 
 #include "MeshLightBuffer.h"
+#include "WireframeDebugColor.h"
 
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
@@ -33,10 +34,10 @@ bool GraphicsManager::start()
 	}
 
 	m_gBuffer.pointradius = 0.0001f;
-	m_gBuffer.sun.ambientA = { 192 / 255.0f, 118 / 255.0f, 118 / 255.0f, 0.2f };
-	m_gBuffer.sun.ambientB = { 192 / 255.0f, 118 / 255.0f, 118 / 255.0f, 0.2f };
-	m_gBuffer.sun.hardness = 3.0f;
-	m_gBuffer.sun.ambientDirection = { 0, -1.0f, 0.0f, 0.0f };
+	m_gBuffer.sun.ambientA = { 21 / 255.0f, 9 / 255.0f, 3/ 255.0f, 72 / 255.0f };
+	m_gBuffer.sun.ambientB = { 214 / 255.0f, 122 / 255.0f, 65 / 255.0f, 8 / 255.0f };
+	m_gBuffer.sun.hardness = 1.3f;
+	m_gBuffer.sun.ambientDirection = { 1, 0, -0.4, 0.0f };
 	m_gBuffer.sun.color = { 0.196f, 0.223f, 0.286f, 0.0f };
 	m_gBuffer.sun.direction = { 1.0f, 0.0f, -1.0f, 1.0f };
 
@@ -233,16 +234,15 @@ i32 GraphicsManager::diffX()
 {
 	if(m_mouseLook)
 		return m_mouseX;
-	return 0.0f;
+	return 0;
 }
 
 i32 GraphicsManager::diffY()
 {
 	if(m_mouseLook)
 		return m_mouseY;
-	return 0.0f;
+	return 0;
 }
-
 
 void GraphicsManager::setViewMatrix(const XMMATRIX& view)
 {
@@ -275,6 +275,18 @@ void GraphicsManager::setShadowRasterizer(bool shadowRasterizer)
 	{
 		m_deviceContext->RSSetState(m_sceneRasterizer.Get());
 
+	}
+}
+
+void GraphicsManager::setWireframe(bool on)
+{
+	if (on)
+	{
+		m_deviceContext->RSSetState(m_wireRasterizer.Get());
+	}
+	else
+	{
+		m_deviceContext->RSSetState(m_sceneRasterizer.Get());
 	}
 }
 
@@ -558,8 +570,8 @@ bool GraphicsManager::initSwapchain()
 	DXGI_SWAP_CHAIN_DESC swapchainDesc = { };
 	ZeroMemory(&swapchainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 	swapchainDesc.BufferCount = 1;
-	swapchainDesc.BufferDesc.Width = m_clientWidth;
-	swapchainDesc.BufferDesc.Height = m_clientHeight;
+	swapchainDesc.BufferDesc.Width = static_cast<u32>(m_clientWidth);
+	swapchainDesc.BufferDesc.Height = static_cast<u32>(m_clientHeight);
 	swapchainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapchainDesc.BufferDesc.RefreshRate.Numerator = m_numerator; // or 0 if !vsync
 	swapchainDesc.BufferDesc.RefreshRate.Denominator = m_denominator; // or 1 if !vsync
@@ -625,8 +637,8 @@ bool GraphicsManager::initDepthStencilBuffer()
 	auto vars = System.getVars();
 	D3D11_TEXTURE2D_DESC depthBufferDesc = { };
 	ZeroMemory(&depthBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	depthBufferDesc.Width = m_clientWidth;
-	depthBufferDesc.Height = m_clientHeight;
+	depthBufferDesc.Width = static_cast<u32>(m_clientWidth);
+	depthBufferDesc.Height = static_cast<u32>(m_clientHeight);
 	depthBufferDesc.MipLevels = 1;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -704,10 +716,20 @@ bool GraphicsManager::initRasterizer()
 		return false;
 	}
 
-	rasterDesc.DepthBias = 10;
-	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.SlopeScaledDepthBias = 1.0f;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+
+	if (FAILED(m_device->CreateRasterizerState(&rasterDesc, m_wireRasterizer.GetAddressOf())))
+	{
+		return false;
+	}
+
+
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 8.0f;
+	rasterDesc.SlopeScaledDepthBias = 8.0f;
 	//rasterDesc.CullMode = D3D11_CULL_FRONT;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
 
 	if (FAILED(m_device->CreateRasterizerState(&rasterDesc, m_shadowMapRasterizer.GetAddressOf())))
 	{
@@ -767,6 +789,13 @@ bool GraphicsManager::initShaders()
 		L"SpriteVertex.cso",
 		L"SpritePixel.cso",
 		sizeof(SpriteBuffer)
+	));
+
+	putShader(L"Octree", new Shader(
+		m_device.Get(),
+		L"OctreeVertex.cso",
+		L"OctreePixel.cso",
+		sizeof(WireframeDebugColor)
 	));
 
 	putShader(L"DepthBlur", new Shader(
@@ -853,6 +882,7 @@ bool GraphicsManager::initQuad()
 		logger.err("Failed to create index buffer!");
 		return false;
 	}
+	return true;
 }
 
 

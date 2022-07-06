@@ -2,49 +2,69 @@
 
 #include "GameObject.h"
 
+#include "GlobalBuffer.h"
+
 #include "PxPhysicsAPI.h"
+
+#include "robin_hood.h"
 
 using namespace physx;
 
 struct MF_Entity;
 
+class OctreeNode;
+class AmbientLightVolume;
+
 class Player : public GameObject
 {
 public:
+    /***** CREATE ENTITY *****/
     static Player* Create(MF_Entity* entity);
 
+    /***** CTOR/DTOR *****/
     Player(XMFLOAT3 pos);
     ~Player();
 
+    /***** UPDATE/DRAW *****/
     virtual void update();
-    virtual void _update();
     virtual void draw();
 
 private:
-    PxController* m_controller;
-
-    PxVec3 m_move;
-
-    bool m_onGround;
-    f32 m_radius;
-    f32 m_height;
-
-    PxExtendedVec3 m_lastPos;
-
+    /***** FIELDS *****/
+    /***** PHYSX *****/
+    PxController*           m_controller;
+    PxVec3                  m_move;
+    PxExtendedVec3          m_lastPos;
+    PxQueryFilterCallback*  m_filter;
+    /***** PHYSICAL FIELDS *****/
+    bool    m_onGround;
+    f32     m_radius;
+    f32     m_height;
+    /***** MOTION AND VECTORS *****/
     XMVECTOR m_forward;
     XMVECTOR m_right;
     XMVECTOR m_up;
-
     XMVECTOR m_minMove;
     XMVECTOR m_maxMove;
     XMVECTOR m_friction;
     XMVECTOR m_gravity;
     XMVECTOR m_stopDown;
     XMVECTOR m_jump;
-
+    /***** DEBUG *****/
+    bool m_gravityOff = false;
+    /***** AMBIENT LIGHT STATE *****/
+    AmbientLightVolume* m_currentLight;
+    f32 m_lightT;
+    DirectionalLight m_targetLight;
+    DirectionalLight m_prevLight;
+    /***** nav *****/
+    robin_hood::unordered_map<OctreeNode*, OctreeNode*> m_path;
+    
+    /***** UPDATE METHODS *****/
     void checkFloor();
     void setVectors();
+    void updateMoveThisFrame();
+    void updateCamera();
+    void updateAmbientLight();
     void inputMove(XMVECTOR& moveVec);
-
-    PxQueryFilterCallback* m_filter;
 };

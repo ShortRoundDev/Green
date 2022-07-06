@@ -90,13 +90,24 @@ float4 Pixel(PixelInput input) : SV_TARGET
         }*/
         //if (spotShadow < 1.0f && spotShadow >= 0.0f)
         //{
-            spotColor += CalcSpotLight(
+            /*spotColor += CalcSpotLight(
                 0, 0.2f,
                 input.normal,
                 input.pixelPos,
                 camera,
                 spotLights[j]
-            ) * (1.0f - spotShadow);
+            ) * (1.0f - spotShadow);*/
+        
+        DirectionalLight dir =
+        {
+            float4(0, 0, 0, 0),
+            float4(0, 0, 0, 0),
+            float4(0, 0, 0, 0),
+            spotLights[j].color,
+            spotLights[j].direction,
+            0.0f
+        };
+        spotColor += CalculateDirectionalColor(dir, camera.xyz, input.pixelPos, input.normal, 0, 0.2f) * (1.0f - spotShadow);
         //}
     }
         

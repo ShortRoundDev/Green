@@ -17,7 +17,7 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-constexpr u32 SHADOW_RES = 4096L;
+constexpr u32 SHADOW_RES = 8192L;
 
 struct OrthoView
 {
@@ -70,6 +70,7 @@ public:
     void resetRenderTarget();
     void resetViewport();
     void setShadowRasterizer(bool shadowRasterizer);
+    void setWireframe(bool on);
 
     GlobalBuffer m_gBuffer;
 
@@ -105,6 +106,7 @@ private:
     ComPtr<ID3D11DepthStencilState> m_depthStencilState;
     ComPtr<ID3D11DepthStencilView> m_depthStencilView;
     ComPtr<ID3D11RasterizerState> m_sceneRasterizer;
+    ComPtr<ID3D11RasterizerState> m_wireRasterizer;
     ComPtr<ID3D11RasterizerState> m_shadowMapRasterizer;
 
     D3D11_VIEWPORT m_viewport;

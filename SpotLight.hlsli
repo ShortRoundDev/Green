@@ -23,28 +23,38 @@ float SpotLightShadow(
     Texture2D shadowMap
 )
 {
+    
     float4 pixelPosLightSpace = mul(float4(pos, 1.0f), light.lightSpace);
     float3 projCoords = pixelPosLightSpace.xyz / pixelPosLightSpace.w;
-    
+
     float current = projCoords.z;
+
     projCoords = (projCoords * 0.5f + 0.5f);
     projCoords.y = projCoords.y * -1.0f + 1.0f;
-    float shadowAcc = 0.0f;
-    
-    float2 texel;
-    shadowMap.GetDimensions(texel.x, texel.y);
-    texel = 1.0f / texel;
-    
 
-    for (int x = -1; x <= 1; ++x)
+    float shadow = 0.0f;
+    float2 resolution;
+    shadowMap.GetDimensions(resolution.x, resolution.y);
+    
+    float2 grad = frac(projCoords.xy * resolution.x + 0.5f);
+    
+    const int FILTER_SIZE = 5;
+    
+    for (int i = -FILTER_SIZE; i <= FILTER_SIZE; i++)
     {
-        for (int y = -1; y <= 1; ++y)
+        for (int j = -FILTER_SIZE; j < FILTER_SIZE; j++)
         {
-            float pcfDepth = shadowMap.Sample(shadowSampler, projCoords.xy + float2(x, y) * texel).r;
-            shadowAcc += current > pcfDepth ? 1.0f : 0.0f;
+            float4 tmp = shadowMap.Gather(shadowSampler, projCoords.xy + float2(i, j) * float2(1.0f / resolution.x, 1.0f / resolution.x));
+            tmp.x = tmp.x < current ? 0.0f : 1.0f;
+            tmp.y = tmp.y < current ? 0.0f : 1.0f;
+            tmp.z = tmp.z < current ? 0.0f : 1.0f;
+            tmp.w = tmp.w < current ? 0.0f : 1.0f;
+            
+            shadow += lerp(lerp(tmp.w, tmp.z, grad.x), lerp(tmp.x, tmp.y, grad.x), grad.y);
         }
     }
-    return shadowAcc / 9.0f;
+    
+    return 1.0f - (shadow / (float) ((2 * FILTER_SIZE) * (2 * FILTER_SIZE + 1)));
 }
 
 float3 CalcSpotLight(

@@ -21,7 +21,7 @@ Sprite::Sprite(std::string textureName, XMFLOAT3 position, XMFLOAT4 color) :
     })
 {
     std::vector<Mesh*> meshes;
-    Mesh::createMapFromFile("Sprite.obj", meshes, &Game);
+    Mesh::createMapFromFile("Sprite.obj", meshes, nullptr, &Game);
     if (meshes.size() == 0)
     {
         logger.err("Failed to load sprite obj!");

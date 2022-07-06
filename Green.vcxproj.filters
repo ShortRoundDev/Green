@@ -115,6 +115,21 @@
     <Filter Include="Source Files\Managers\Graphics\Animation">
       <UniqueIdentifier>{0ff3d5c6-f659-45dd-99d7-e68c8490540a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Octree">
+      <UniqueIdentifier>{e23e914f-b298-4092-b8ee-2920824944fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Game\Navmesh">
+      <UniqueIdentifier>{8b4b7caa-eeac-4bdc-b7ee-f30814798dea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Util">
+      <UniqueIdentifier>{c83ac49b-2341-4cd6-b264-926633c48888}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{f92ad892-47bc-4f97-a077-245e8cab41a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Game\NavMesh">
+      <UniqueIdentifier>{13e7af76-4bc6-48e2-898c-a3ef691e20c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -218,6 +233,18 @@
     </ClCompile>
     <ClCompile Include="KeyFrame.cpp">
       <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugMarkerEntity.cpp">
+      <Filter>Source Files\Managers\Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="NavMesh.cpp">
+      <Filter>Source Files\Managers\Game\NavMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="NavNode.cpp">
+      <Filter>Source Files\Managers\Game\NavMesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +362,21 @@
     <ClInclude Include="KeyFrame.h">
       <Filter>Header Files\Managers\Graphics\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="NavNode.h">
+      <Filter>Header Files\Managers\Game\Navmesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugMarkerEntity.h">
+      <Filter>Header Files\Managers\Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="NavMesh.h">
+      <Filter>Header Files\Managers\Game\Navmesh</Filter>
+    </ClInclude>
+    <ClInclude Include="WireframeDebugColor.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="WorldVertex.hlsl">
@@ -381,6 +423,12 @@
     </FxCompile>
     <FxCompile Include="PostProcessVertex.hlsl">
       <Filter>Resource Files\Shaders\Post</Filter>
+    </FxCompile>
+    <FxCompile Include="OctreeVertex.hlsl">
+      <Filter>Resource Files\Shaders\Octree</Filter>
+    </FxCompile>
+    <FxCompile Include="OctreePixel.hlsl">
+      <Filter>Resource Files\Shaders\Octree</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

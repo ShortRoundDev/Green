@@ -172,7 +172,9 @@ SpotLight::SpotLight(
 
     float radFullAngle = std::acosf(m_cBuffer.cosFullAngle);
     ///// Matrices /////
-    m_projection = XMMatrixPerspectiveFovLH(radFullAngle * 2.0f, (f32)width/(f32)height, 0.1f, 1000.0f);
+    //m_projection = XMMatrixPerspectiveFovLH(radFullAngle * 2.0f, (f32)width/(f32)height, 0.1f, 1000.0f);
+
+    m_projection = XMMatrixOrthographicLH(2048, 2048, 0.1f, 1000.0f);
 
     XMVECTOR eyePos = XMLoadFloat4(&pos);
     XMVECTOR dirVec = XMLoadFloat4(&dir);

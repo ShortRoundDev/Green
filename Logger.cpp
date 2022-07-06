@@ -19,7 +19,7 @@ Logger::Logger(const char* filePrefix)
     this->m_filePrefix = filePrefix;
     this->m_filePrefixLength = (u32)strnlen(filePrefix, 64);
 
-    size_t size;
+    sz size;
     mbstowcs_s(&size, (wchar_t*)m_filePrefixW, 64, m_filePrefix, 64);
 
     auto Logs = LogManager::getLogManager();

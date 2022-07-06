@@ -1,4 +1,7 @@
 newmtl __TB_empty
+newmtl metal/metalfloor2
+map_Kd textures\metal\metalfloor2.png
+
 newmtl paint/beige_wall_001_diff_4k
 map_Kd textures\paint\beige_wall_001_diff_4k.jpg
 

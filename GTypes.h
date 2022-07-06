@@ -18,6 +18,8 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 
+typedef size_t sz;
+
 constexpr f32 M_PI_F = 3.14159265358979323846f;
 constexpr f64 M_PI_D = 3.14159265358979323846;
 

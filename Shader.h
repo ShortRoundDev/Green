@@ -20,7 +20,7 @@ public:
         ID3D11Device* device,
         std::wstring vertexPath,
         std::wstring pixelPath,
-        size_t bufferSize
+        sz bufferSize
     );
 
     ~Shader();
@@ -34,7 +34,7 @@ public:
 private:
 
     bool m_status;
-    size_t m_bufferSize;
+    sz m_bufferSize;
 
     ComPtr<ID3D11VertexShader> m_vertex;
     ComPtr<ID3D11PixelShader> m_pixel;
@@ -52,12 +52,12 @@ private:
         std::wstring vertexPath,
         std::wstring pixelPath,
         u8** vertexByteCode,
-        size_t* vertexByteCodeLength
+        sz* vertexByteCodeLength
     );
-    bool initLayout(ID3D11Device* device, u8* byteCode, size_t byteCodeLength);
+    bool initLayout(ID3D11Device* device, u8* byteCode, sz byteCodeLength);
     bool initSampler(ID3D11Device* device);
     bool initBlendState(ID3D11Device* device);
-    bool initCBuffer(ID3D11Device* device, size_t bufferSize);
+    bool initCBuffer(ID3D11Device* device, sz bufferSize);
 
     void logShaderError(ID3D10Blob* shaderError, std::wstring path);
 };

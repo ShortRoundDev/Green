@@ -11,6 +11,39 @@ struct DirectionalLight
     float hardness;
 };
 
+float DirectionalLightShadow(
+    SamplerState shadowSampler,
+    matrix lightSpace,
+    float3 pos,
+    float4 camera,
+    Texture2D shadowMap
+)
+{
+    float4 pixelPosLightSpace = mul(float4(pos, 1.0f), lightSpace);
+    float3 projCoords = pixelPosLightSpace.xyz / pixelPosLightSpace.w;
+    
+    float current = projCoords.z;
+    projCoords = (projCoords * 0.5f + 0.5f);
+    projCoords.y = projCoords.y * -1.0f + 1.0f;
+    float shadowAcc = 0.0f;
+    
+    float2 texel;
+    shadowMap.GetDimensions(texel.x, texel.y);
+    texel = 1.0f / texel;
+    
+
+    for (int x = -1; x <= 1; ++x)
+    {
+        for (int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = shadowMap.Sample(shadowSampler, projCoords.xy + float2(x, y) * texel).r;
+            shadowAcc += current > pcfDepth ? 1.0f : 0.0f;
+        }
+    }
+    return shadowAcc / 9.0f;
+}
+
+
 float3 DiffuseDirectionalLight(DirectionalLight light, float3 normal, float roughness)
 {
     float diffMagnitude = max(dot(normalize(light.direction.xyz), normal), roughness);

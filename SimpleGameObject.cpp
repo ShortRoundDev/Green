@@ -52,7 +52,7 @@ void SimpleGameObject::draw()
 
     transform = XMMatrixTransformation(XMVectorZero(), XMVectorZero(), oneV, XMVectorZero(), XMVectorZero(), pos);
     
-
+    m_shader->use();
     m_shader->bindModelMatrix(transform);
     m_mesh->draw();
 }

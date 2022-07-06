@@ -1,8 +1,14 @@
 #include "Octree.h"
 
+#include "GraphicsManager.h"
+
 #include "MeshEntity.h"
 
 #include <set>
+
+constexpr f32 OCT_SZ = 1024.0f;
+
+using namespace _NodeType;
 
 Octree::Octree(const std::vector<MeshEntity*>& meshes) :
     m_root(nullptr)
@@ -11,6 +17,7 @@ Octree::Octree(const std::vector<MeshEntity*>& meshes) :
     {
         return;
     }
+
     XMFLOAT3 min = meshes[0]->getMesh()->getBox().getMin();
     XMFLOAT3 max = meshes[0]->getMesh()->getBox().getMax();
 
@@ -45,7 +52,17 @@ Octree::Octree(const std::vector<MeshEntity*>& meshes) :
         }
     }
 
-    m_root = new OctreeNode(nullptr, AABB(min, max), meshes, 5); // max depth is 5. Can change later
+    m_root = new OctreeNode(
+        nullptr,
+        AABB(
+            XMFLOAT3(-OCT_SZ, -OCT_SZ, -OCT_SZ),
+            XMFLOAT3(OCT_SZ, OCT_SZ, OCT_SZ)
+        ),
+        meshes,
+        MAX_TREE_DEPTH,
+        NodeType::ROOT
+    );
+    m_root->generateNeighbors();
 }
 
 Octree::~Octree()
@@ -53,9 +70,9 @@ Octree::~Octree()
 
 }
 
-void Octree::insert(MeshEntity* meshEntity)
+OctreeNode* Octree::getNode(XMFLOAT3 point)
 {
-    m_root->insert(meshEntity);
+    return m_root->query(point);
 }
 
 void Octree::queryAll(AABB* aabb, std::vector<MeshEntity*>& meshes)
@@ -88,4 +105,16 @@ void Octree::queryType(XMFLOAT3 point, std::vector<MeshEntity*>& meshes, u64 typ
 {
     std::set<MeshEntity*> uniqueness;
     m_root->query(point, meshes, uniqueness, type);
+}
+
+void Octree::draw()
+{
+    Graphics.setWireframe(true);
+    m_root->draw();
+    Graphics.setWireframe(false);
+}
+
+sz Octree::size()
+{
+    return m_root->getSize();
 }

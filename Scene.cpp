@@ -16,10 +16,12 @@
 #include "Player.h"
 #include "MapFile.h"
 
+#include "NavMesh.h"
 #include "MeshEntity.h"
 #include "WorldSpawn.h"
 #include "AmbientLightVolume.h"
 #include "SimpleGameObject.h"
+#include "DebugMarkerEntity.h"
 
 #include <algorithm>
 
@@ -29,9 +31,12 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
 {
     std::vector<MeshEntity*> meshEntities;
     initFromMapFile(fileName, meshEntities);
+
+    NavMesh navMesh;
     if (!Mesh::createMapFromFile(
         fileName + ".obj",
         m_brushes,
+        &navMesh,
         gameManager,
         true
     ))
@@ -39,14 +44,6 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
         logger.err("Failed to load meshes!");
         return;
     }
-    /*Vector3 _pos = Vector3(0, 0, 0);
-    Quaternion o = Quaternion::identity();
-    Transform t(_pos, o);
-    auto body = gameManager->getPhysicsWorld()->createRigidBody(t);
-    body->setType(BodyType::STATIC);
-
-    auto box = gameManager->getPhysicsCommon()->createBoxShape(Vector3(128, 8, 128));
-    auto collider = body->addCollider(box, Transform::identity());*/
 
     m_camera = new Camera();
     m_shader = Graphics.getShader(L"World");
@@ -55,34 +52,29 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
         return new WorldSpawn(mesh);
     });
 
-    //m_light = new SpotLight({ 64, 128.0f, -64, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 800, 800, { -1.0f, 0, 1.0f, 1.0f });
-    //m_lights.push_back(new PointLight({ 64, 128, -64, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, 512, 0.1));
-    //m_lights.push_back(new PointLight({ 100, 100, -40, 1 }, { 1.0f, 1.0f, 0, 1 }, 128, 128, 128, 0.1));
-    //m_lights.push_back(new PointLight({ 0, 100, -40, 1 }, { 1.0f, 1.0f, 0, 1 }, 512, 512, 128, 0.1));
-    //m_lights.push_back(new PointLight({ 100, 80, -440, 1 }, { 0.3f, 1.0f, 0, 1 }, 128, 128, 128, 0.1));
-    //m_lights.push_back(new SpotLight({ 32, 100, -80, 1 }, { 0.0f, 0.0f, 1.0f, 1 }, 128, 128, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
-    //m_lights.push_back(new SpotLight({ 32, 100, -20, 1 }, { 1.0f, 0.0f, 0.0f, 1 }, 128, 128, { 3.0f, -1.0f, 0.0f, 0 }, 512, 64, 0.1f));
-    //m_lights.push_back(new SpotLight({ 0, 0, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600, { 0, 1, 0, 1 }, 10, 10, 1.0f));
-    
-    //m_light2 = new PointLight({ 128, 200, 0, 1 }, { 0.196f * 3.0f, 0.223f * 3.0f, 0.286f * 3.0f, 1 }, 1600, 1600);
-
     m_tree = new Octree(meshEntities);
+    logger.info("Octree Size: %ld", m_tree->size());
     for (auto light : m_lights)
     {
-        auto box = light->getBounds();
-        std::vector<MeshEntity*> result;
+       // auto box = light->getBounds();
+       // std::vector<MeshEntity*> result;
 
-        m_tree->querySolid(&box, result);
-
-        for (auto mesh : result)
+      //  m_tree->querySolid(&box, result);)
+        //for (auto mesh : result)
+        for(auto mesh : m_brushes)
         {
-            mesh->getMesh()->addLight(light);
+            mesh->addLight(light);
         }
     }
 
     for (auto mesh : m_brushes)
     {
         m_meshViewModels.push_back(mesh->getViewModel());
+    }
+
+    for (auto node : navMesh.getRoot())
+    {
+        m_gameObjects.push_back(new DebugMarkerEntity(node->getSpot(), 4.0f, { 1.0f, 1.0f, 0.1f, 0.5f }));
     }
 }
 
@@ -105,10 +97,9 @@ void Scene::initFromMapFile(std::string fileName, std::vector<MeshEntity*>& mesh
     thread_local static char errBuff[1024];
 
     MF_Map map;
-    size_t mapfileSize;
+    sz mapfileSize;
     u8* data;
     System.readFile(fileName + ".map", &data, 0x100000, &mapfileSize); // 1mib max
-    logger.info("%s", (char*)data);
     if (!MF_Parse((char*)data, &map))
     {
         MF_GetErrMessage(errBuff);
@@ -161,7 +152,9 @@ void Scene::initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<Mesh
         }
     }
 
-    for (int i = 0; i < dict->totalBrushes; i++)
+    m_gameObjects.push_back(new SimpleGameObject(XMFLOAT3(452.664093f, 0.600002f, -513.489319f)));
+
+    /*for (int i = 0; i < dict->totalBrushes; i++)
     {
         auto item = dict->brushes + i;
         std::string name = std::string(item->name);
@@ -173,7 +166,7 @@ void Scene::initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<Mesh
                 meshEntities.push_back(light);
             }
         }
-    }
+    }*/
 }
 
 
@@ -196,7 +189,7 @@ void Scene::draw()
     {
         l->draw();
     }
-
+    //m_tree->draw();
 }
 
 void Scene::renderMeshes()

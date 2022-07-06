@@ -15,6 +15,8 @@ public:
     Octree(const std::vector<MeshEntity*>& meshes);
     ~Octree();
 
+    OctreeNode* getNode(XMFLOAT3 point);
+
     void queryAll(AABB* aabb, std::vector<MeshEntity*>& meshes);
     void querySolid(AABB* aabb, std::vector<MeshEntity*>& meshes);
     void queryType(AABB* aabb, std::vector<MeshEntity*>& meshes, u64 type);
@@ -23,7 +25,9 @@ public:
     void querySolid(XMFLOAT3 point, std::vector<MeshEntity*>& meshes);
     void queryType(XMFLOAT3 point, std::vector<MeshEntity*>& meshes, u64 type);
 
-    void insert(MeshEntity* meshEntity);
+    void draw();
+
+    sz size();
 
 private:
     OctreeNode* m_root;

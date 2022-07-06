@@ -22,6 +22,7 @@ class GameManager;
 class AABB;
 class ILight;
 class MeshViewModel;
+class NavMesh;
 
 class Mesh
 {
@@ -30,6 +31,7 @@ public:
     static bool createMapFromFile(
         std::string path,
         std::vector<Mesh*>& meshes,
+        NavMesh* navMesh,
         GameManager* gameManager,
         bool flipX
     );
@@ -43,7 +45,23 @@ public:
     static bool createMapFromFile(
         std::string path,
         std::vector<Mesh*>& meshes,
+        NavMesh* navMesh,
         GameManager* gameManager
+    );
+
+    static bool createBbox(
+        AABB aabb,
+        Texture* texture,
+        Mesh*& mesh
+    );
+
+    static bool createFromMemory(
+        std::vector<GVertex>& vertices,
+        sz vertCount,
+        std::vector<u32>& indices,
+        sz indexCount,
+        Texture* texture,
+        Mesh*& mesh
     );
 
     void draw();
@@ -63,13 +81,20 @@ public:
 
 private:
     Mesh();
-    bool initialize(const std::vector<GVertex>& vertices, size_t vertCount, const std::vector<u32>& indices, size_t indexCount, Texture* texture);
+    bool initialize(
+        const std::vector<GVertex>& vertices,
+        sz vertCount,
+        const std::vector<u32>& indices,
+        sz indexCount,
+        Texture* texture
+    );
 
     ComPtr<ID3D11Buffer> m_vertexBuffer;
     u32 m_vertCount;
 
     ComPtr<ID3D11Buffer> m_indexBuffer;
     u32 m_indexCount;
+    std::vector<u32> m_indices;
 
     Texture* m_texture;
     u32 m_textureCount;
@@ -90,4 +115,6 @@ private:
     void initAABB(const std::vector<GVertex>& vertices);
     void concatenateVertices(std::vector<GVertex>& out, const std::vector<GVertex>& a, const std::vector<GVertex>& b);
     void concatenateIndices(std::vector<u32>& out, const std::vector<u32>& a, const std::vector<u32>& b);
+
+    static bool GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh*> meshes);
 };

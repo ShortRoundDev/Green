@@ -54,12 +54,12 @@ void SystemManager::setRunning(bool running)
     m_running = running;
 }
 
-bool SystemManager::readFile(std::string fileName, u8** buffer, size_t maxSize, size_t* outSize)
+bool SystemManager::readFile(std::string fileName, u8** buffer, sz maxSize, sz* outSize)
 {
     return readFile(fileName.c_str(), buffer, maxSize, outSize);
 }
 
-bool SystemManager::readFile(const char* fileName, u8** buffer, size_t maxSize, size_t* outSize)
+bool SystemManager::readFile(const char* fileName, u8** buffer, sz maxSize, sz* outSize)
 {
     HANDLE handle = CreateFileA(
         fileName,
@@ -79,12 +79,12 @@ bool SystemManager::readFile(const char* fileName, u8** buffer, size_t maxSize, 
     return readFileHandle(handle, buffer, maxSize, outSize);
 }
 
-bool SystemManager::readFile(std::wstring fileName, u8** buffer, size_t maxSize, size_t* outSize)
+bool SystemManager::readFile(std::wstring fileName, u8** buffer, sz maxSize, sz* outSize)
 {
     return readFile(fileName.c_str(), buffer, maxSize, outSize);
 }
 
-bool SystemManager::readFile(const wchar_t* fileName, u8** buffer, size_t maxSize, size_t* outSize)
+bool SystemManager::readFile(const wchar_t* fileName, u8** buffer, sz maxSize, sz* outSize)
 {
     HANDLE handle = CreateFileW(
         fileName,
@@ -107,7 +107,7 @@ bool SystemManager::readFile(const wchar_t* fileName, u8** buffer, size_t maxSiz
 
 ////////// PRIVATE //////////
 
-bool SystemManager::readFileHandle(HANDLE file, u8** buffer, size_t maxSize, size_t* outSize)
+bool SystemManager::readFileHandle(HANDLE file, u8** buffer, sz maxSize, sz* outSize)
 {
 
     DWORD size = GetFileSize(file, NULL);
@@ -220,7 +220,7 @@ bool SystemManager::loadCfg(std::wstring filename)
                 goto Next;
             }
 
-            size_t size;
+            sz size;
             mbstowcs_s(&size, wBuffer, start, (c + 1) - start); // convert line to utf-16
 
             if (!parseCfgLine(wBuffer, key, value)) // parse individual line
@@ -244,7 +244,7 @@ bool SystemManager::loadCfg(std::wstring filename)
 
     if (*start != L'\0') // still one line left
     {
-        size_t size;
+        sz size;
         mbstowcs_s(&size, wBuffer, start, (c + 1) - start);
         if (!parseCfgLine(wBuffer, key, value))
         {

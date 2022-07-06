@@ -36,7 +36,7 @@ Texture::Texture(std::string path)
     m_status = true;
 }
 
-Texture::Texture(u8* data, size_t size)
+Texture::Texture(u8* data, sz size)
 {
     HRESULT result = CreateWICTextureFromMemory(
         Graphics.getDevice(),

@@ -1,0 +1,21 @@
+// Game: Generic
+// Format: Standard
+// entity 0
+{
+"classname" "worldspawn"
+"_tb_textures" "textures"
+// brush 0
+{
+( -64 64 16 ) ( -64 -64 16 ) ( -64 -64 -16 ) DevFloor1 0 0 0 1 1
+( -64 64 16 ) ( 0 64 32 ) ( 0 -64 32 ) DevFloor1 0 0 0 1 1
+( 0 -64 32 ) ( 64 -64 -16 ) ( -64 -64 -16 ) DevFloor1 0 0 0 1 1
+( 64 -64 -16 ) ( 64 64 -16 ) ( -64 64 -16 ) DevFloor1 0 0 0 1 1
+( -64 64 -16 ) ( 64 64 -16 ) ( 0 64 32 ) DevFloor1 0 0 0 1 1
+( 0 64 32 ) ( 64 64 -16 ) ( 64 -64 -16 ) DevFloor1 -18.823532 -14.117647 0 1 1
+}
+}
+// entity 1
+{
+"classname" "info_player_start"
+"origin" "-16 -16 139"
+}
