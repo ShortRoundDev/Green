@@ -243,7 +243,7 @@ void PointLight::bindShadowMap(u32 face)
     context->ClearDepthStencilView(m_shadowMapFacesDsv[face].Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-PointLightBuffer PointLight::getCbuffer()
+PointLightBuffer PointLight::getCBuffer()
 {
     return m_cBuffer;
 }
@@ -263,11 +263,6 @@ AABB PointLight::getBounds()
     XMFLOAT3 min = XMFLOAT3(m_pos.x - dist, m_pos.y - dist, m_pos.z - dist);
     XMFLOAT3 max = XMFLOAT3(m_pos.x + dist, m_pos.y + dist, m_pos.z + dist);
     return AABB(min, max);
-}
-
-PointLightBuffer PointLight::getCBuffer()
-{
-    return m_cBuffer;
 }
 
 void PointLight::draw()

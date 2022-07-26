@@ -1,13 +1,25 @@
 #ifndef __DIRECTIONAL_LIGHT_HLSLI__
 #define __DIRECTIONAL_LIGHT_HLSLI__
 
+struct SunBuffer
+{
+    float4 color;
+    float4 direction;
+    float4 pos;
+    matrix dirLightSpace;
+};
+
 struct DirectionalLight
 {
+    //Ambient
     float4 ambientA;
     float4 ambientB;
     float4 ambientDirection;
-    float4 color;
-    float4 direction;
+    
+    // Sun
+    SunBuffer sun;
+    
+    //Also ambient but I dont wanna pack this shit
     float hardness;
 };
 
@@ -46,8 +58,13 @@ float DirectionalLightShadow(
 
 float3 DiffuseDirectionalLight(DirectionalLight light, float3 normal, float roughness)
 {
-    float diffMagnitude = max(dot(normalize(light.direction.xyz), normal), roughness);
-    return (light.color.rgb * light.color.a) * diffMagnitude;
+    float dp = dot(normalize(light.sun.direction.xyz), normal);
+    if (dp >= 0.0f)
+    {
+        return 0.0f;
+    }
+    float diffMagnitude = max(abs(dp), roughness);
+    return (light.sun.color.rgb * light.sun.color.a) * diffMagnitude;
 }
 
 float3 SpecularDirectionalLight(
@@ -58,10 +75,16 @@ float3 SpecularDirectionalLight(
     uint shininess
 )
 {
+    float dp = dot(normalize(light.sun.direction.xyz), normal);
+    if (dp >= 0.0f)
+    {
+        return 0.0f;
+    }
+
     float3 viewDir = normalize(camera - position);
-    float3 reflectDir = reflect(-normalize(light.direction.xyz), normal);
+    float3 reflectDir = reflect(-normalize(light.sun.direction.xyz), normal);
     float specularStrength = pow(max(dot(viewDir, reflectDir), 0.0f), shininess);
-    return (light.color.rgb * light.color.a) * (0.5f * specularStrength);
+    return (light.sun.color.rgb * light.sun.color.a) * (0.5f * specularStrength);
 }
 
 float3 CalculateDirectionalColor(

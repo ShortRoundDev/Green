@@ -21,9 +21,11 @@
 #include "WorldSpawn.h"
 #include "AmbientLightVolume.h"
 #include "SimpleGameObject.h"
+#include "Zombie.h"
 #include "DebugMarkerEntity.h"
 
 #include <algorithm>
+#include "DirectionalLight.h"
 
 static ::Logger logger = CreateLogger("Scene");
 
@@ -33,7 +35,7 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     initFromMapFile(fileName, meshEntities);
 
     NavMesh navMesh;
-    if (!Mesh::createMapFromFile(
+    if (!Mesh::loadObj(
         fileName + ".obj",
         m_brushes,
         &navMesh,
@@ -56,14 +58,13 @@ Scene::Scene(std::string fileName, GameManager* gameManager)
     logger.info("Octree Size: %ld", m_tree->size());
     for (auto light : m_lights)
     {
-       // auto box = light->getBounds();
-       // std::vector<MeshEntity*> result;
+        auto box = light->getBounds();
+        std::vector<MeshEntity*> result;
 
-      //  m_tree->querySolid(&box, result);)
-        //for (auto mesh : result)
-        for(auto mesh : m_brushes)
+        m_tree->querySolid(&box, result);
+        for (auto meshEnt : result)
         {
-            mesh->addLight(light);
+            meshEnt->getMesh()->addLight(light);
         }
     }
 
@@ -89,6 +90,7 @@ void Scene::generateShadowMaps()
     {
         light->renderShadowMap(this);
     }
+    m_directionalLight->renderShadowMap(this);
     //m_light2->renderShadowMap(this);
 }
 
@@ -143,16 +145,26 @@ void Scene::initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<Mesh
         }
         else if (!strcmp(item.classname, "SpotLight"))
         {
-            
             auto light = SpotLight::Create(&item);
             if (light)
             {
                 m_lights.push_back(light);
             }
         }
+        else if (!strcmp(item.classname, "SunLight"))
+        {
+            if (m_directionalLight != nullptr)
+            {
+                logger.warn("Warning: sun already defined! Overwriting with 2nd sun...");
+                delete m_directionalLight;
+            }
+
+            m_directionalLight = DirectionalLight::Create(&item);
+        }
     }
 
-    m_gameObjects.push_back(new SimpleGameObject(XMFLOAT3(452.664093f, 0.600002f, -513.489319f)));
+    //m_gameObjects.push_back(new SimpleGameObject(XMFLOAT3(452.664093f, 0.600002f, -513.489319f)));
+    m_gameObjects.push_back(new Zombie(XMFLOAT3(452.664093f, 0.600002f, -513.489319f)));
 
     /*for (int i = 0; i < dict->totalBrushes; i++)
     {
@@ -178,6 +190,11 @@ void Scene::draw()
     Graphics.setViewMatrix(m_camera->getView());
     Graphics.setCameraPos(m_camera->getPosition());
 
+    if (m_directionalLight)
+    {
+        m_directionalLight->use(0);
+    }
+
     renderViewModels();
 
     for (auto ent : m_gameObjects)
@@ -185,10 +202,10 @@ void Scene::draw()
         ent->draw();
     }
 
-    for (auto l : m_lights)
+    /*for (auto l : m_lights)
     {
         l->draw();
-    }
+    }*/
     //m_tree->draw();
 }
 

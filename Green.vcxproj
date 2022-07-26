@@ -166,11 +166,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="Actor.cpp" />
     <ClCompile Include="AmbientLightVolume.cpp" />
     <ClCompile Include="AnimationAction.cpp" />
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DebugMarkerEntity.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameWorldObject.cpp" />
@@ -203,14 +205,17 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="WorldSpawn.cpp" />
+    <ClCompile Include="Zombie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="Actor.h" />
     <ClInclude Include="AmbientLightVolume.h" />
     <ClInclude Include="AnimationAction.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DebugMarkerEntity.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameWorldObject.h" />
@@ -248,6 +253,7 @@
     <ClInclude Include="WireframeDebugColor.h" />
     <ClInclude Include="WorldEntityBuffer.h" />
     <ClInclude Include="WorldSpawn.h" />
+    <ClInclude Include="Zombie.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="GaussianPixel.hlsl">

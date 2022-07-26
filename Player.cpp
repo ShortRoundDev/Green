@@ -269,11 +269,11 @@ void Player::updateAmbientLight()
 
         f32 lerpedHardness = m_prevLight.hardness + ((m_targetLight.hardness - m_prevLight.hardness) * m_lightT);
 
-        DirectionalLight lightDesc;
-        Graphics.m_gBuffer.sun.ambientA         = lerpedAmbientA;
-        Graphics.m_gBuffer.sun.ambientB         = lerpedAmbientB;
-        Graphics.m_gBuffer.sun.ambientDirection = lerpedAmbientDir;
-        Graphics.m_gBuffer.sun.hardness         = lerpedHardness;
+        DirectionalLightBuffer lightDesc;
+        Graphics.m_gBuffer.dirLight.ambientA         = lerpedAmbientA;
+        Graphics.m_gBuffer.dirLight.ambientB         = lerpedAmbientB;
+        Graphics.m_gBuffer.dirLight.ambientDirection = lerpedAmbientDir;
+        Graphics.m_gBuffer.dirLight.hardness         = lerpedHardness;
     }
 
     if (m_lightT < 1.0f)

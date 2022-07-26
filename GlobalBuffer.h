@@ -4,13 +4,25 @@
 
 using namespace DirectX;
 
-struct DirectionalLight
+struct SunBuffer
 {
+    XMFLOAT4 color;
+    XMFLOAT4 direction;
+    XMFLOAT4 pos;
+    XMMATRIX dirLightSpace;
+};
+
+struct DirectionalLightBuffer
+{
+    //ambient
     XMFLOAT4 ambientA;
     XMFLOAT4 ambientB;
     XMFLOAT4 ambientDirection;
-    XMFLOAT4 color;
-    XMFLOAT4 direction;
+
+    //sun
+    SunBuffer sun;
+
+    //also ambient but I don't wanna pack this shit
     float hardness;
 };
 
@@ -21,7 +33,7 @@ struct GlobalBuffer
     XMMATRIX projection;
     XMMATRIX invWorld;
     XMFLOAT4 camera;
-    DirectionalLight sun;
+    DirectionalLightBuffer dirLight;
 
     float pointradius;
 };

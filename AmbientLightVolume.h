@@ -13,14 +13,14 @@ public:
 
     AmbientLightVolume(
         Mesh* mesh,
-        DirectionalLight light
+        DirectionalLightBuffer light
     );
 
     ~AmbientLightVolume();
 
-    const DirectionalLight& getLightDesc();
+    const DirectionalLightBuffer& getLightDesc();
 
 private:
-    DirectionalLight m_directionalLight;
+    DirectionalLightBuffer m_directionalLight;
 };
 

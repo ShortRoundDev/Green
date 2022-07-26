@@ -39,18 +39,6 @@ public:
     }
 };
 
-bool Mesh::createMapFromFile(
-    std::string path,
-    std::vector<Mesh*>& meshes,
-    NavMesh* navMesh,
-    GameManager* gameManager
-)
-{
-    return createMapFromFile(
-        path, meshes, navMesh, gameManager, false
-    );
-}
-
 bool Mesh::createBbox(
     AABB aabb,
     Texture* texture,
@@ -112,7 +100,7 @@ bool Mesh::createBbox(
     );
 }
 
-bool Mesh::createFromMemory(
+bool Mesh::loadMemory(
     std::vector<GVertex>& vertices,
     sz vertCount,
     std::vector<u32>& indices,
@@ -131,7 +119,22 @@ bool Mesh::createFromMemory(
     );
 }
 
-bool Mesh::createMapFromFile(
+bool Mesh::loadObj(
+    std::string path,
+    std::vector<Mesh*>& meshes,
+    GameManager* gameManager
+)
+{
+    return loadObj(
+        path,
+        meshes,
+        nullptr,
+        gameManager
+    );
+}
+
+
+bool Mesh::loadObj(
     std::string path,
     std::vector<Mesh*>& meshes,
     NavMesh* navMesh,
@@ -152,7 +155,6 @@ bool Mesh::createMapFromFile(
     for (u32 i = 0; i < root->mNumChildren; i++)
     {
         auto child = root->mChildren[i];
-        logger.info("%d: Meshes: %d", i, child->mNumMeshes);
     }
 
     // For each NODE in SCENE
@@ -166,7 +168,6 @@ bool Mesh::createMapFromFile(
         //std::vector<PolygonVertexArray::PolygonFace> nodeFaces = std::vector<PolygonVertexArray::PolygonFace>();
 
         auto child = root->mChildren[i];
-        logger.info("Node: %s", child->mName.C_Str());
         u32 faceIndexOffset = 0;
 
         //For each MESH in NODE
@@ -232,7 +233,6 @@ bool Mesh::createMapFromFile(
             if (mesh->mMaterialIndex >= 0)
             {
                 aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-                logger.info("\t%s", material->GetName().C_Str());
                 auto diffuseCount = material->GetTextureCount(aiTextureType_DIFFUSE);
                 if (diffuseCount > 0)
                 {
@@ -314,9 +314,6 @@ bool Mesh::loadGltf(
     auto root = scene->mRootNode;
     auto node = scene->mRootNode;
 
-    //std::vector<PxVec3> nodeVertices;
-    //std::unordered_set<PxVec3, HashPxVector3, EqualsPxVector3> uniqueNodeVertices;
-
     //For each MESH in SCENE
     bool skip = false;
     std::vector<GVertex> meshVertices = std::vector<GVertex>();
@@ -344,6 +341,8 @@ bool Mesh::loadGltf(
             v
         );
 
+        auto bone = _mesh->mBones[i]->mName;
+        
         meshVertices.push_back(vertex);
     }
 
@@ -394,31 +393,6 @@ bool Mesh::loadGltf(
         texture
     );
     return true;
-
-    /*PxVec3* convexVertices = new PxVec3[nodeVertices.size()];
-    CopyMemory(convexVertices, nodeVertices.data(), nodeVertices.size() * sizeof(PxVec3));
-
-    PxConvexMeshDesc meshDesc;
-    meshDesc.points.count = nodeVertices.size();
-    meshDesc.points.stride = sizeof(PxVec3);
-    meshDesc.points.data = convexVertices;
-    meshDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
-
-    PxDefaultMemoryOutputStream buffer;
-    PxConvexMeshCookingResult::Enum result;
-    if (!gameManager->getCooking()->cookConvexMesh(meshDesc, buffer, &result))
-    {
-        logger.err("Failed to cook convex mesh!");
-        return false;
-    }
-    PxDefaultMemoryInputData input(buffer.getData(), buffer.getSize());
-    auto mesh = gameManager->getPhysics()->createConvexMesh(input);
-    auto actor = gameManager->getPhysics()->createRigidStatic(PxTransform(PxVec3(0, 0, 0)));
-    auto material = gameManager->getPhysics()->createMaterial(0.5f, 0.5f, 0.6f);
-
-    auto shape = PxRigidActorExt::createExclusiveShape(*actor, PxConvexMeshGeometry(mesh), *material);
-
-    gameManager->getPxScene()->addActor(*actor);*/
 }
 
 void Mesh::draw()
@@ -449,6 +423,22 @@ Mesh::Mesh(AABB aabb)
     : m_box(aabb)
 {
 
+}
+
+Mesh::Mesh(
+    const std::vector<GVertex>& vertices,
+    sz vertCount,
+    const std::vector<u32>& indices,
+    sz indexCount,
+    Texture* texture
+)
+{
+    initialize(vertices,
+        vertCount,
+        indices,
+        indexCount,
+        texture
+    );
 }
 
 Mesh::~Mesh()
@@ -713,6 +703,26 @@ void Mesh::concatenateIndices(
     }
 }
 
+float sign(XMFLOAT2 p1, XMFLOAT2 p2, XMFLOAT2 p3)
+{
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+bool PointInTriangle(XMFLOAT2 pt, XMFLOAT2 v1, XMFLOAT2 v2, XMFLOAT2 v3)
+{
+    float d1, d2, d3;
+    bool has_neg, has_pos;
+
+    d1 = sign(pt, v1, v2);
+    d2 = sign(pt, v2, v3);
+    d3 = sign(pt, v3, v1);
+
+    has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+    return !(has_neg && has_pos);
+}
+
 bool Mesh::GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh*> meshes)
 {
     const static f32 INTERVAL = 64.0f;
@@ -742,6 +752,18 @@ bool Mesh::GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh
                     for (int z = ((i32)(bbox.getMin().z / INTERVAL)) * (int)INTERVAL; z < ((i32)(bbox.getMax().z / INTERVAL)) * (int)INTERVAL; z += (int)INTERVAL)
                     {
                         auto origin = PxVec3((f32)x, bbox.getMax().y + 16.0f, (f32)z);
+                        XMFLOAT2 _origin = XMFLOAT2(origin.x, origin.z);
+
+                        if (PointInTriangle(
+                            _origin,
+                            XMFLOAT2(triangle[0].pos.x, triangle[0].pos.z),
+                            XMFLOAT2(triangle[1].pos.x, triangle[1].pos.z),
+                            XMFLOAT2(triangle[2].pos.x, triangle[2].pos.z)
+                        ))
+                        {
+                            continue;
+                        }
+
                         auto dir = PxVec3(0.0f, -1.0f, 0.0f);
                         PxReal dist = 1000.0f;
                         PxRaycastBuffer hit;
@@ -752,7 +774,6 @@ bool Mesh::GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh
                         {
                             if (hit.block.position.y == bbox.getMax().y + 16.0f)
                             {
-                                logger.warn("IN WALL!");
                                 continue;
                             }
                             pos.x = hit.block.position.x;
@@ -761,7 +782,6 @@ bool Mesh::GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh
                             navMesh->addNode(pos);
                         }
 
-                        logger.info("Node: %f, %f, %f", pos.x, pos.y, pos.z);
                     }
                 }
             }

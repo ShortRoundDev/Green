@@ -48,7 +48,6 @@ void MeshViewModel::draw()
     lightBuffer.nPointLights = m_numPointLights;
     for (int i = 0; i < m_numPointLights; i++)
     {
-        //m_lights[i]->use(i + 1);
         m_pointLightBuffer[i] = m_pointLights[i]->getDepthMapSrv();
         auto buffer = m_pointLights[i]->getCBuffer();
         lightBuffer.pointLights[i] = buffer;

@@ -17,7 +17,7 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-constexpr u32 SHADOW_RES = 8192L;
+constexpr u32 SHADOW_RES = 512;
 
 struct OrthoView
 {

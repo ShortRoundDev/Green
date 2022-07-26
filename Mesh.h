@@ -28,12 +28,18 @@ class Mesh
 {
 public:
 
-    static bool createMapFromFile(
+    static bool loadObj(
+        std::string path,
+        std::vector<Mesh*>& meshes,
+        GameManager* gameManager
+    );
+
+    static bool loadObj(
         std::string path,
         std::vector<Mesh*>& meshes,
         NavMesh* navMesh,
         GameManager* gameManager,
-        bool flipX
+        bool flipX = false
     );
 
     static bool loadGltf(
@@ -42,24 +48,17 @@ public:
         GameManager* gameManager
     );
 
-    static bool createMapFromFile(
-        std::string path,
-        std::vector<Mesh*>& meshes,
-        NavMesh* navMesh,
-        GameManager* gameManager
-    );
-
-    static bool createBbox(
-        AABB aabb,
-        Texture* texture,
-        Mesh*& mesh
-    );
-
-    static bool createFromMemory(
+    static bool loadMemory(
         std::vector<GVertex>& vertices,
         sz vertCount,
         std::vector<u32>& indices,
         sz indexCount,
+        Texture* texture,
+        Mesh*& mesh
+    );
+
+    static bool createBbox(
+        AABB aabb,
         Texture* texture,
         Mesh*& mesh
     );
@@ -81,6 +80,14 @@ public:
 
 private:
     Mesh();
+    Mesh(
+        const std::vector<GVertex>& vertices,
+        sz vertCount,
+        const std::vector<u32>& indices,
+        sz indexCount,
+        Texture* texture
+    );
+
     bool initialize(
         const std::vector<GVertex>& vertices,
         sz vertCount,

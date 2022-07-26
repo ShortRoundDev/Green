@@ -17,6 +17,7 @@ class ILight;
 class GameManager;
 class GameObject;
 class MeshViewModel;
+class DirectionalLight;
 
 using namespace physx;
 
@@ -55,6 +56,7 @@ private:
     std::vector<GameObject*> m_addGameObjects;
 
     Octree* m_tree;
+    DirectionalLight* m_directionalLight;
 
     void initFromMapFile(std::string fileName, std::vector<MeshEntity*>& meshEntities);
     void initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<MeshEntity*>& meshEntities);

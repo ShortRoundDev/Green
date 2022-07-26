@@ -33,13 +33,13 @@ bool GraphicsManager::start()
 		return false;
 	}
 
+	ZeroMemory(&m_gBuffer, sizeof(m_gBuffer));
+
 	m_gBuffer.pointradius = 0.0001f;
-	m_gBuffer.sun.ambientA = { 21 / 255.0f, 9 / 255.0f, 3/ 255.0f, 72 / 255.0f };
-	m_gBuffer.sun.ambientB = { 214 / 255.0f, 122 / 255.0f, 65 / 255.0f, 8 / 255.0f };
-	m_gBuffer.sun.hardness = 1.3f;
-	m_gBuffer.sun.ambientDirection = { 1, 0, -0.4, 0.0f };
-	m_gBuffer.sun.color = { 0.196f, 0.223f, 0.286f, 0.0f };
-	m_gBuffer.sun.direction = { 1.0f, 0.0f, -1.0f, 1.0f };
+	m_gBuffer.dirLight.ambientA = { 21 / 255.0f, 9 / 255.0f, 3/ 255.0f, 72 / 255.0f };
+	m_gBuffer.dirLight.ambientB = { 214 / 255.0f, 122 / 255.0f, 65 / 255.0f, 8 / 255.0f };
+	m_gBuffer.dirLight.hardness = 1.3f;
+	m_gBuffer.dirLight.ambientDirection = { 1, 0, -0.4, 0.0f };
 
 	///// IMGUI /////
 	IMGUI_CHECKVERSION();
@@ -725,9 +725,9 @@ bool GraphicsManager::initRasterizer()
 	}
 
 
-	rasterDesc.DepthBias = 0;
-	rasterDesc.DepthBiasClamp = 8.0f;
-	rasterDesc.SlopeScaledDepthBias = 8.0f;
+	rasterDesc.DepthBias = 5;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.SlopeScaledDepthBias = 4.0f;
 	//rasterDesc.CullMode = D3D11_CULL_FRONT;
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
 

@@ -12,7 +12,9 @@ static Logger logger = CreateLogger("AmbientLightVolume");
 
 AmbientLightVolume* AmbientLightVolume::Create(MF_MeshEntity* meshEntity)
 {
-    DirectionalLight light;
+    DirectionalLightBuffer light;
+    ZeroMemory(&light, sizeof(light));
+
     MF_Vector4 ambientA;
     MF_Vector4 ambientB;
     MF_Vector3 ambientDirection;
@@ -97,7 +99,7 @@ AmbientLightVolume* AmbientLightVolume::Create(MF_MeshEntity* meshEntity)
     return new AmbientLightVolume(mesh, light);
 }
 
-AmbientLightVolume::AmbientLightVolume(Mesh* mesh, DirectionalLight light) :
+AmbientLightVolume::AmbientLightVolume(Mesh* mesh, DirectionalLightBuffer light) :
     MeshEntity(mesh, AMBIENT_LIGHT_VOLUME),
     m_directionalLight(light)
 {
@@ -109,7 +111,7 @@ AmbientLightVolume::~AmbientLightVolume()
 
 }
 
-const DirectionalLight& AmbientLightVolume::getLightDesc()
+const DirectionalLightBuffer& AmbientLightVolume::getLightDesc()
 {
     return m_directionalLight;
 }

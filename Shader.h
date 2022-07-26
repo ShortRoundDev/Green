@@ -31,6 +31,7 @@ public:
 
     bool bindModelMatrix(const XMMATRIX& modelTransform);
     void use();
+
 private:
 
     bool m_status;
@@ -61,4 +62,3 @@ private:
 
     void logShaderError(ID3D10Blob* shaderError, std::wstring path);
 };
-

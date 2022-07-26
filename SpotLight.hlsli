@@ -16,7 +16,7 @@ struct SpotLight
 };
 
 float SpotLightShadow(
-    SamplerState shadowSampler,
+    SamplerComparisonState shadowSampler,
     SpotLight light,
     float3 pos,
     float4 camera,
@@ -25,8 +25,8 @@ float SpotLightShadow(
 {
     
     float4 pixelPosLightSpace = mul(float4(pos, 1.0f), light.lightSpace);
-    float3 projCoords = pixelPosLightSpace.xyz / pixelPosLightSpace.w;
 
+    float3 projCoords = pixelPosLightSpace.xyz / pixelPosLightSpace.w;
     float current = projCoords.z;
 
     projCoords = (projCoords * 0.5f + 0.5f);
@@ -36,25 +36,37 @@ float SpotLightShadow(
     float2 resolution;
     shadowMap.GetDimensions(resolution.x, resolution.y);
     
-    float2 grad = frac(projCoords.xy * resolution.x + 0.5f);
+   // float2 grad = frac(projCoords.xy * resolution.x + 0.5f);
     
-    const int FILTER_SIZE = 5;
+//    const int FILTER_SIZE = 1;
     
-    for (int i = -FILTER_SIZE; i <= FILTER_SIZE; i++)
-    {
-        for (int j = -FILTER_SIZE; j < FILTER_SIZE; j++)
-        {
-            float4 tmp = shadowMap.Gather(shadowSampler, projCoords.xy + float2(i, j) * float2(1.0f / resolution.x, 1.0f / resolution.x));
-            tmp.x = tmp.x < current ? 0.0f : 1.0f;
-            tmp.y = tmp.y < current ? 0.0f : 1.0f;
-            tmp.z = tmp.z < current ? 0.0f : 1.0f;
-            tmp.w = tmp.w < current ? 0.0f : 1.0f;
+  //  for (int i = -FILTER_SIZE; i <= FILTER_SIZE; i++)
+    //{
+      //  for (int j = -FILTER_SIZE; j < FILTER_SIZE; j++)
+       // {
+         //   float4 tmp = shadowMap.Gather(shadowSampler, projCoords.xy + float2(i, j) * ((float2(1.0f / (resolution.x), 1.0f / (resolution.x)))));
+         //   tmp.x = tmp.x < current ? 0.0f : 1.0f;
+          //  tmp.y = tmp.y < current ? 0.0f : 1.0f;
+           // tmp.z = tmp.z < current ? 0.0f : 1.0f;
+            //tmp.w = tmp.w < current ? 0.0f : 1.0f;
             
-            shadow += lerp(lerp(tmp.w, tmp.z, grad.x), lerp(tmp.x, tmp.y, grad.x), grad.y);
+     //       shadow += lerp(lerp(tmp.w, tmp.z, grad.x), lerp(tmp.x, tmp.y, grad.x), grad.y);
+        //}
+   // }
+  
+    //shadow = shadowMap.SampleCmp(shadowSampler, projCoords.xy, current).r;
+    
+    
+    
+    for (int i = -2; i <= 2; i++)
+    {
+        for (int j = -2; j <= 2; j++)
+        {
+            shadow += shadowMap.SampleCmpLevelZero(shadowSampler, projCoords.xy + float2(i, j) * float2(1.0f / resolution.x, 1.0f / resolution.y), current).r;
         }
     }
-    
-    return 1.0f - (shadow / (float) ((2 * FILTER_SIZE) * (2 * FILTER_SIZE + 1)));
+    return shadow / 25;
+    //return 1.0f - (shadow / (float) ((2 * FILTER_SIZE) * (2 * FILTER_SIZE + 1)));
 }
 
 float3 CalcSpotLight(

@@ -55,8 +55,8 @@ private:
     /***** AMBIENT LIGHT STATE *****/
     AmbientLightVolume* m_currentLight;
     f32 m_lightT;
-    DirectionalLight m_targetLight;
-    DirectionalLight m_prevLight;
+    DirectionalLightBuffer m_targetLight;
+    DirectionalLightBuffer m_prevLight;
     /***** nav *****/
     robin_hood::unordered_map<OctreeNode*, OctreeNode*> m_path;
     

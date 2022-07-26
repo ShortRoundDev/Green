@@ -11,7 +11,7 @@ cbuffer GlobalCBuffer : register(b0)
     matrix invWorld;
     float4 camera;
     
-    DirectionalLight sun;
+    DirectionalLight dirLight;
     
     float pointradius;
 }

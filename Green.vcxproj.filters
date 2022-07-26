@@ -130,6 +130,12 @@
     <Filter Include="Source Files\Managers\Game\NavMesh">
       <UniqueIdentifier>{13e7af76-4bc6-48e2-898c-a3ef691e20c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Managers\Game\Entities\Actors">
+      <UniqueIdentifier>{7618ecb7-991c-4403-8250-d3094cc4f871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Game\Entities\Actors">
+      <UniqueIdentifier>{7c596c4f-b336-4a50-9273-ec70dc2a540c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -245,6 +251,15 @@
     </ClCompile>
     <ClCompile Include="NavNode.cpp">
       <Filter>Source Files\Managers\Game\NavMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source Files\Managers\Graphics\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Source Files\Managers\Game\Entities\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Zombie.cpp">
+      <Filter>Source Files\Managers\Game\Entities\Actors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -376,6 +391,15 @@
     </ClInclude>
     <ClInclude Include="WireframeDebugColor.h">
       <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Header Files\Managers\Graphics\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>Header Files\Managers\Game\Entities\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Zombie.h">
+      <Filter>Header Files\Managers\Game\Entities\Actors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

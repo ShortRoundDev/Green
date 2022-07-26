@@ -30,10 +30,8 @@ public:
     virtual void use(u32 slot);
     virtual void renderShadowMap(Scene* scene);
 
-    PointLightBuffer getCbuffer();
-    AABB getBounds();
-
     PointLightBuffer getCBuffer();
+    AABB getBounds();
 
     void draw();
 

@@ -219,13 +219,13 @@ bool Shader::initSampler(ID3D11Device* device)
     }
 
     ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
+    samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
     samplerDesc.MipLODBias = 0.0f;
     samplerDesc.MaxAnisotropy = 1;
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
     samplerDesc.BorderColor[0] = 0;
     samplerDesc.BorderColor[1] = 0;
     samplerDesc.BorderColor[2] = 0;
