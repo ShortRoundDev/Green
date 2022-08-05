@@ -6,6 +6,6 @@ class WorldSpawn : public MeshEntity
 {
 public:
     WorldSpawn(Mesh* mesh) : MeshEntity(mesh, WORLDSPAWN) { }
-    ~WorldSpawn() { }
+    virtual ~WorldSpawn() { }
 };
 

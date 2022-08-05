@@ -11,7 +11,7 @@ class DebugMarkerEntity : public GameObject
 public:
     DebugMarkerEntity(XMFLOAT3 pos, f32 size);
     DebugMarkerEntity(XMFLOAT3 pos, f32 size, XMFLOAT4 color);
-    ~DebugMarkerEntity();
+    virtual ~DebugMarkerEntity();
 
     virtual void update();
     virtual void draw();

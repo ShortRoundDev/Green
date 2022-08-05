@@ -16,7 +16,7 @@ public:
         DirectionalLightBuffer light
     );
 
-    ~AmbientLightVolume();
+    virtual ~AmbientLightVolume();
 
     const DirectionalLightBuffer& getLightDesc();
 

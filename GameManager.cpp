@@ -5,6 +5,8 @@
 
 #include "Scene.h"
 
+#include "Player.h"
+
 constexpr u64 timeStepU = 16;
 constexpr f32 timeStepF = (f32)timeStepU / 1000.0f;
 
@@ -58,6 +60,16 @@ Scene* GameManager::getScene()
 u64 GameManager::getTime()
 {
     return m_time;
+}
+
+Player* GameManager::getPlayer()
+{
+    return m_player;
+}
+
+void GameManager::setPlayer(Player* player)
+{
+    m_player = player;
 }
 
 void GameManager::startPhysX()

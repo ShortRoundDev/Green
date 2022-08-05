@@ -168,11 +168,12 @@
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="AmbientLightVolume.cpp" />
-    <ClCompile Include="AnimationAction.cpp" />
+    <ClCompile Include="AnimationClip.cpp" />
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DebugMarkerEntity.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameWorldObject.cpp" />
@@ -180,8 +181,10 @@
     <ClCompile Include="ILight.cpp" />
     <ClCompile Include="IManager.cpp" />
     <ClCompile Include="KeyFrame.cpp" />
+    <ClCompile Include="LightVolume.cpp" />
     <ClCompile Include="MeshEntity.cpp" />
     <ClCompile Include="MeshViewModel.cpp" />
+    <ClCompile Include="MeshViewModelBuilder.cpp" />
     <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="NavNode.cpp" />
     <ClCompile Include="Octree.cpp" />
@@ -191,6 +194,7 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="SimpleGameObject.cpp" />
     <ClCompile Include="SingleActorExclusionFilter.cpp" />
+    <ClCompile Include="SkinnedData.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="LocalShaderIncluder.cpp" />
     <ClCompile Include="Logger.cpp" />
@@ -211,11 +215,12 @@
     <ClInclude Include="AABB.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AmbientLightVolume.h" />
-    <ClInclude Include="AnimationAction.h" />
+    <ClInclude Include="AnimationClip.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DebugMarkerEntity.h" />
     <ClInclude Include="DirectionalLight.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameWorldObject.h" />
@@ -226,9 +231,11 @@
     <ClInclude Include="ILight.h" />
     <ClInclude Include="IManager.h" />
     <ClInclude Include="KeyFrame.h" />
+    <ClInclude Include="LightVolume.h" />
     <ClInclude Include="MeshEntity.h" />
     <ClInclude Include="MeshLightBuffer.h" />
     <ClInclude Include="MeshViewModel.h" />
+    <ClInclude Include="MeshViewModelBuilder.h" />
     <ClInclude Include="NavMesh.h" />
     <ClInclude Include="NavNode.h" />
     <ClInclude Include="Octree.h" />
@@ -238,6 +245,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="SimpleGameObject.h" />
     <ClInclude Include="SingleActorExclusionFilter.h" />
+    <ClInclude Include="SkinnedData.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="LocalShaderIncluder.h" />
     <ClInclude Include="Logger.h" />

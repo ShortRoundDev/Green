@@ -171,6 +171,7 @@ void PointLight::use(u32 slot)
 
 void PointLight::renderShadowMap(Scene* scene)
 {
+    Graphics.getContext()->ClearDepthStencilView(m_depthMapDsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     Graphics.setShadowRasterizer(true);
     m_shader->use();
 
@@ -227,6 +228,7 @@ void PointLight::renderShadowMap(Scene* scene)
         m_shader->bindCBuffer(&buffer);
         m_shader->bindModelMatrix(XMMatrixIdentity());
         scene->renderMeshes();
+        scene->renderEntities(m_shader);
     }
     Graphics.resetRenderTarget();
     Graphics.resetViewport();

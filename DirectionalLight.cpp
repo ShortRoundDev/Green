@@ -152,9 +152,11 @@ void DirectionalLight::use(u32 slot)
 
 void DirectionalLight::renderShadowMap(Scene* scene)
 {
+    Graphics.getContext()->ClearDepthStencilView(m_depthMapDsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     Graphics.setShadowRasterizer(true);
     bindShadowMap();
     m_shader->use();
+    m_shader->bindModelMatrix(XMMatrixIdentity());
 
     m_spaceT = XMMatrixTranspose(m_space);
 
@@ -170,6 +172,7 @@ void DirectionalLight::renderShadowMap(Scene* scene)
     m_shader->bindCBuffer(&buffer);
 
     scene->renderMeshes();
+    scene->renderEntities(m_shader);
     Graphics.resetRenderTarget();
     Graphics.resetViewport();
     Graphics.setShadowRasterizer(false);

@@ -8,6 +8,7 @@
 
 
 class Scene;
+class Player;
 
 using namespace physx;
 
@@ -22,6 +23,9 @@ public:
 
     Scene* getScene();
     u64 getTime();
+
+    Player* getPlayer();
+    void setPlayer(Player* player);
 
     PxPhysics* getPhysics();
     PxScene* getPxScene();
@@ -47,6 +51,8 @@ private:
     PxPvd* m_pvd;
 
     PxCooking* m_cooking;
+
+    Player* m_player;
 
     void startPhysX();
 };

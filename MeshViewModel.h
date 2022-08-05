@@ -1,10 +1,10 @@
 #pragma once
 
-class Mesh;
-class ILight;
 class PointLight;
 class SpotLight;
 class Shader;
+class Mesh;
+class ILight;
 
 #include "GTypes.h"
 #include "MeshLightBuffer.h"
@@ -22,6 +22,7 @@ public:
     ~MeshViewModel();
 
     void draw();
+    Mesh* getMesh();
 
 private:
     Mesh* m_mesh;
@@ -34,4 +35,3 @@ private:
     ID3D11ShaderResourceView** m_pointLightBuffer;
     ID3D11ShaderResourceView** m_spotLightBuffer;
 };
-

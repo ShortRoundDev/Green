@@ -318,7 +318,7 @@ void OctreeNode::query(
             }
             auto other = mesh->getMesh()->getBox();
             // type == 0 means all types
-            if ((type == 0 || mesh->getType() == type) && other.collides(aabb) || aabb->collides(&other))
+            if ((type == 0 || mesh->getType() == type) && (other.collides(aabb) || aabb->collides(&other)))
             {
                 meshes.push_back(mesh);
                 unique.emplace(mesh);

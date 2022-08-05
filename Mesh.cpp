@@ -15,9 +15,14 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "nlohmann/json.hpp"
+
 #include <unordered_set>
+#include <fstream>
 
 static ::Logger logger = CreateLogger("Mesh");
+
+using json = nlohmann::json;
 
 struct HashPxVector3
 {
@@ -90,7 +95,7 @@ bool Mesh::createBbox(
         6, 0, 3
     });
 
-    return createFromMemory(
+    return loadMemory(
         vertices,
         vertices.size(),
         indices,
@@ -152,6 +157,7 @@ bool Mesh::loadObj(
     std::vector<Mesh> outMeshes = std::vector<Mesh>();
 
     auto root = scene->mRootNode;
+    
     for (u32 i = 0; i < root->mNumChildren; i++)
     {
         auto child = root->mChildren[i];
@@ -168,6 +174,7 @@ bool Mesh::loadObj(
         //std::vector<PolygonVertexArray::PolygonFace> nodeFaces = std::vector<PolygonVertexArray::PolygonFace>();
 
         auto child = root->mChildren[i];
+
         u32 faceIndexOffset = 0;
 
         //For each MESH in NODE
@@ -178,6 +185,7 @@ bool Mesh::loadObj(
             std::vector<u32> meshIndices = std::vector<u32>();
 
             auto mesh = scene->mMeshes[child->mMeshes[j]];
+
             if (scene->mMaterials[mesh->mMaterialIndex]->GetName() == aiString("__TB_empty"))
             {
                 skip = true;
@@ -309,10 +317,12 @@ bool Mesh::loadGltf(
         return false;
     }
 
+    //initSkinnedData(path);
+
     *mesh = new Mesh;
 
-    auto root = scene->mRootNode;
-    auto node = scene->mRootNode;
+    //auto root = scene->mRootNode;
+    //auto node = scene->mRootNode;
 
     //For each MESH in SCENE
     bool skip = false;
@@ -320,6 +330,8 @@ bool Mesh::loadGltf(
     std::vector<u32> meshIndices = std::vector<u32>();
 
     auto _mesh = scene->mMeshes[0];
+  //  _mesh->mAABB
+
     //For each VERTEX in MESH
     for (u32 i = 0; i < _mesh->mNumVertices; i++)
     {
@@ -329,6 +341,8 @@ bool Mesh::loadGltf(
             u = _mesh->mTextureCoords[0][i].x;
             v = _mesh->mTextureCoords[0][i].y;
         }
+
+
 
         GVertex vertex = GVertex(
             _mesh->mVertices[i].x,
@@ -341,7 +355,7 @@ bool Mesh::loadGltf(
             v
         );
 
-        auto bone = _mesh->mBones[i]->mName;
+        //auto bone = _mesh->mBones[i]->mName;
         
         meshVertices.push_back(vertex);
     }
@@ -383,6 +397,8 @@ bool Mesh::loadGltf(
         }
     }
 
+
+
     // Create MESH for Rendering
     *mesh = new Mesh();
     (*mesh)->initialize(
@@ -401,6 +417,7 @@ void Mesh::draw()
     {
         m_texture->use();
     }
+
     UINT stride = sizeof(GVertex);
     UINT offset = 0;
 
@@ -456,94 +473,9 @@ void Mesh::addLight(ILight* light)
     m_lights.push_back(light);
 }
 
-MeshViewModel* Mesh::getViewModel()
-{
-    auto centroid = getCentroid();
-    auto centroidV = XMLoadFloat3(&centroid);
-
-    std::vector<ILight*> spotLights;
-    std::vector<ILight*> pointLights;
-
-    std::copy_if(m_lights.begin(), m_lights.end(), std::back_inserter(spotLights), [](ILight* val) {
-        return val->getLightType() == SPOT_LIGHT;
-    });
-
-    std::copy_if(m_lights.begin(), m_lights.end(), std::back_inserter(pointLights), [](ILight* val) {
-        return val->getLightType() == POINT_LIGHT;
-    });
-    if (spotLights.size() > MAX_LIGHT)
-    {
-        std::sort(spotLights.begin(), spotLights.end(), [centroidV](ILight* a, ILight* b) {
-            auto aPos = a->getPos();
-            XMVECTOR aV = XMLoadFloat4(&aPos);
-
-            auto bPos = b->getPos();
-            XMVECTOR bV = XMLoadFloat4(&bPos);
-
-            XMVECTOR aDiff = XMVectorSubtract(centroidV, aV);
-            XMVECTOR bDiff = XMVectorSubtract(centroidV, bV);
-
-            auto aLengthV = XMVector3LengthSq(aDiff);
-            auto bLengthV = XMVector3LengthSq(bDiff);
-
-            f32 aLength, bLength;
-            XMStoreFloat(&aLength, aLengthV);
-            XMStoreFloat(&bLength, bLengthV);
-
-            return aLength > bLength;
-        });
-        if (spotLights.size() > MAX_LIGHT)
-        {
-            logger.warn("Spot Light limit threshold exceeded!");
-        }
-        spotLights.erase(spotLights.begin() + 3, spotLights.end());
-    }
-
-    if (pointLights.size() > MAX_LIGHT)
-    {
-        std::sort(pointLights.begin(), pointLights.end(), [centroidV](ILight* a, ILight* b) {
-            auto aPos = a->getPos();
-            XMVECTOR aV = XMLoadFloat4(&aPos);
-
-            auto bPos = b->getPos();
-            XMVECTOR bV = XMLoadFloat4(&bPos);
-
-            XMVECTOR aDiff = XMVectorSubtract(centroidV, aV);
-            XMVECTOR bDiff = XMVectorSubtract(centroidV, bV);
-
-            auto aLengthV = XMVector3LengthSq(aDiff);
-            auto bLengthV = XMVector3LengthSq(bDiff);
-
-            f32 aLength, bLength;
-            XMStoreFloat(&aLength, aLengthV);
-            XMStoreFloat(&bLength, bLengthV);
-
-            return aLength > bLength;
-        });
-        if (pointLights.size() > MAX_LIGHT)
-        {
-            logger.warn("Point Light limit threshold exceeded!");
-        }
-        pointLights.erase(pointLights.begin() + 3, pointLights.end());
-    }
-
-    std::vector<SpotLight*> spotLightsSorted;
-    std::vector<PointLight*> pointLightsSorted;
-
-    std::transform(spotLights.begin(), spotLights.end(), std::back_inserter(spotLightsSorted), [](ILight* light) {
-        return (SpotLight*)light;
-    });
-
-    std::transform(pointLights.begin(), pointLights.end(), std::back_inserter(pointLightsSorted), [](ILight* light) {
-        return (PointLight*)light;
-    });
-
-    return new MeshViewModel(this, spotLightsSorted, pointLightsSorted);
-}
-
 void Mesh::getTransforms(const std::string& name, f32 timePos, std::vector<XMMATRIX>& transforms)
 {
-    u32 numBones = m_boneOffsets.size();
+    /*u32 numBones = m_boneOffsets.size();
     std::vector<XMMATRIX> toParentTransforms(numBones);
 
     auto clip = m_animations.find(name);
@@ -569,7 +501,7 @@ void Mesh::getTransforms(const std::string& name, f32 timePos, std::vector<XMMAT
         XMMATRIX offset = m_boneOffsets[i];
         XMMATRIX toRoot = toRootTransforms[i];
         transforms[i] = XMMatrixMultiply(offset, toRoot);
-    }
+    }*/
 }
 
 Texture* Mesh::getTexture()
@@ -701,6 +633,75 @@ void Mesh::concatenateIndices(
     {
         out.push_back(b[i] + initialSize);
     }
+}
+
+void Mesh::initSkinnedData(std::string gltfPath)
+{
+    std::fstream stream(gltfPath);
+    json data = json::parse(stream);
+
+    // GET BONE HIERARCHY
+    auto skins = data["skins"];
+    if (skins.size() == 0)
+    {
+        return;
+    }
+
+    auto skin = skins[0];
+    auto joints = skin["joints"];
+    auto numBones = joints.size();
+    std::vector<i32> boneHierarchy(numBones);
+
+    for (int i = 0; i < numBones; i++)
+    {
+        auto joint = joints[i];
+        auto idx = joint.get<i32>();
+        boneHierarchy[i] = idx;
+    }
+
+    auto nodes = data["nodes"];
+    std::vector<XMMATRIX> offsetMatrices(numBones);
+    XMVECTOR zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+    for (int i = 0; i < numBones; i++)
+    {
+        auto idx = boneHierarchy[i];
+        auto node = nodes[idx];
+
+        //GET ROTATION
+        auto rotationObj = node["rotation"];
+        float rotationArr[4] = { 0, 0, 0, 0 };
+        for (int j = 0; rotationObj && (j < 4); j++)
+        {
+            rotationArr[j] = rotationObj[j].get<f32>();
+        }
+        XMFLOAT4 rotation(rotationArr);
+
+        //GET TRANSLATION
+        auto translationObj = node["translation"];
+        float translationArr[3] = { 0, 0, 0 };
+        for (int j = 0; translationObj && (j < 3); j++)
+        {
+            translationArr[j] = translationObj[j].get<f32>();
+        }
+        XMFLOAT3 translation(translationArr);
+
+        //GET SCALE
+        auto scaleObj = node["scale"];
+        float scaleArr[3] = { 0, 0, 0 };
+        for (int j = 0; scaleObj && (j < 3); j++)
+        {
+            scaleArr[j] = scaleObj[j].get<f32>();
+        }
+        XMFLOAT3 scale(scaleArr);
+
+        XMVECTOR scaleV = XMLoadFloat3(&scale);
+        XMVECTOR rotationV = XMLoadFloat4(&rotation);
+        XMVECTOR translationV = XMLoadFloat3(&translation);
+
+        offsetMatrices[i] = XMMatrixAffineTransformation(scaleV, zero, rotationV, translationV);
+    }
+
+    //m_animationData = new SkinnedData(boneHierarchy,)
 }
 
 float sign(XMFLOAT2 p1, XMFLOAT2 p2, XMFLOAT2 p3)

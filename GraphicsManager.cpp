@@ -112,6 +112,8 @@ void GraphicsManager::bindGlobalBuffer()
 
 	m_deviceContext->VSSetConstantBuffers(0, 1, m_gBufferBuffer.GetAddressOf());
 	m_deviceContext->PSSetConstantBuffers(0, 1, m_gBufferBuffer.GetAddressOf());
+
+	m_frustum.load(1000.0f, m_projection, m_view);
 }
 
 bool GraphicsManager::update()

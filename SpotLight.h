@@ -38,7 +38,7 @@ public:
         f32 radius,
         f32 cutoff
     );
-    ~SpotLight();
+    virtual ~SpotLight();
 
     virtual void use(u32 slot);
     virtual void renderShadowMap(Scene* scene);

@@ -8,7 +8,7 @@ class PlayerBehaviorCallback : public PxControllerBehaviorCallback
 {
 public:
     PlayerBehaviorCallback();
-    ~PlayerBehaviorCallback();
+    virtual ~PlayerBehaviorCallback();
 
     virtual PxControllerBehaviorFlags getBehaviorFlags(const PxShape& shape, const PxActor& actor);
     virtual PxControllerBehaviorFlags getBehaviorFlags(const PxController& controller);

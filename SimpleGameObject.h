@@ -8,7 +8,7 @@ class SimpleGameObject : public GameObject
 {
 public:
     SimpleGameObject(XMFLOAT3 pos);
-    ~SimpleGameObject();
+    virtual ~SimpleGameObject();
 
     void update();
     void draw();

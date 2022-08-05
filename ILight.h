@@ -41,7 +41,7 @@ public:
         m_viewport.MinDepth = 0.0f;
         m_viewport.MaxDepth = 1.0f;
     };
-    ~ILight()
+    virtual ~ILight()
     {
 
     };

@@ -27,7 +27,7 @@ void GameObject::update()
     
 }
 
-void GameObject::draw()
+void GameObject::draw(Shader* shaderOverride)
 {
 
 }

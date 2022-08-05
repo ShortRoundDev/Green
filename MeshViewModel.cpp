@@ -67,3 +67,8 @@ void MeshViewModel::draw()
     m_shader->bindCBuffer(&lightBuffer);
     m_mesh->draw();
 }
+
+Mesh* MeshViewModel::getMesh()
+{
+    return m_mesh;
+}

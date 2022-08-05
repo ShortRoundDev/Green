@@ -23,7 +23,9 @@ public:
 
     /***** CTOR/DTOR *****/
     Player(XMFLOAT3 pos);
-    ~Player();
+    virtual ~Player();
+
+    const XMFLOAT3& getPos();
 
     /***** UPDATE/DRAW *****/
     virtual void update();

@@ -6,6 +6,7 @@
 
 constexpr u64 WORLDSPAWN            = 1L;
 constexpr u64 AMBIENT_LIGHT_VOLUME  = 2L;
+constexpr u64 LIGHT_VOLUME          = 3L;
 
 class MeshEntity
 {
@@ -14,7 +15,7 @@ public:
         m_mesh(mesh),
         m_type(type){ }
 
-    ~MeshEntity() { }
+    virtual ~MeshEntity() { }
 
     Mesh* getMesh()
     {

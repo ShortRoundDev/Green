@@ -3,7 +3,7 @@
 #include "GTypes.h"
 #include "GVertex.h"
 #include "AABB.h"
-#include "AnimationAction.h"
+#include "SkinnedData.h"
 
 #include <d3d11.h>
 #include <wrl/client.h>
@@ -69,10 +69,10 @@ public:
     ~Mesh();
 
     AABB getBox();
+    XMFLOAT3 getCentroid();
 
     void addLight(ILight* light);
 
-    MeshViewModel* getViewModel();
     void getTransforms(const std::string& name, f32 timePos, std::vector<XMMATRIX>& transforms);
 
     Texture* getTexture();
@@ -110,18 +110,20 @@ private:
 
     AABB m_box;
 
-    XMFLOAT3 getCentroid();
 
     std::vector<GVertex> m_vertices;
     std::vector<ILight*> m_lights;
 
-    std::vector<u32> m_boneHierarchy;
+    /*std::vector<u32> m_boneHierarchy;
     std::vector<XMMATRIX> m_boneOffsets;
-    std::map<std::string, AnimationAction> m_animations;
+    std::map<std::string, AnimationClip> m_animations;*/
+
+    SkinnedData* m_animationData;
 
     void initAABB(const std::vector<GVertex>& vertices);
     void concatenateVertices(std::vector<GVertex>& out, const std::vector<GVertex>& a, const std::vector<GVertex>& b);
     void concatenateIndices(std::vector<u32>& out, const std::vector<u32>& a, const std::vector<u32>& b);
+    static void initSkinnedData(std::string gltfPath);
 
     static bool GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh*> meshes);
 };

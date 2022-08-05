@@ -231,7 +231,7 @@
     <ClCompile Include="SimpleGameObject.cpp">
       <Filter>Source Files\Managers\Game\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationAction.cpp">
+    <ClCompile Include="AnimationClip.cpp">
       <Filter>Source Files\Managers\Graphics\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Bone.cpp">
@@ -260,6 +260,18 @@
     </ClCompile>
     <ClCompile Include="Zombie.cpp">
       <Filter>Source Files\Managers\Game\Entities\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="LightVolume.cpp">
+      <Filter>Source Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshViewModelBuilder.cpp">
+      <Filter>Source Files\Managers\Graphics\ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedData.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -368,7 +380,7 @@
     <ClInclude Include="WorldEntityBuffer.h">
       <Filter>Header Files\Managers\Game\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationAction.h">
+    <ClInclude Include="AnimationClip.h">
       <Filter>Header Files\Managers\Graphics\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Bone.h">
@@ -400,6 +412,18 @@
     </ClInclude>
     <ClInclude Include="Zombie.h">
       <Filter>Header Files\Managers\Game\Entities\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="LightVolume.h">
+      <Filter>Header Files\Managers\Game\Entities\MeshEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshViewModelBuilder.h">
+      <Filter>Header Files\Managers\Graphics\ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Header Files\Managers\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedData.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

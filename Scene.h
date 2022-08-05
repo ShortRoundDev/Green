@@ -3,6 +3,7 @@
 #include "PxPhysicsAPI.h"
 
 #include "Octree.h"
+#include "NavMesh.h"
 
 #include <string>
 #include <vector>
@@ -29,6 +30,7 @@ public:
 
     void generateShadowMaps();
     void draw();
+    void renderEntities(Shader* shader);
     void renderMeshes();
     void renderViewModels();
     void update();
@@ -50,14 +52,17 @@ private:
     std::vector<MeshViewModel*> m_meshViewModels;
     std::vector<PxConvexMesh*> m_physicsMeshes;
     std::vector<ILight*> m_lights;
+    NavMesh m_navMesh;
 
-    //std::vector<btRigidBody*> m_walls;
     std::vector<GameObject*> m_gameObjects;
     std::vector<GameObject*> m_addGameObjects;
 
     Octree* m_tree;
     DirectionalLight* m_directionalLight;
 
+    void initFromFiles(std::string fileName, GameManager* gameManager);
     void initFromMapFile(std::string fileName, std::vector<MeshEntity*>& meshEntities);
+    void initFromObjFile(std::string fileName, GameManager* gameManager);
+    void initBrushViewModels();
     void initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<MeshEntity*>& meshEntities);
 };

@@ -192,8 +192,24 @@ Version: 1.84.2
 Port-Version: 1
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 3001f07d587493f4e3507a9537433f05d853a1f385c1fd0818c14a2ba08f8231
+Abi: d5ecb5b0054b440c0d5f1ba45531877d5c27a86b7c2ac1acb93ec6d1aa8c9e39
 Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
+Type: Port
+Status: install ok installed
+
+Package: imgui
+Feature: dx11-binding
+Architecture: x64-windows
+Multi-Arch: same
+Description: Make available DirectX11 binding
+Type: Port
+Status: install ok installed
+
+Package: imgui
+Feature: win32-binding
+Architecture: x64-windows
+Multi-Arch: same
+Description: Make available Win32 binding
 Type: Port
 Status: install ok installed
 

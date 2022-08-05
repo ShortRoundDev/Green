@@ -24,7 +24,9 @@ Player* Player::Create(MF_Entity* entity)
     MF_Vector3 pos;
     if (MF_GetAttributeVec3(entity, "origin", &pos))
     {
-        return new Player(MF3_TO_XM3(pos));
+        auto player = new Player(MF3_TO_XM3(pos));
+        Game.setPlayer(player);
+        return player;
     }
     return nullptr;
 }
@@ -58,7 +60,7 @@ Player::Player(XMFLOAT3 pos) :
     desc.height = 55.0f;
     m_height = desc.height;
     
-    desc.invisibleWallHeight = 3.0;
+    desc.invisibleWallHeight = 3.0f;
     desc.climbingMode = PxCapsuleClimbingMode::eEASY;
     desc.material = material;
     desc.behaviorCallback = new PlayerBehaviorCallback();
@@ -95,6 +97,12 @@ Player::~Player()
 
 }
 #pragma endregion
+
+const XMFLOAT3& Player::getPos()
+{
+    return m_pos;
+}
+
 
 /***** UPDATE/DRAW *****/
 #pragma region UPDATE_DRAW

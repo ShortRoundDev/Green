@@ -14,7 +14,7 @@ public:
     static DirectionalLight* Create(MF_Entity* entity);
 
     DirectionalLight(XMFLOAT4 pos, XMFLOAT4 color, XMFLOAT4 dir, u32 width, u32 height);
-    ~DirectionalLight();
+    virtual ~DirectionalLight();
 
     virtual void use(u32 slot);
     virtual void renderShadowMap(Scene* scene);

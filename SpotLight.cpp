@@ -218,6 +218,7 @@ void SpotLight::use(u32 slot)
 
 void SpotLight::renderShadowMap(Scene* scene)
 {
+    Graphics.getContext()->ClearDepthStencilView(m_depthMapDsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     Graphics.setShadowRasterizer(true);
     bindShadowMap();
     m_shader->use();
@@ -236,6 +237,7 @@ void SpotLight::renderShadowMap(Scene* scene)
     m_shader->bindCBuffer(&buffer);
 
     scene->renderMeshes();
+    scene->renderEntities(m_shader);
     Graphics.resetRenderTarget();
     Graphics.resetViewport();
     Graphics.setShadowRasterizer(false);

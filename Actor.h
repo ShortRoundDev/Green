@@ -16,17 +16,18 @@ using namespace physx;
 class Actor : public GameObject
 {
 public:
-    Actor(std::string model, XMFLOAT3 pos, PxController* controller, u64 typeId) : Actor(
-        model, pos, controller, typeId, &Game
+    Actor(std::string model, XMFLOAT3 pos, u64 typeId) : Actor(
+        model, pos, typeId, &Game
     )
     {
 
     }
 
-    Actor(std::string model, XMFLOAT3 pos, PxController* controller, u64 typeId, GameManager* game) :
+    Actor(std::string model, XMFLOAT3 pos, u64 typeId, GameManager* game) :
         GameObject(pos, typeId, game),
         m_mesh(nullptr),
-        m_controller(controller)
+        m_controller(nullptr),
+        m_shader(nullptr)
     {
         if (!Mesh::loadGltf(model, &m_mesh, game))
         {
@@ -34,7 +35,7 @@ public:
         }
     }
 
-    ~Actor()
+    virtual ~Actor()
     {
 
     }

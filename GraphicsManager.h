@@ -3,6 +3,7 @@
 
 #include "GTypes.h"
 #include "GlobalBuffer.h"
+#include "Frustum.h"
 
 #include "Windows.h"
 #include "d3d11.h"
@@ -73,6 +74,7 @@ public:
     void setWireframe(bool on);
 
     GlobalBuffer m_gBuffer;
+    Frustum m_frustum;
 
     f32 getClientWidth();
     f32 getClientHeight();

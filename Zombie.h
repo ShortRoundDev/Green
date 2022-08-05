@@ -2,14 +2,14 @@
 
 #include "Actor.h"
 
-class Zombie :public  Actor
+class Zombie : public Actor
 {
 public:
     Zombie(XMFLOAT3 pos);
     ~Zombie();
 
     void update();
-    void draw();
+    void draw(Shader* shaderOverride = nullptr);
     void think();
 
 private:

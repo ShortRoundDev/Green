@@ -51,7 +51,7 @@ float4 Pixel(PixelInput input) : SV_TARGET
             dirLight.sun.direction,
             0.0f, 0.0f, 0.0f, 0.0f
         };
-    
+        
         float dirShadow = SpotLightShadow(
             pointShadowSampler,
             tmp,
