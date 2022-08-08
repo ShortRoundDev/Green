@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Actor.h"
+#include "Animator.h"
 
 class Zombie : public Actor
 {
@@ -13,5 +14,6 @@ public:
     void think();
 
 private:
+    Animator* m_animator;
 };
 

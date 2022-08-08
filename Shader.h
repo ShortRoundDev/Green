@@ -7,6 +7,7 @@
 #include "DirectXMath.h"
 
 #include <string>
+#include <vector>
 
 using namespace Microsoft::WRL;
 using namespace DirectX;
@@ -30,6 +31,7 @@ public:
     bool bindPointLight(PointLight* pointLight);
 
     bool bindModelMatrix(const XMMATRIX& modelTransform);
+    bool bindModelMatrix(const XMMATRIX& modelTransform, const std::vector<XMMATRIX>* bones, u32 totalBones);
     void use();
 
 private:

@@ -1,101 +1,60 @@
 #pragma once
 
+#include "DirectXMath.h"
 #include "GTypes.h"
-#include "KeyFrame.h"
 
-#include <DirectXMath.h>
-
+#include <string>
 #include <vector>
 
+#include <functional>
+
 using namespace DirectX;
+
+class aiNodeAnim;
+
+typedef XMVECTOR(*vectorInterpolator)(XMVECTOR a0, XMVECTOR a1, f32 t);
+
+struct KeyFrame
+{
+    XMVECTOR value;
+    f32 timestamp;
+};
 
 class Bone
 {
 public:
-    Bone()
+    Bone(const std::string& name, i32 id, const aiNodeAnim* channel);
+    ~Bone();
+    void update(f32 time);
+    const XMMATRIX& getLocalTransform();
+
+private:
+    std::vector<KeyFrame> m_positions;
+    std::vector<KeyFrame> m_scales;
+    std::vector<KeyFrame> m_rotations;
+
+    i32 m_numPositions;
+    i32 m_numRotations;
+    i32 m_numScales;
+
+    XMMATRIX m_localTransform;
+    std::string m_name;
+    i32 m_id;
+
+    i32 getKeyframeIndex(const std::vector<KeyFrame>& keyframes, f32 time);
+
+    void getKeyFrames(const std::vector<KeyFrame>& keyframes, f32 time, XMVECTOR& a0, XMVECTOR& a1, f32& timePct);
+
+    template<typename T>
+    void loadKeyFrames(std::vector<KeyFrame>& keyframes, T* channel, i32 keyLength, std::function<KeyFrame(T)> transformer)
     {
-
-    }
-    ~Bone()
-    {
-
-    }
-
-    f32 getStartTime()
-    {
-
-    }
-
-    f32 getEndTime()
-    {
-
-    }
-
-    void interpolate(f32 t, XMMATRIX& transform)
-    {
-        if (t <= keyFrames.front().getTimestamp())
+        for (int i = 0; i < keyLength; i++)
         {
-            auto front = keyFrames.front();
-            auto scale = front.getScale();
-            auto translation = front.getTranslation();
-            auto rotation = front.getRotation();
-            XMVECTOR s = XMLoadFloat3(&scale);
-            XMVECTOR p = XMLoadFloat3(&translation);
-            XMVECTOR q = XMLoadFloat4(&rotation);
-            
-            XMVECTOR zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-            transform = XMMatrixAffineTransformation(s, zero, q, p);
-        }
-        else if (t >= keyFrames.back().getTimestamp())
-        {
-            auto back = keyFrames.back();
-            auto scale = back.getScale();
-            auto translation = back.getTranslation();
-            auto rotation = back.getRotation();
-            XMVECTOR s = XMLoadFloat3(&scale);
-            XMVECTOR p = XMLoadFloat3(&translation);
-            XMVECTOR q = XMLoadFloat4(&rotation);
+            T aiKey = channel[i];
 
-            XMVECTOR zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-            transform = XMMatrixAffineTransformation(s, zero, q, p);
-        }
-        else
-        {
-            for (u32 i = 0; i < keyFrames.size() - 1; i++)
-            {
-                auto j = keyFrames[i]; // j = last frame completed
-                auto k = keyFrames[i + 1]; // k = next frame, to be completed
-                if (t >= j.getTimestamp() && t <= k.getTimestamp())
-                {
-                    float lerpPercent = (t - j.getTimestamp()) / (k.getTimestamp() - j.getTimestamp());
+            KeyFrame animKey = transformer(aiKey);
 
-                    auto scale0 = j.getScale();
-                    auto scale1 = k.getScale();
-                    XMVECTOR s0 = XMLoadFloat3(&scale0);
-                    XMVECTOR s1 = XMLoadFloat3(&scale1);
-
-                    auto translation0 = j.getTranslation();
-                    auto translation1 = k.getTranslation();
-                    XMVECTOR p0 = XMLoadFloat3(&translation0);
-                    XMVECTOR p1= XMLoadFloat3(&translation1);
-
-                    auto rotation0 = j.getRotation();
-                    auto rotation1 = k.getRotation();
-                    XMVECTOR q0 = XMLoadFloat4(&rotation0);
-                    XMVECTOR q1 = XMLoadFloat4(&rotation1);
-
-                    XMVECTOR s = XMVectorLerp(s0, p1, lerpPercent);
-                    XMVECTOR p = XMVectorLerp(p0, p1, lerpPercent);
-                    XMVECTOR q = XMQuaternionSlerp(q0, q1, lerpPercent);
-
-                    XMVECTOR zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-                    transform = XMMatrixAffineTransformation(s, zero, q, p);
-
-                    break;
-                }
-            }
+            keyframes.push_back(animKey);
         }
     }
-    std::vector<KeyFrame> keyFrames;
 };
-

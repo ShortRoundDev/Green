@@ -138,7 +138,6 @@ bool Mesh::loadObj(
     );
 }
 
-
 bool Mesh::loadObj(
     std::string path,
     std::vector<Mesh*>& meshes,
@@ -301,6 +300,7 @@ bool Mesh::loadObj(
     }
 
     return true;
+
 }
 
 bool Mesh::loadGltf(
@@ -317,21 +317,13 @@ bool Mesh::loadGltf(
         return false;
     }
 
-    //initSkinnedData(path);
-
-    *mesh = new Mesh;
-
-    //auto root = scene->mRootNode;
-    //auto node = scene->mRootNode;
-
     //For each MESH in SCENE
     bool skip = false;
     std::vector<GVertex> meshVertices = std::vector<GVertex>();
     std::vector<u32> meshIndices = std::vector<u32>();
 
     auto _mesh = scene->mMeshes[0];
-  //  _mesh->mAABB
-
+  
     //For each VERTEX in MESH
     for (u32 i = 0; i < _mesh->mNumVertices; i++)
     {
@@ -341,8 +333,6 @@ bool Mesh::loadGltf(
             u = _mesh->mTextureCoords[0][i].x;
             v = _mesh->mTextureCoords[0][i].y;
         }
-
-
 
         GVertex vertex = GVertex(
             _mesh->mVertices[i].x,
@@ -354,8 +344,6 @@ bool Mesh::loadGltf(
             u,
             v
         );
-
-        //auto bone = _mesh->mBones[i]->mName;
         
         meshVertices.push_back(vertex);
     }
@@ -397,10 +385,11 @@ bool Mesh::loadGltf(
         }
     }
 
-
-
     // Create MESH for Rendering
     *mesh = new Mesh();
+
+    getBonesForMesh(*mesh, meshVertices, _mesh, scene);
+
     (*mesh)->initialize(
         meshVertices,
         meshVertices.size(),
@@ -408,7 +397,50 @@ bool Mesh::loadGltf(
         meshIndices.size(),
         texture
     );
+    (*mesh)->setScene((aiScene*)scene);
     return true;
+}
+
+void Mesh::getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* aMesh, const aiScene* scene)
+{
+    for (int boneIndex = 0; boneIndex < aMesh->mNumBones; boneIndex++)
+    {
+        int boneId = -1;
+        std::string boneName = aMesh->mBones[boneIndex]->mName.C_Str();
+
+        if (mesh->getBoneInfoMap().find(boneName) == mesh->getBoneInfoMap().end())
+        {
+            BoneInfo newBone;
+            newBone.id = mesh->getBoneCounter();
+            convertAiMatrixToXMMatrix(aMesh->mBones[boneIndex]->mOffsetMatrix, newBone.offset);
+            mesh->getBoneInfoMap()[boneName] = newBone;
+            boneId = mesh->getBoneCounter();
+            mesh->setBoneCounter(mesh->getBoneCounter() + 1);
+        }
+        else
+        {
+            boneId = mesh->getBoneInfoMap()[boneName].id;
+        }
+        if (boneId == -1)
+        {
+            logger.err("Bone ID is -1, this is bullshit!");
+            return;
+        }
+        auto weights = aMesh->mBones[boneIndex]->mWeights;
+        i32 numWeights = aMesh->mBones[boneIndex]->mNumWeights;
+
+        for (int weightIndex = 0; weightIndex < numWeights; weightIndex++)
+        {
+            i32 vertexId = weights[weightIndex].mVertexId;
+            f32 weight = weights[weightIndex].mWeight;
+            if (vertexId >= vertices.size())
+            {
+                logger.err("Somehow, you've got more vertices in the assimp bone hierarchy than in the parsed-out vertex list. Fix yo shit!");
+                return;
+            }
+            pushBoneToVertexStack(vertices[vertexId], boneId, weight);
+        }
+    }
 }
 
 void Mesh::draw()
@@ -514,6 +546,17 @@ void Mesh::setTexture(Texture* texture)
     m_texture = texture;
 }
 
+void Mesh::setScene(aiScene* scene)
+{
+    m_scene = scene;
+}
+
+const aiScene* Mesh::getScene()
+{
+    return m_scene;
+}
+
+
 bool Mesh::initialize(
     const std::vector<GVertex>& vertices,
     sz vertCount,
@@ -596,6 +639,21 @@ XMFLOAT3 Mesh::getCentroid()
     return centroidV.pos;
 }
 
+std::map<std::string, BoneInfo>& Mesh::getBoneInfoMap()
+{
+    return m_boneInfoMap;
+}
+
+i32 Mesh::getBoneCounter()
+{
+    return m_boneCounter;
+}
+
+void Mesh::setBoneCounter(i32 boneCounter)
+{
+    m_boneCounter = boneCounter;
+}
+
 void Mesh::initAABB(const std::vector<GVertex>& vertices)
 {
     m_box = AABB(vertices);
@@ -633,75 +691,6 @@ void Mesh::concatenateIndices(
     {
         out.push_back(b[i] + initialSize);
     }
-}
-
-void Mesh::initSkinnedData(std::string gltfPath)
-{
-    std::fstream stream(gltfPath);
-    json data = json::parse(stream);
-
-    // GET BONE HIERARCHY
-    auto skins = data["skins"];
-    if (skins.size() == 0)
-    {
-        return;
-    }
-
-    auto skin = skins[0];
-    auto joints = skin["joints"];
-    auto numBones = joints.size();
-    std::vector<i32> boneHierarchy(numBones);
-
-    for (int i = 0; i < numBones; i++)
-    {
-        auto joint = joints[i];
-        auto idx = joint.get<i32>();
-        boneHierarchy[i] = idx;
-    }
-
-    auto nodes = data["nodes"];
-    std::vector<XMMATRIX> offsetMatrices(numBones);
-    XMVECTOR zero = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-    for (int i = 0; i < numBones; i++)
-    {
-        auto idx = boneHierarchy[i];
-        auto node = nodes[idx];
-
-        //GET ROTATION
-        auto rotationObj = node["rotation"];
-        float rotationArr[4] = { 0, 0, 0, 0 };
-        for (int j = 0; rotationObj && (j < 4); j++)
-        {
-            rotationArr[j] = rotationObj[j].get<f32>();
-        }
-        XMFLOAT4 rotation(rotationArr);
-
-        //GET TRANSLATION
-        auto translationObj = node["translation"];
-        float translationArr[3] = { 0, 0, 0 };
-        for (int j = 0; translationObj && (j < 3); j++)
-        {
-            translationArr[j] = translationObj[j].get<f32>();
-        }
-        XMFLOAT3 translation(translationArr);
-
-        //GET SCALE
-        auto scaleObj = node["scale"];
-        float scaleArr[3] = { 0, 0, 0 };
-        for (int j = 0; scaleObj && (j < 3); j++)
-        {
-            scaleArr[j] = scaleObj[j].get<f32>();
-        }
-        XMFLOAT3 scale(scaleArr);
-
-        XMVECTOR scaleV = XMLoadFloat3(&scale);
-        XMVECTOR rotationV = XMLoadFloat4(&rotation);
-        XMVECTOR translationV = XMLoadFloat3(&translation);
-
-        offsetMatrices[i] = XMMatrixAffineTransformation(scaleV, zero, rotationV, translationV);
-    }
-
-    //m_animationData = new SkinnedData(boneHierarchy,)
 }
 
 float sign(XMFLOAT2 p1, XMFLOAT2 p2, XMFLOAT2 p3)
@@ -790,4 +779,20 @@ bool Mesh::GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh
     }
 
     return true;
+}
+
+void pushBoneToVertexStack(GVertex& vertex, i32 boneId, f32 weight)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        auto boneArr = (i32*)&(vertex.bones); // is this safe? I think it's ok...
+        if (boneArr[i] < 0)
+        {
+            auto weightArr = (f32*)&(vertex.weights);
+            
+            boneArr[i] = boneId;
+            weightArr[i] = weight;
+            return;
+        }
+    }
 }

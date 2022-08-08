@@ -18,6 +18,8 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+class Logger;
+
 constexpr u32 SHADOW_RES = 512;
 
 struct OrthoView
@@ -57,6 +59,9 @@ public:
 
     ID3D11Device* getDevice();
     ID3D11DeviceContext* getContext();
+    ID3D11InfoQueue* getInfo();
+
+    void printAndClearDebug(Logger* logger);
 
     HWND getWindow();
 
@@ -110,6 +115,7 @@ private:
     ComPtr<ID3D11RasterizerState> m_sceneRasterizer;
     ComPtr<ID3D11RasterizerState> m_wireRasterizer;
     ComPtr<ID3D11RasterizerState> m_shadowMapRasterizer;
+    ComPtr<ID3D11InfoQueue> m_infoQueue;
 
     D3D11_VIEWPORT m_viewport;
 

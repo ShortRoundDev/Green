@@ -11,5 +11,6 @@ struct SystemVars
     std::wstring title = L"Game";
 
     bool debugMode = false;
+    bool dxDebug = false;
 };
 

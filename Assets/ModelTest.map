@@ -1,0 +1,28 @@
+// Game: Generic
+// Format: Standard
+// entity 0
+{
+"classname" "worldspawn"
+"_tb_textures" "textures;textures/carpet;textures/concrete"
+// brush 0
+{
+( -224 -64 -16 ) ( -224 -63 -16 ) ( -224 -64 -15 ) brown_planks_03_diff_4k 0 0 0 0.025 0.025
+( -64 -160 -16 ) ( -64 -160 -15 ) ( -63 -160 -16 ) brown_planks_03_diff_4k 0 0 0 0.025 0.025
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) brown_planks_03_diff_4k 0 0 0 0.025 0.025
+( 64 64 16 ) ( 64 65 16 ) ( 65 64 16 ) brown_planks_03_diff_4k 0 0 0 0.025 0.025
+( 64 256 16 ) ( 65 256 16 ) ( 64 256 17 ) brown_planks_03_diff_4k 0 0 0 0.025 0.025
+( 224 64 16 ) ( 224 64 17 ) ( 224 65 16 ) brown_planks_03_diff_4k 0 0 0 0.025 0.025
+}
+}
+// entity 1
+{
+"classname" "info_player_start"
+"origin" "0 0 59"
+}
+// entity 2
+{
+"classname" "SunLight"
+"origin" "-312 24 248"
+"color" "255 255 255 255"
+"dir" "1 0.5 -0.5"
+}

@@ -231,15 +231,6 @@
     <ClCompile Include="SimpleGameObject.cpp">
       <Filter>Source Files\Managers\Game\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationClip.cpp">
-      <Filter>Source Files\Managers\Graphics\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Bone.cpp">
-      <Filter>Source Files\Managers\Graphics\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyFrame.cpp">
-      <Filter>Source Files\Managers\Graphics\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
@@ -270,7 +261,13 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>Source Files\Managers\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="SkinnedData.cpp">
+    <ClCompile Include="Bone.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
       <Filter>Source Files\Managers\Graphics\Animation</Filter>
     </ClCompile>
   </ItemGroup>
@@ -380,15 +377,6 @@
     <ClInclude Include="WorldEntityBuffer.h">
       <Filter>Header Files\Managers\Game\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationClip.h">
-      <Filter>Header Files\Managers\Graphics\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Bone.h">
-      <Filter>Header Files\Managers\Graphics\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyFrame.h">
-      <Filter>Header Files\Managers\Graphics\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="NavNode.h">
       <Filter>Header Files\Managers\Game\Navmesh</Filter>
     </ClInclude>
@@ -422,7 +410,16 @@
     <ClInclude Include="Frustum.h">
       <Filter>Header Files\Managers\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="SkinnedData.h">
+    <ClInclude Include="BoneInfo.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
       <Filter>Header Files\Managers\Graphics\Animation</Filter>
     </ClInclude>
   </ItemGroup>

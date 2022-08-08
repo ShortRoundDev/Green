@@ -15,7 +15,8 @@ bool GameManager::start()
     startPhysX();
     MF_Init();
 
-    m_scene = new Scene("School", this);
+    m_scene = new Scene("ModelTest", this);
+
     m_scene->generateShadowMaps();
     //m_scene->initEntities();
     Graphics.swap();

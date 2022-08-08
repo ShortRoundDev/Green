@@ -382,5 +382,11 @@ bool SystemManager::parseParameters()
         m_systemVars.debugMode = debugMode->second == L"true";
     }
 
+    auto dxDebug = m_args.find(L"dxdebug");
+    if (dxDebug != m_args.end())
+    {
+        m_systemVars.dxDebug = dxDebug->second == L"true";
+    }
+
     return true;
 }

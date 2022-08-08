@@ -148,8 +148,9 @@ bool Shader::initShaderCode(
 
 bool Shader::initLayout(ID3D11Device* device, u8* byteCode, sz byteCodeLength)
 {
-    D3D11_INPUT_ELEMENT_DESC polygonLayout[3];
-    ZeroMemory(polygonLayout, sizeof(D3D11_INPUT_ELEMENT_DESC) * 3);
+    const i32 INPUT_SIZE = 5;
+    D3D11_INPUT_ELEMENT_DESC polygonLayout[INPUT_SIZE];
+    ZeroMemory(polygonLayout, sizeof(D3D11_INPUT_ELEMENT_DESC) * INPUT_SIZE);
     polygonLayout[0].SemanticName = "POSITION";
     polygonLayout[0].SemanticIndex = 0;
     polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -174,6 +175,22 @@ bool Shader::initLayout(ID3D11Device* device, u8* byteCode, sz byteCodeLength)
     polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
     polygonLayout[2].InstanceDataStepRate = 0;
 
+    polygonLayout[3].SemanticName = "BONEINDICES";
+    polygonLayout[3].SemanticIndex = 0;
+    polygonLayout[3].Format = DXGI_FORMAT_R32G32B32A32_SINT;
+    polygonLayout[3].InputSlot = 0;
+    polygonLayout[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+    polygonLayout[3].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    polygonLayout[3].InstanceDataStepRate = 0;
+
+    polygonLayout[4].SemanticName = "WEIGHTS";
+    polygonLayout[4].SemanticIndex = 0;
+    polygonLayout[4].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    polygonLayout[4].InputSlot = 0;
+    polygonLayout[4].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+    polygonLayout[4].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+    polygonLayout[4].InstanceDataStepRate = 0;
+
     int numElements = _countof(polygonLayout);
 
     HRESULT result = device->CreateInputLayout(
@@ -188,6 +205,7 @@ bool Shader::initLayout(ID3D11Device* device, u8* byteCode, sz byteCodeLength)
     if (FAILED(result))
     {
         logger.err("Shader input layout error!");
+        Graphics.printAndClearDebug(&logger);
         return false;
     }
     return true;
@@ -328,8 +346,19 @@ bool Shader::initCBuffer(ID3D11Device* device, sz bufferSize)
 
 bool Shader::bindModelMatrix(const XMMATRIX& modelTransform)
 {
+    return bindModelMatrix(modelTransform, nullptr, 0);
+}
+
+bool Shader::bindModelMatrix(const XMMATRIX& modelTransform, const std::vector<XMMATRIX>* bones, u32 totalBones)
+{
     ModelBuffer model;
+
     model.modelTransform = XMMatrixTranspose(modelTransform);
+    for(int i = 0; i < totalBones; i++){
+        auto matrix = (*bones)[i];
+        model.bones[i] = XMMatrixTranspose(matrix);
+    }
+    model.totalBones = totalBones;
 
     D3D11_MAPPED_SUBRESOURCE mBufferResource;
     HRESULT result = Graphics.getContext()->Map(m_modelBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mBufferResource);

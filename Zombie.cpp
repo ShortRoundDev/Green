@@ -8,13 +8,12 @@
 
 #include "Logger.h"
 
-
 static ::Logger logger = CreateLogger("Zombie");
 
 const PxControllerFilters filters;
 
 Zombie::Zombie(XMFLOAT3 pos) : Actor(
-    "zombie.gltf",
+    "RbgBox.gltf",
     pos,
     TYPE_ID(Zombie)
 )
@@ -31,10 +30,13 @@ Zombie::Zombie(XMFLOAT3 pos) : Actor(
     desc.material = material;
     m_controller = Game.getControllers()->createController(desc);
     m_controller->setPosition(PxExtendedVec3(pos.x, pos.y, pos.z));
+
     if (!m_controller)
     {
         logger.err("Failed to create capsule!");
     }
+
+    m_animator = new Animator(new Animation("RbgBox.gltf", m_mesh));
 }
 
 Zombie::~Zombie()
@@ -44,6 +46,9 @@ Zombie::~Zombie()
 
 void Zombie::update()
 {
+    m_animator->update(1.0f);
+    return;
+
     auto pPos = Game.getPlayer()->getPos();
     auto pPosV = XMLoadFloat3(&pPos);
     auto posV = XMLoadFloat3(&m_pos);
@@ -61,7 +66,6 @@ void Zombie::update()
 
     PxExtendedVec3 pos = m_controller->getFootPosition();
     m_pos = XMFLOAT3(pos.x, pos.y, pos.z);
-
 }
 
 void Zombie::draw(Shader* shaderOverride)
@@ -76,7 +80,8 @@ void Zombie::draw(Shader* shaderOverride)
 
     Shader* shader = shaderOverride ? shaderOverride : m_shader;
     shader->use();
-    shader->bindModelMatrix(transform);
+    shader->bindModelMatrix(transform, &(m_animator->getFinalBoneMatrices()), m_animator->getFinalBoneMatrices().size());
+    auto bones = m_animator->getFinalBoneMatrices();
     m_mesh->draw();
 
 }

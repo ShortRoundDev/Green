@@ -227,6 +227,39 @@ ID3D11DeviceContext* GraphicsManager::getContext()
 	return m_deviceContext.Get();
 }
 
+ID3D11InfoQueue* GraphicsManager::getInfo()
+{
+	return m_infoQueue.Get();
+}
+
+void GraphicsManager::printAndClearDebug(Logger* logger)
+{
+	if (!System.getVars().dxDebug)
+	{
+		return;
+	}
+	for (u64 i = 0; i < getInfo()->GetNumStoredMessages(); i++)
+	{
+		sz messageSize = 0;
+		auto RES = getInfo()->GetMessage(i, NULL, &messageSize);
+		D3D11_MESSAGE* message = (D3D11_MESSAGE*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, messageSize);
+		if (message == NULL)
+		{
+			logger->err("Failed to allocate message!");
+			continue;
+		}
+
+		RES = getInfo()->GetMessage(i, message, &messageSize);
+		if (RES == S_OK)
+		{
+			logger->err("%s", message->pDescription);
+		}
+
+		HeapFree(GetProcessHeap(), HEAP_ZERO_MEMORY, message);
+	}
+	getInfo()->ClearStoredMessages();
+}
+
 HWND GraphicsManager::getWindow()
 {
 	return m_window;
@@ -595,7 +628,7 @@ bool GraphicsManager::initSwapchain()
 				NULL,
 				D3D_DRIVER_TYPE_HARDWARE,
 				NULL,
-				0,
+				vars.dxDebug ? (BYTE)D3D11_CREATE_DEVICE_DEBUG : 0,
 				&featureLevel,
 				1,
 				D3D11_SDK_VERSION,
@@ -609,6 +642,14 @@ bool GraphicsManager::initSwapchain()
 	)
 	{
 		return false;
+	}
+
+	if (vars.dxDebug)
+	{
+		if (FAILED(m_device->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)m_infoQueue.GetAddressOf())))
+		{
+			logger.warn("No debug info queue available");
+		}
 	}
 	return true;
 }

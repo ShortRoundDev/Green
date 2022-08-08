@@ -3,6 +3,8 @@
 
 #include "DirectionalLight.hlsli"
 
+#define MAX_BONES 100
+
 cbuffer GlobalCBuffer : register(b0)
 {
     matrix world;
@@ -19,6 +21,8 @@ cbuffer GlobalCBuffer : register(b0)
 cbuffer ModelBuffer : register(b1)
 {
     matrix modelTransform;
+    matrix bones[MAX_BONES];
+    uint totalBones;
 }
 
 #endif

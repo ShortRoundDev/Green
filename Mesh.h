@@ -3,12 +3,15 @@
 #include "GTypes.h"
 #include "GVertex.h"
 #include "AABB.h"
-#include "SkinnedData.h"
+
+#include "assimp/Importer.hpp"
 
 #include <d3d11.h>
 #include <wrl/client.h>
 
 #include "PxPhysicsAPI.h"
+
+#include "BoneInfo.h"
 
 #include <vector>
 #include <string>
@@ -23,6 +26,11 @@ class AABB;
 class ILight;
 class MeshViewModel;
 class NavMesh;
+
+class aiMesh;
+class aiScene;
+
+void pushBoneToVertexStack(GVertex& vertex, i32 boneId, f32 weight);
 
 class Mesh
 {
@@ -70,6 +78,10 @@ public:
 
     AABB getBox();
     XMFLOAT3 getCentroid();
+    std::map<std::string, BoneInfo>& getBoneInfoMap();
+    
+    i32 getBoneCounter();
+    void setBoneCounter(i32 boneCounter);
 
     void addLight(ILight* light);
 
@@ -77,6 +89,12 @@ public:
 
     Texture* getTexture();
     void setTexture(Texture* texture);
+
+    void setScene(aiScene* scene);
+    const aiScene* getScene();
+    
+protected:
+    static void getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* aMesh, const aiScene* scene);
 
 private:
     Mesh();
@@ -96,6 +114,9 @@ private:
         Texture* texture
     );
 
+    std::map<std::string, BoneInfo> m_boneInfoMap;
+    i32 m_boneCounter = 0;
+
     ComPtr<ID3D11Buffer> m_vertexBuffer;
     u32 m_vertCount;
 
@@ -110,20 +131,14 @@ private:
 
     AABB m_box;
 
-
     std::vector<GVertex> m_vertices;
     std::vector<ILight*> m_lights;
 
-    /*std::vector<u32> m_boneHierarchy;
-    std::vector<XMMATRIX> m_boneOffsets;
-    std::map<std::string, AnimationClip> m_animations;*/
-
-    SkinnedData* m_animationData;
+    aiScene* m_scene;
 
     void initAABB(const std::vector<GVertex>& vertices);
     void concatenateVertices(std::vector<GVertex>& out, const std::vector<GVertex>& a, const std::vector<GVertex>& b);
     void concatenateIndices(std::vector<u32>& out, const std::vector<u32>& a, const std::vector<u32>& b);
-    static void initSkinnedData(std::string gltfPath);
 
     static bool GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh*> meshes);
 };

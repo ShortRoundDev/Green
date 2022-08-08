@@ -41,4 +41,6 @@ struct GlobalBuffer
 struct ModelBuffer
 {
     XMMATRIX modelTransform;
+    XMMATRIX bones[100];
+    u32 totalBones;
 };

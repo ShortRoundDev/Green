@@ -7,7 +7,30 @@
 ShadowPixelInput Vertex(VertexInput input)
 {
     ShadowPixelInput output;
-    output.position = mul(float4(input.position.xyz, 1.0), modelTransform);
+    
+    float4 totalPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    bool hasBones = false;
+    for (int i = 0; i < 4; i++)
+    {
+        uint boneId = input.boneIndices[i];
+        if (boneId == -1)
+        {
+            break;
+        }
+        if (boneId >= totalBones)
+        {
+            totalPos = input.position;
+            break;
+        }
+        hasBones = true;
+        float4 localPos = mul(input.position, bones[boneId]);
+        totalPos += localPos * input.weights[i];
+    }
+    
+    if (!hasBones)
+    {
+        totalPos = input.position;
+    }
 
    /* output.position = PerspectiveTransform(
 		input.position,
@@ -15,7 +38,10 @@ ShadowPixelInput Vertex(VertexInput input)
 		view,
 		projection
 	);*/
-    output.position = mul(output.position, lightSpace);
+    
+    totalPos = mul(totalPos, modelTransform);
+    
+    output.position = mul(totalPos, lightSpace);
     
     output.tex = input.tex;
 
