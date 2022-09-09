@@ -1,0 +1,8 @@
+Package: ms-gltf
+Feature: test
+Depends: gtest
+Architecture: x64-windows
+Multi-Arch: same
+Description: Build test programs
+Type: Port
+Status: install ok half-installed

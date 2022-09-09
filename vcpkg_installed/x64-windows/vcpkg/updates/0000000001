@@ -1,9 +1,8 @@
-Package: nlohmann-json
-Version: 3.10.2
-Depends: vcpkg-cmake, vcpkg-cmake-config
+Package: gtest
+Version: 1.11.0
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 383c84a5cfe460e204bcab86aacf804fcd90b2331ae83c9222066a6c7cc32f4d
-Description: JSON for Modern C++
+Abi: 0b16b0fc636131a24d2a7be1e468536d728da6076cc0a5aedc62f8280b49e890
+Description: GoogleTest and GoogleMock testing frameworks
 Type: Port
 Status: install ok installed

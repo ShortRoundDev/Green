@@ -199,7 +199,7 @@ void Scene::initEntities(MF_Map* map, MF_BrushDictionary* dict, std::vector<Mesh
     }
 
     //m_gameObjects.push_back(new SimpleGameObject(XMFLOAT3(452.664093f, 0.600002f, -513.489319f)));
-    m_gameObjects.push_back(new Zombie(XMFLOAT3(-64.0f, 48.0f, 100.0f)));
+    m_gameObjects.push_back(new Zombie(XMFLOAT3(-64.0f, 32.0f, 100.0f)));
 
     for (int i = 0; i < dict->totalBrushes; i++)
     {

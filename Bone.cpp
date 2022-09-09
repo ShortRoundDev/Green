@@ -12,6 +12,10 @@ Bone::Bone(const std::string& name, i32 id, const aiNodeAnim* channel) :
     m_numRotations(channel->mNumRotationKeys),
     m_numScales(channel->mNumScalingKeys)
 {
+    m_positions.reserve(channel->mNumPositionKeys);
+    m_rotations.reserve(channel->mNumRotationKeys);
+    m_scales.reserve(channel->mNumScalingKeys);
+
     loadKeyFrames<aiVectorKey>(m_positions, channel->mPositionKeys, m_numPositions, [](aiVectorKey vec) -> KeyFrame {
         return {
             XMVectorSet(vec.mValue.x, vec.mValue.y, vec.mValue.z, 0.0f),

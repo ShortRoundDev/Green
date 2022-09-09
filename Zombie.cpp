@@ -31,6 +31,7 @@ Zombie::Zombie(XMFLOAT3 pos) : Actor(
     m_controller = Game.getControllers()->createController(desc);
     m_controller->setPosition(PxExtendedVec3(pos.x, pos.y, pos.z));
 
+
     if (!m_controller)
     {
         logger.err("Failed to create capsule!");

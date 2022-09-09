@@ -11,9 +11,9 @@
 #include <string>
 #include <map>
 
-using namespace DirectX;
+#include "Mesh.h"
 
-class Mesh;
+using namespace DirectX;
 
 struct AnimNodeData
 {

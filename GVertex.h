@@ -12,6 +12,11 @@ struct GVertex
     XMINT4 bones;
     XMFLOAT4 weights;
 
+    GVertex()
+    {
+
+    }
+
     GVertex(float x, float y, float z, float nX, float nY, float nZ, float u, float v, XMINT4 _bones = { -1, -1, -1, -1}, XMFLOAT4 _weights = { 0.0f, 0.0f, 0.0f, 0.0f })
     {
         pos = XMFLOAT3(x, y, z);
