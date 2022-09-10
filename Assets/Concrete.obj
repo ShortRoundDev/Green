@@ -1,0 +1,495 @@
+mtllib Concrete.mtl
+# vertices
+v -352 -32 -352
+v -352 -32 288
+v -352 0 288
+v -352 0 -352
+v 256 0 288
+v 256 -32 288
+v 256 -32 -352
+v 256 0 -352
+v -352 0 -352
+v -352 0 -320
+v -352 128 -320
+v -352 128 -352
+v -176 128 -320
+v -176 0 -320
+v -176 0 -352
+v -176 128 -352
+v -48 0 -352
+v -48 0 -320
+v -48 128 -320
+v -48 128 -352
+v 256 128 -320
+v 256 0 -320
+v 256 0 -352
+v 256 128 -352
+v -352 128 -352
+v -352 128 -320
+v -352 160 -320
+v -352 160 -352
+v 256 160 -320
+v 256 128 -320
+v 256 128 -352
+v 256 160 -352
+v -352 0 -320
+v -352 0 288
+v -352 160 288
+v -352 160 -320
+v -320 160 288
+v -320 0 288
+v -320 0 -320
+v -320 160 -320
+v -320 0 256
+v -320 0 288
+v -320 160 288
+v -320 160 256
+v 256 160 288
+v 256 0 288
+v 256 0 256
+v 256 160 256
+v 224 0 -320
+v 224 0 256
+v 224 160 256
+v 224 160 -320
+v 256 160 256
+v 256 0 256
+v 256 0 -320
+v 256 160 -320
+v -352 160 -352
+v -352 160 288
+v -352 192 288
+v -352 192 -352
+v 256 192 288
+v 256 160 288
+v 256 160 -352
+v 256 192 -352
+v -160 0 -128
+v -160 0 -96
+v -160 160 -96
+v -160 160 -128
+v -128 160 -96
+v -128 0 -96
+v -128 0 -128
+v -128 160 -128
+v -160 0 96
+v -160 0 128
+v -160 160 128
+v -160 160 96
+v -128 160 128
+v -128 0 128
+v -128 0 96
+v -128 160 96
+v 32 0 96
+v 32 0 128
+v 32 160 128
+v 32 160 96
+v 64 160 128
+v 64 0 128
+v 64 0 96
+v 64 160 96
+v 32 0 -128
+v 32 0 -96
+v 32 160 -96
+v 32 160 -128
+v 64 160 -96
+v 64 0 -96
+v 64 0 -128
+v 64 160 -128
+v -352 -32 -672
+v -352 -32 -352
+v -352 0 -352
+v -352 0 -672
+v 256 0 -352
+v 256 -32 -352
+v 256 -32 -672
+v 256 0 -672
+v 224 0 -672
+v 224 0 -352
+v 224 160 -352
+v 224 160 -672
+v 256 160 -352
+v 256 0 -352
+v 256 0 -672
+v 256 160 -672
+v -352 0 -672
+v -352 0 -352
+v -352 160 -352
+v -352 160 -672
+v -320 160 -352
+v -320 0 -352
+v -320 0 -672
+v -320 160 -672
+v -352 160 -672
+v -352 160 -352
+v -352 192 -352
+v -352 192 -672
+v 256 192 -352
+v 256 160 -352
+v 256 160 -672
+v 256 192 -672
+v -320 0 -672
+v -320 0 -640
+v -320 160 -640
+v -320 160 -672
+v 224 160 -640
+v 224 0 -640
+v 224 0 -672
+v 224 160 -672
+
+# texture coordinates
+vt 2.75 -0.25
+vt -2.25 -0.25
+vt -2.25 -0
+vt 2.75 -0
+vt 2 -0
+vt -2.75 -0
+vt -2.75 -0.25
+vt 2 -0.25
+vt 2 -2.25
+vt -2.75 -2.25
+vt -2.75 2.75
+vt 2 2.75
+vt 1.375 0.125
+vt 1.25 0.125
+vt 1.25 0.625
+vt 1.375 0.625
+vt -0.6875 0.625
+vt -1.375 0.625
+vt -1.375 0.125
+vt -0.6875 0.125
+vt -0.6875 1.25
+vt -1.375 1.25
+vt -1.375 1.375
+vt -0.6875 1.375
+vt 1.375 -0
+vt 1.25 -0
+vt 1.25 0.5
+vt 1.375 0.5
+vt 1 0.5
+vt -0.1875 0.5
+vt -0.1875 -0
+vt 1 -0
+vt 1 1.25
+vt -0.1875 1.25
+vt -0.1875 1.375
+vt 1 1.375
+vt 1.375 0.375
+vt 1.25 0.375
+vt -1.375 0.5
+vt -1.375 0.375
+vt 1 0.375
+vt -1.125 -0
+vt -1.125 0.625
+vt -1.25 0.625
+vt -1.375 -0
+vt -1.25 -0
+vt -1.25 -1.125
+vt -1.375 -1.125
+vt -1.25 1.25
+vt -1 -0
+vt -1 0.625
+vt 1 0.625
+vt 1 -1.125
+vt -1.25 -1
+vt 1 -1
+vt 0.875 0.625
+vt 0.875 -0
+vt 0.875 -1
+vt 0.875 1.25
+vt 2.75 1
+vt -2.25 1
+vt -2.25 1.25
+vt 2.75 1.25
+vt 2 1.25
+vt -2.75 1.25
+vt -2.75 1
+vt 2 1
+vt 0.5 -0
+vt 0.375 -0
+vt 0.375 0.625
+vt 0.5 0.625
+vt -0.5 0.625
+vt -0.625 0.625
+vt -0.625 -0
+vt -0.5 -0
+vt -0.5 0.375
+vt -0.625 0.375
+vt -0.625 0.5
+vt -0.5 0.5
+vt 2.625 -0.125
+vt 1.375 -0.125
+vt 2.625 -0
+vt -1.375 -0.125
+vt 1 -0.125
+vt -1.375 2.625
+vt 1 2.625
+vt 2.25 -0
+vt 2.25 0.625
+vt 1 1
+vt 0.875 1
+vt 0.875 2.25
+vt 1 2.25
+vt -1 1
+vt -1.125 1
+vt -1.125 2.25
+vt -1 2.25
+vt 5.25 1
+vt 5.25 1.25
+vt -2.75 5.25
+vt 2 5.25
+vt 2.5 -0
+vt 2.5 0.625
+vt 2.625 0.625
+vt 0.875 2.5
+vt -1.25 2.5
+vt -1.25 2.625
+vt 0.875 2.625
+
+# face normals
+vn -1 0 -0
+vn 0 0 1
+vn 0 -1 -0
+vn 0 1 -0
+vn 0 0 -1
+vn 1 0 -0
+
+# objects
+o entity0_brush0
+usemtl concrete/concretefloor7
+f 1/1/1 2/2/1 3/3/1 4/4/1
+usemtl concrete/concretefloor7
+f 5/5/2 3/6/2 2/7/2 6/8/2
+usemtl concrete/concretefloor7
+f 6/9/3 2/10/3 1/11/3 7/12/3
+usemtl concrete/concretefloor7
+f 8/12/4 4/11/4 3/10/4 5/9/4
+usemtl concrete/concretefloor7
+f 7/8/5 1/7/5 4/6/5 8/5/5
+usemtl concrete/concretefloor7
+f 8/4/6 5/3/6 6/2/6 7/1/6
+
+o entity0_brush1
+usemtl paint/plasterwallwhite
+f 9/13/1 10/14/1 11/15/1 12/16/1
+usemtl paint/plasterwallwhite
+f 13/17/2 11/18/2 10/19/2 14/20/2
+usemtl paint/plasterwallwhite
+f 14/21/3 10/22/3 9/23/3 15/24/3
+usemtl paint/plasterwallwhite
+f 16/24/4 12/23/4 11/22/4 13/21/4
+usemtl paint/plasterwallwhite
+f 15/20/5 9/19/5 12/18/5 16/17/5
+usemtl paint/plasterwallwhite
+f 16/16/6 13/15/6 14/14/6 15/13/6
+
+o entity0_brush2
+usemtl paint/plasterwallwhite
+f 17/25/1 18/26/1 19/27/1 20/28/1
+usemtl paint/plasterwallwhite
+f 21/29/2 19/30/2 18/31/2 22/32/2
+usemtl paint/plasterwallwhite
+f 22/33/3 18/34/3 17/35/3 23/36/3
+usemtl paint/plasterwallwhite
+f 24/36/4 20/35/4 19/34/4 21/33/4
+usemtl paint/plasterwallwhite
+f 23/32/5 17/31/5 20/30/5 24/29/5
+usemtl paint/plasterwallwhite
+f 24/28/6 21/27/6 22/26/6 23/25/6
+
+o entity0_brush3
+usemtl paint/plasterwallwhite
+f 25/37/1 26/38/1 27/27/1 28/28/1
+usemtl paint/plasterwallwhite
+f 29/29/2 27/39/2 26/40/2 30/41/2
+usemtl paint/plasterwallwhite
+f 30/33/3 26/22/3 25/23/3 31/36/3
+usemtl paint/plasterwallwhite
+f 32/36/4 28/23/4 27/22/4 29/33/4
+usemtl paint/plasterwallwhite
+f 31/41/5 25/40/5 28/39/5 32/29/5
+usemtl paint/plasterwallwhite
+f 32/28/6 29/27/6 30/38/6 31/37/6
+
+o entity0_brush4
+usemtl paint/plasterwallwhite
+f 33/26/1 34/42/1 35/43/1 36/15/1
+usemtl paint/plasterwallwhite
+f 37/44/2 35/18/2 34/45/2 38/46/2
+usemtl paint/plasterwallwhite
+f 38/47/3 34/48/3 33/22/3 39/49/3
+usemtl paint/plasterwallwhite
+f 40/49/4 36/22/4 35/48/4 37/47/4
+usemtl paint/plasterwallwhite
+f 39/46/5 33/45/5 36/18/5 40/44/5
+usemtl paint/plasterwallwhite
+f 40/15/6 37/43/6 38/42/6 39/26/6
+
+o entity0_brush5
+usemtl paint/plasterwallwhite
+f 41/50/1 42/42/1 43/43/1 44/51/1
+usemtl paint/plasterwallwhite
+f 45/52/2 43/44/2 42/46/2 46/32/2
+usemtl paint/plasterwallwhite
+f 46/53/3 42/47/3 41/54/3 47/55/3
+usemtl paint/plasterwallwhite
+f 48/55/4 44/54/4 43/47/4 45/53/4
+usemtl paint/plasterwallwhite
+f 47/32/5 41/46/5 44/44/5 48/52/5
+usemtl paint/plasterwallwhite
+f 48/51/6 45/43/6 46/42/6 47/50/6
+
+o entity0_brush6
+usemtl paint/plasterwallwhite
+f 49/26/1 50/50/1 51/51/1 52/15/1
+usemtl paint/plasterwallwhite
+f 53/52/2 51/56/2 50/57/2 54/32/2
+usemtl paint/plasterwallwhite
+f 54/55/3 50/58/3 49/59/3 55/33/3
+usemtl paint/plasterwallwhite
+f 56/33/4 52/59/4 51/58/4 53/55/4
+usemtl paint/plasterwallwhite
+f 55/32/5 49/57/5 52/56/5 56/52/5
+usemtl paint/plasterwallwhite
+f 56/15/6 53/51/6 54/50/6 55/26/6
+
+o entity0_brush7
+usemtl carpet/carpetfloorwhite
+f 57/60/1 58/61/1 59/62/1 60/63/1
+usemtl carpet/carpetfloorwhite
+f 61/64/2 59/65/2 58/66/2 62/67/2
+usemtl carpet/carpetfloorwhite
+f 62/9/3 58/10/3 57/11/3 63/12/3
+usemtl carpet/carpetfloorwhite
+f 64/12/4 60/11/4 59/10/4 61/9/4
+usemtl carpet/carpetfloorwhite
+f 63/67/5 57/66/5 60/65/5 64/64/5
+usemtl carpet/carpetfloorwhite
+f 64/63/6 61/62/6 62/61/6 63/60/6
+
+o entity0_brush8
+usemtl concrete/concretefloor7
+f 65/68/1 66/69/1 67/70/1 68/71/1
+usemtl concrete/concretefloor7
+f 69/72/2 67/73/2 66/74/2 70/75/2
+usemtl concrete/concretefloor7
+f 70/76/3 66/77/3 65/78/3 71/79/3
+usemtl concrete/concretefloor7
+f 72/79/4 68/78/4 67/77/4 69/76/4
+usemtl concrete/concretefloor7
+f 71/75/5 65/74/5 68/73/5 72/72/5
+usemtl concrete/concretefloor7
+f 72/71/6 69/70/6 70/69/6 71/68/6
+
+o entity0_brush9
+usemtl concrete/concretefloor7
+f 73/68/1 74/69/1 75/70/1 76/71/1
+usemtl concrete/concretefloor7
+f 77/72/2 75/73/2 74/74/2 78/75/2
+usemtl concrete/concretefloor7
+f 78/76/3 74/77/3 73/78/3 79/79/3
+usemtl concrete/concretefloor7
+f 80/79/4 76/78/4 75/77/4 77/76/4
+usemtl concrete/concretefloor7
+f 79/75/5 73/74/5 76/73/5 80/72/5
+usemtl concrete/concretefloor7
+f 80/71/6 77/70/6 78/69/6 79/68/6
+
+o entity0_brush10
+usemtl concrete/concretefloor7
+f 81/68/1 82/69/1 83/70/1 84/71/1
+usemtl concrete/concretefloor7
+f 85/72/2 83/73/2 82/74/2 86/75/2
+usemtl concrete/concretefloor7
+f 86/76/3 82/77/3 81/78/3 87/79/3
+usemtl concrete/concretefloor7
+f 88/79/4 84/78/4 83/77/4 85/76/4
+usemtl concrete/concretefloor7
+f 87/75/5 81/74/5 84/73/5 88/72/5
+usemtl concrete/concretefloor7
+f 88/71/6 85/70/6 86/69/6 87/68/6
+
+o entity0_brush11
+usemtl concrete/concretefloor7
+f 89/68/1 90/69/1 91/70/1 92/71/1
+usemtl concrete/concretefloor7
+f 93/72/2 91/73/2 90/74/2 94/75/2
+usemtl concrete/concretefloor7
+f 94/76/3 90/77/3 89/78/3 95/79/3
+usemtl concrete/concretefloor7
+f 96/79/4 92/78/4 91/77/4 93/76/4
+usemtl concrete/concretefloor7
+f 95/75/5 89/74/5 92/73/5 96/72/5
+usemtl concrete/concretefloor7
+f 96/71/6 93/70/6 94/69/6 95/68/6
+
+o entity0_brush12
+usemtl concrete/concretefloor7
+f 97/80/1 98/81/1 99/25/1 100/82/1
+usemtl concrete/concretefloor7
+f 101/32/2 99/45/2 98/83/2 102/84/2
+usemtl concrete/concretefloor7
+f 102/36/3 98/23/3 97/85/3 103/86/3
+usemtl concrete/concretefloor7
+f 104/86/4 100/85/4 99/23/4 101/36/4
+usemtl concrete/concretefloor7
+f 103/84/5 97/83/5 100/45/5 104/32/5
+usemtl concrete/concretefloor7
+f 104/82/6 101/25/6 102/81/6 103/80/6
+
+o entity0_brush13
+usemtl paint/plasterwallwhite
+f 105/87/1 106/32/1 107/52/1 108/88/1
+usemtl paint/plasterwallwhite
+f 109/52/2 107/56/2 106/57/2 110/32/2
+usemtl paint/plasterwallwhite
+f 110/89/3 106/90/3 105/91/3 111/92/3
+usemtl paint/plasterwallwhite
+f 112/92/4 108/91/4 107/90/4 109/89/4
+usemtl paint/plasterwallwhite
+f 111/32/5 105/57/5 108/56/5 112/52/5
+usemtl paint/plasterwallwhite
+f 112/88/6 109/52/6 110/32/6 111/87/6
+
+o entity0_brush14
+usemtl paint/plasterwallwhite
+f 113/87/1 114/32/1 115/52/1 116/88/1
+usemtl paint/plasterwallwhite
+f 117/51/2 115/43/2 114/42/2 118/50/2
+usemtl paint/plasterwallwhite
+f 118/93/3 114/94/3 113/95/3 119/96/3
+usemtl paint/plasterwallwhite
+f 120/96/4 116/95/4 115/94/4 117/93/4
+usemtl paint/plasterwallwhite
+f 119/50/5 113/42/5 116/43/5 120/51/5
+usemtl paint/plasterwallwhite
+f 120/88/6 117/52/6 118/32/6 119/87/6
+
+o entity0_brush15
+usemtl carpet/carpetfloorwhite
+f 121/97/1 122/60/1 123/63/1 124/98/1
+usemtl carpet/carpetfloorwhite
+f 125/64/2 123/65/2 122/66/2 126/67/2
+usemtl carpet/carpetfloorwhite
+f 126/12/3 122/11/3 121/99/3 127/100/3
+usemtl carpet/carpetfloorwhite
+f 128/100/4 124/99/4 123/11/4 125/12/4
+usemtl carpet/carpetfloorwhite
+f 127/67/5 121/66/5 124/65/5 128/64/5
+usemtl carpet/carpetfloorwhite
+f 128/98/6 125/63/6 126/60/6 127/97/6
+
+o entity0_brush16
+usemtl concrete/concretefloor7
+f 129/82/1 130/101/1 131/102/1 132/103/1
+usemtl concrete/concretefloor7
+f 133/56/2 131/44/2 130/46/2 134/57/2
+usemtl concrete/concretefloor7
+f 134/104/3 130/105/3 129/106/3 135/107/3
+usemtl concrete/concretefloor7
+f 136/107/4 132/106/4 131/105/4 133/104/4
+usemtl concrete/concretefloor7
+f 135/57/5 129/46/5 132/44/5 136/56/5
+usemtl concrete/concretefloor7
+f 136/103/6 133/102/6 134/101/6 135/82/6
+
