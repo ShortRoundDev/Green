@@ -123,11 +123,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/MapFile;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>/experimental:external  /external:W0 /external:I"vcpkg_installed\x64-windows\x64-windows\include" /external:I"include" %(AdditionalOptions)</AdditionalOptions>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -181,6 +187,7 @@
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="ILight.cpp" />
     <ClCompile Include="IManager.cpp" />
+    <ClCompile Include="IMeshFactory.cpp" />
     <ClCompile Include="LightVolume.cpp" />
     <ClCompile Include="MeshEntity.cpp" />
     <ClCompile Include="MeshViewModel.cpp" />
@@ -207,6 +214,7 @@
     <ClCompile Include="SystemVars.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="WavefrontMeshFactory.cpp" />
     <ClCompile Include="WorldSpawn.cpp" />
     <ClCompile Include="Zombie.cpp" />
   </ItemGroup>
@@ -231,6 +239,7 @@
     <ClInclude Include="GVertex.h" />
     <ClInclude Include="ILight.h" />
     <ClInclude Include="IManager.h" />
+    <ClInclude Include="IMeshFactory.h" />
     <ClInclude Include="LightVolume.h" />
     <ClInclude Include="MeshEntity.h" />
     <ClInclude Include="MeshLightBuffer.h" />
@@ -253,10 +262,12 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="SystemManager.h" />
     <ClInclude Include="SystemVars.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="WavefrontMeshFactory.h" />
     <ClInclude Include="WireframeDebugColor.h" />
     <ClInclude Include="WorldEntityBuffer.h" />
     <ClInclude Include="WorldSpawn.h" />
@@ -370,6 +381,7 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <FileType>Document</FileType>
     </CopyFileToFolders>
+    <None Include=".gitignore" />
     <None Include="Assets\Sprite.mtl" />
     <None Include="DirectionalLight.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -390,12 +402,6 @@
     </None>
     <None Include="SpotLight.hlsli" />
     <None Include="vcpkg.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="Assets\Boxes.obj">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Sprite.obj">

@@ -44,6 +44,9 @@ ShadowPixelInput Vertex(VertexInput input)
     output.position = mul(totalPos, lightSpace);
     
     output.tex = input.tex;
+    output.normal = float3(0, 0, 0);
+    output.lightViewPosition = float4(0, 0, 0, 0);
+    output.lightPos = float3(0, 0, 0);
 
     return output;
 }

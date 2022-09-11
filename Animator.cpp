@@ -1,7 +1,5 @@
 #include "Animator.h"
 
-#include <string>
-
 Animator::Animator(Animation* animation) :
     m_deltaTime(0.0f),
     m_currentTime(0.0f),

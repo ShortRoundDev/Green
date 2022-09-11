@@ -32,7 +32,11 @@ public:
         m_height(height),
         m_far(1000.0f),
         m_near(0.01f),
-        m_lightType(lightType)
+        m_lightType(lightType),
+        m_projection(),
+        m_shader(nullptr),
+        m_view(),
+        m_space()
     {
         m_viewport.TopLeftX = 0.0f;
         m_viewport.TopLeftY = 0.0f;

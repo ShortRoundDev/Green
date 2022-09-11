@@ -1,4 +1,5 @@
 #include "GameManager.h"
+
 #include "GraphicsManager.h"
 
 #include "MapFile.h"
@@ -7,7 +8,7 @@
 
 #include "Player.h"
 
-constexpr u64 timeStepU = 16;
+constexpr u64 timeStepU = 8;
 constexpr f32 timeStepF = (f32)timeStepU / 1000.0f;
 
 bool GameManager::start()
@@ -15,7 +16,7 @@ bool GameManager::start()
     startPhysX();
     MF_Init();
 
-    m_scene = new Scene("ModelTest", this);
+    m_scene = new Scene("School", this);
 
     m_scene->generateShadowMaps();
     //m_scene->initEntities();
@@ -36,20 +37,12 @@ void GameManager::draw()
     m_scene->draw();
 }
 
-void GameManager::update()
+void GameManager::update(u64 time, f32 diff)
 {
-    u64 ticks = GetTickCount64();
-    u64 delta = ticks - m_time;
-    m_time = ticks;
-
-    m_acc += delta;
-
-    while (m_acc >= timeStepU)
-    {
-        m_acc -= timeStepU; // this might cause problems later. Whatever
-        m_pxScene->simulate(1.0f / 60.0f);
-        m_pxScene->fetchResults(true);
-    }
+    m_time = time;
+    m_diff = diff;
+    m_pxScene->simulate(diff);
+    m_pxScene->fetchResults(true);
     m_scene->update();
 }
 
@@ -61,6 +54,11 @@ Scene* GameManager::getScene()
 u64 GameManager::getTime()
 {
     return m_time;
+}
+
+f32 GameManager::getDiff()
+{
+    return m_diff;
 }
 
 Player* GameManager::getPlayer()

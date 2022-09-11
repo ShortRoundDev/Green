@@ -24,6 +24,7 @@ x64-windows/share/minizip/minizipConfigVersion.cmake
 x64-windows/share/minizip/minizipTargets-debug.cmake
 x64-windows/share/minizip/minizipTargets-release.cmake
 x64-windows/share/minizip/minizipTargets.cmake
+x64-windows/share/minizip/vcpkg.spdx.json
 x64-windows/share/minizip/vcpkg_abi_info.txt
 x64-windows/tools/
 x64-windows/tools/minizip/

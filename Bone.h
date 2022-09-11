@@ -1,16 +1,15 @@
 #pragma once
 
 #include "DirectXMath.h"
+#include "assimp/anim.h"
+
 #include "GTypes.h"
 
-#include <string>
 #include <vector>
-
+#include <string>
 #include <functional>
 
 using namespace DirectX;
-
-class aiNodeAnim;
 
 typedef XMVECTOR(*vectorInterpolator)(XMVECTOR a0, XMVECTOR a1, f32 t);
 

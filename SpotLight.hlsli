@@ -23,7 +23,6 @@ float SpotLightShadow(
     Texture2D shadowMap
 )
 {
-    
     float4 pixelPosLightSpace = mul(float4(pos, 1.0f), light.lightSpace);
 
     float3 projCoords = pixelPosLightSpace.xyz / pixelPosLightSpace.w;
@@ -58,14 +57,14 @@ float SpotLightShadow(
     
     
     
-    for (int i = -2; i <= 2; i++)
+    for (int i = -1; i <= 1; i++)
     {
-        for (int j = -2; j <= 2; j++)
+        for (int j = -1; j <= 1; j++)
         {
             shadow += shadowMap.SampleCmpLevelZero(shadowSampler, projCoords.xy + float2(i, j) * float2(1.0f / resolution.x, 1.0f / resolution.y), current).r;
         }
     }
-    return shadow / 25;
+    return shadow / 9;
     //return 1.0f - (shadow / (float) ((2 * FILTER_SIZE) * (2 * FILTER_SIZE + 1)));
 }
 

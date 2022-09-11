@@ -3,9 +3,8 @@
 
 #include "IManager.h"
 
-#include "PxPhysicsAPI.h"
-#include "cooking/PxCooking.h"
-
+#include <PxPhysicsAPI.h>
+#include <cooking/PxCooking.h>
 
 class Scene;
 class Player;
@@ -19,10 +18,11 @@ public:
     virtual bool shutDown();
 
     void draw();
-    void update();
+    void update(u64 time, f32 diff);
 
     Scene* getScene();
     u64 getTime();
+    f32 getDiff();
 
     Player* getPlayer();
     void setPlayer(Player* player);
@@ -36,7 +36,7 @@ private:
     Scene* m_scene;
 
     u64 m_time;
-    u64 m_acc = 0;
+    f32 m_diff;
 
     PxFoundation* m_foundation;
     PxPhysics* m_physics;
@@ -45,8 +45,8 @@ private:
     PxDefaultAllocator m_allocator;
     PxDefaultErrorCallback m_errCallback;
 
-    PxDefaultCpuDispatcher* m_dispatcher;
-    PxControllerManager* m_controllers;
+    PxDefaultCpuDispatcher* m_dispatcher = nullptr;
+    PxControllerManager* m_controllers = nullptr;
 
     PxPvd* m_pvd;
 

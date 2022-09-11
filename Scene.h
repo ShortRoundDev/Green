@@ -1,12 +1,7 @@
 #pragma once
 
-#include "PxPhysicsAPI.h"
-
 #include "Octree.h"
 #include "NavMesh.h"
-
-#include <string>
-#include <vector>
 
 struct MF_Map;
 struct MF_BrushDictionary;

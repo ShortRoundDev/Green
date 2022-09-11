@@ -1,12 +1,11 @@
 #pragma once
 
-#include <d3d11.h>
+#include "GTypes.h"
 
 #include <wrl/client.h>
+#include <d3d11.h>
 
 #include <string>
-
-#include "GTypes.h"
 
 using namespace Microsoft::WRL;
 

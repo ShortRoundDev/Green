@@ -36,7 +36,7 @@ DirectionalLight* DirectionalLight::Create(MF_Entity* entity)
         MF3_TO_XM4(pos),
         MFCOL_TO_XM4(color),
         MF3_TO_XM4(dir),
-        4096, 4096
+        2048, 2048
     );
 }
 
@@ -100,8 +100,6 @@ DirectionalLight::DirectionalLight(
     _dir = XMVector3Normalize(_dir);
 
     XMStoreFloat4(&dir, _dir); // store for up check
-
-    XMVECTOR left;
 
     XMFLOAT4 upFloat4 = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
     if (dir.y == -1.0f || dir.y == 1.0f)

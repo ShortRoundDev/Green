@@ -2,12 +2,13 @@
 
 #include "GraphicsManager.h"
 #include "SystemManager.h"
-#include "GTypes.h"
 #include "LocalShaderIncluder.h"
 #include "Logger.h"
+#include "PointLight.h"
 
 #include <d3dcompiler.h>
-#include "PointLight.h"
+#include <codecvt>
+#include <cmath>
 
 ////////// PUBLIC //////////
 
@@ -351,11 +352,11 @@ bool Shader::bindModelMatrix(const XMMATRIX& modelTransform)
 
 bool Shader::bindModelMatrix(const XMMATRIX& modelTransform, const std::vector<XMMATRIX>* bones, u32 totalBones)
 {
-    ModelBuffer model;
+    ModelBuffer model = { };
 
     model.modelTransform = XMMatrixTranspose(modelTransform);
-    for(int i = 0; i < totalBones; i++){
-        auto matrix = (*bones)[i];
+    for(u32 i = 0; i < totalBones; i++){
+        auto& matrix = (*bones)[i];
         model.bones[i] = XMMatrixTranspose(matrix);
     }
     model.totalBones = totalBones;
@@ -376,6 +377,7 @@ bool Shader::bindModelMatrix(const XMMATRIX& modelTransform, const std::vector<X
     // Put CBuffer in correct register slot
     Graphics.getContext()->VSSetConstantBuffers(1, 1, m_modelBuffer.GetAddressOf());
     Graphics.getContext()->PSSetConstantBuffers(1, 1, m_modelBuffer.GetAddressOf());
+    return true;
 }
 
 bool Shader::bindCBuffer(void* cBuffer)
@@ -410,7 +412,9 @@ void Shader::logShaderError(ID3D10Blob* shaderError, std::wstring path)
     bufferSize = shaderError->GetBufferSize();
 
     std::string errorMsg = std::string(compileErrors, bufferSize);
-    std::string spath = std::string(path.begin(), path.end());
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+
+    std::string spath = converter.to_bytes(path);
 
     logger.err("Error compiling [%s]:\n%s", spath.c_str(), errorMsg.c_str());
 }

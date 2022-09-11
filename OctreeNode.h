@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <set>
-#include "robin_hood.h"
+#include <unordered_map>
 
 class MeshEntity;
 class Mesh;
@@ -97,7 +97,7 @@ public:
 
     /***** NAVIGATION *****/
     void generateNeighbors();
-    bool findPath(OctreeNode* destination, robin_hood::unordered_map<OctreeNode*, OctreeNode*>& path);
+    bool findPath(OctreeNode* destination, std::unordered_map<OctreeNode*, OctreeNode*>& path);
 
 private:
     /***** STATIC FIELDS *****/

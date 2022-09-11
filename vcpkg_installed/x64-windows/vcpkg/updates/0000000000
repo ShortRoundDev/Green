@@ -1,8 +1,10 @@
-Package: gtest
-Version: 1.11.0
+Package: ms-gltf
+Version: r1.9.5.4
+Depends: rapidjson, vcpkg-cmake
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 0b16b0fc636131a24d2a7be1e468536d728da6076cc0a5aedc62f8280b49e890
-Description: GoogleTest and GoogleMock testing frameworks
+Abi: 4244524417ff9229fae96719801ae7c040512357a42fca90b43af3c20b55484a
+Description: glTF-SDK is a C++ Software Development Kit for glTF
 Type: Port
-Status: install ok half-installed
+Default-Features: test
+Status: purge ok half-installed

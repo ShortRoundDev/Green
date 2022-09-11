@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------------------
 // DirectXMath.h -- SIMD C++ Math library
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615560
@@ -13,7 +13,7 @@
 #error DirectX Math requires C++
 #endif
 
-#define DIRECTX_MATH_VERSION 316
+#define DIRECTX_MATH_VERSION 317
 
 #if defined(_MSC_VER) && (_MSC_VER < 1910)
 #error DirectX Math requires Visual C++ 2017 or later.
@@ -93,16 +93,20 @@
 #define _XM_SVML_INTRINSICS_
 #endif
 
-#if !defined(_XM_NO_XMVECTOR_OVERLOADS_) && (defined(__clang__) || defined(__GNUC__))
+#if !defined(_XM_NO_XMVECTOR_OVERLOADS_) && (defined(__clang__) || defined(__GNUC__)) && !defined(_XM_NO_INTRINSICS_)
 #define _XM_NO_XMVECTOR_OVERLOADS_
 #endif
 
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4514 4820)
 // C4514/4820: Off by default noise
+#endif
 #include <math.h>
 #include <float.h>
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 
 #ifndef _XM_NO_INTRINSICS_
 
@@ -146,11 +150,15 @@
 #include "sal.h"
 #include <assert.h>
 
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4005 4668)
 // C4005/4668: Old header issue
+#endif
 #include <stdint.h>
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 
 #if __cplusplus >= 201703L
 #define XM_ALIGNED_DATA(x) alignas(x)
@@ -161,6 +169,10 @@
 #else
 #define XM_ALIGNED_DATA(x) __declspec(align(x))
 #define XM_ALIGNED_STRUCT(x) __declspec(align(x)) struct
+#endif
+
+#if (__cplusplus >= 202002L)
+#include <compare>
 #endif
 
 /****************************************************************************
@@ -193,6 +205,12 @@
 #define XM_PERMUTE_PS( v, c ) _mm_permute_ps((v), c )
 #else
 #define XM_PERMUTE_PS( v, c ) _mm_shuffle_ps((v), (v), c )
+#endif
+
+#if defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 11)
+#define XM_LOADU_SI16( p ) _mm_cvtsi32_si128(*reinterpret_cast<unsigned short const*>(p))
+#else
+#define XM_LOADU_SI16( p ) _mm_loadu_si16(p)
 #endif
 
 #endif // _XM_SSE_INTRINSICS_ && !_XM_NO_INTRINSICS_
@@ -271,7 +289,11 @@ namespace DirectX
     constexpr uint32_t XM_CRMASK_CR6FALSE = 0x00000020;
     constexpr uint32_t XM_CRMASK_CR6BOUNDS = XM_CRMASK_CR6FALSE;
 
+#if defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || defined(_M_ARM64EC) || __arm__ || __aarch64__
+    constexpr size_t XM_CACHE_LINE_SIZE = 128;
+#else
     constexpr size_t XM_CACHE_LINE_SIZE = 64;
+#endif
 
 
     /****************************************************************************
@@ -290,20 +312,20 @@ namespace DirectX
 #undef XMComparisonAnyOutOfBounds
 #endif
 
-     // Unit conversion
+    // Unit conversion
 
-    inline constexpr float XMConvertToRadians(float fDegrees) noexcept { return fDegrees * (XM_PI / 180.0f); }
-    inline constexpr float XMConvertToDegrees(float fRadians) noexcept { return fRadians * (180.0f / XM_PI); }
+    constexpr float XMConvertToRadians(float fDegrees) noexcept { return fDegrees * (XM_PI / 180.0f); }
+    constexpr float XMConvertToDegrees(float fRadians) noexcept { return fRadians * (180.0f / XM_PI); }
 
     // Condition register evaluation proceeding a recording (R) comparison
 
-    inline constexpr bool XMComparisonAllTrue(uint32_t CR) noexcept { return (((CR)&XM_CRMASK_CR6TRUE) == XM_CRMASK_CR6TRUE); }
-    inline constexpr bool XMComparisonAnyTrue(uint32_t CR) noexcept { return (((CR)&XM_CRMASK_CR6FALSE) != XM_CRMASK_CR6FALSE); }
-    inline constexpr bool XMComparisonAllFalse(uint32_t CR) noexcept { return (((CR)&XM_CRMASK_CR6FALSE) == XM_CRMASK_CR6FALSE); }
-    inline constexpr bool XMComparisonAnyFalse(uint32_t CR) noexcept { return (((CR)&XM_CRMASK_CR6TRUE) != XM_CRMASK_CR6TRUE); }
-    inline constexpr bool XMComparisonMixed(uint32_t CR) noexcept { return (((CR)&XM_CRMASK_CR6) == 0); }
-    inline constexpr bool XMComparisonAllInBounds(uint32_t CR) noexcept { return (((CR)&XM_CRMASK_CR6BOUNDS) == XM_CRMASK_CR6BOUNDS); }
-    inline constexpr bool XMComparisonAnyOutOfBounds(uint32_t CR) noexcept { return (((CR)&XM_CRMASK_CR6BOUNDS) != XM_CRMASK_CR6BOUNDS); }
+    constexpr bool XMComparisonAllTrue(uint32_t CR) noexcept { return (CR & XM_CRMASK_CR6TRUE) == XM_CRMASK_CR6TRUE; }
+    constexpr bool XMComparisonAnyTrue(uint32_t CR) noexcept { return (CR & XM_CRMASK_CR6FALSE) != XM_CRMASK_CR6FALSE; }
+    constexpr bool XMComparisonAllFalse(uint32_t CR) noexcept { return (CR & XM_CRMASK_CR6FALSE) == XM_CRMASK_CR6FALSE; }
+    constexpr bool XMComparisonAnyFalse(uint32_t CR) noexcept { return (CR & XM_CRMASK_CR6TRUE) != XM_CRMASK_CR6TRUE; }
+    constexpr bool XMComparisonMixed(uint32_t CR) noexcept { return (CR & XM_CRMASK_CR6) == 0; }
+    constexpr bool XMComparisonAllInBounds(uint32_t CR) noexcept { return (CR & XM_CRMASK_CR6BOUNDS) == XM_CRMASK_CR6BOUNDS; }
+    constexpr bool XMComparisonAnyOutOfBounds(uint32_t CR) noexcept { return (CR & XM_CRMASK_CR6BOUNDS) != XM_CRMASK_CR6BOUNDS; }
 
 
     /****************************************************************************
@@ -312,12 +334,14 @@ namespace DirectX
      *
      ****************************************************************************/
 
+#ifdef _MSC_VER    
 #pragma warning(push)
 #pragma warning(disable:4068 4201 4365 4324 4820)
      // C4068: ignore unknown pragmas
      // C4201: nonstandard extension used : nameless struct/union
      // C4365: Off by default noise
      // C4324/4820: padding warnings
+#endif
 
 #ifdef _PREFAST_
 #pragma prefast(push)
@@ -457,10 +481,10 @@ namespace DirectX
     XMVECTOR    XM_CALLCONV     operator+ (FXMVECTOR V) noexcept;
     XMVECTOR    XM_CALLCONV     operator- (FXMVECTOR V) noexcept;
 
-    XMVECTOR& XM_CALLCONV     operator+= (XMVECTOR& V1, FXMVECTOR V2) noexcept;
-    XMVECTOR& XM_CALLCONV     operator-= (XMVECTOR& V1, FXMVECTOR V2) noexcept;
-    XMVECTOR& XM_CALLCONV     operator*= (XMVECTOR& V1, FXMVECTOR V2) noexcept;
-    XMVECTOR& XM_CALLCONV     operator/= (XMVECTOR& V1, FXMVECTOR V2) noexcept;
+    XMVECTOR&   XM_CALLCONV     operator+= (XMVECTOR& V1, FXMVECTOR V2) noexcept;
+    XMVECTOR&   XM_CALLCONV     operator-= (XMVECTOR& V1, FXMVECTOR V2) noexcept;
+    XMVECTOR&   XM_CALLCONV     operator*= (XMVECTOR& V1, FXMVECTOR V2) noexcept;
+    XMVECTOR&   XM_CALLCONV     operator/= (XMVECTOR& V1, FXMVECTOR V2) noexcept;
 
     XMVECTOR& operator*= (XMVECTOR& V, float S) noexcept;
     XMVECTOR& operator/= (XMVECTOR& V, float S) noexcept;
@@ -541,11 +565,11 @@ namespace DirectX
         XMMATRIX    operator+ () const noexcept { return *this; }
         XMMATRIX    operator- () const noexcept;
 
-        XMMATRIX& XM_CALLCONV     operator+= (FXMMATRIX M) noexcept;
-        XMMATRIX& XM_CALLCONV     operator-= (FXMMATRIX M) noexcept;
-        XMMATRIX& XM_CALLCONV     operator*= (FXMMATRIX M) noexcept;
-        XMMATRIX& operator*= (float S) noexcept;
-        XMMATRIX& operator/= (float S) noexcept;
+        XMMATRIX&   XM_CALLCONV     operator+= (FXMMATRIX M) noexcept;
+        XMMATRIX&   XM_CALLCONV     operator-= (FXMMATRIX M) noexcept;
+        XMMATRIX&   XM_CALLCONV     operator*= (FXMMATRIX M) noexcept;
+        XMMATRIX&   operator*= (float S) noexcept;
+        XMMATRIX&   operator/= (float S) noexcept;
 
         XMMATRIX    XM_CALLCONV     operator+ (FXMMATRIX M) const noexcept;
         XMMATRIX    XM_CALLCONV     operator- (FXMMATRIX M) const noexcept;
@@ -573,21 +597,17 @@ namespace DirectX
 
         constexpr XMFLOAT2(float _x, float _y) noexcept : x(_x), y(_y) {}
         explicit XMFLOAT2(_In_reads_(2) const float* pArray)  noexcept : x(pArray[0]), y(pArray[1]) {}
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMFLOAT2&) const = default;
+        auto operator <=> (const XMFLOAT2&) const = default;
+#endif
     };
 
     // 2D Vector; 32 bit floating point components aligned on a 16 byte boundary
     XM_ALIGNED_STRUCT(16) XMFLOAT2A : public XMFLOAT2
     {
-        XMFLOAT2A() = default;
-
-        XMFLOAT2A(const XMFLOAT2A&) = default;
-        XMFLOAT2A& operator=(const XMFLOAT2A&) = default;
-
-        XMFLOAT2A(XMFLOAT2A&&) = default;
-        XMFLOAT2A& operator=(XMFLOAT2A&&) = default;
-
-        constexpr XMFLOAT2A(float _x, float _y) noexcept : XMFLOAT2(_x, _y) {}
-        explicit XMFLOAT2A(_In_reads_(2) const float* pArray) noexcept : XMFLOAT2(pArray) {}
+        using XMFLOAT2::XMFLOAT2;
     };
 
     //------------------------------------------------------------------------------
@@ -607,6 +627,11 @@ namespace DirectX
 
         constexpr XMINT2(int32_t _x, int32_t _y) noexcept : x(_x), y(_y) {}
         explicit XMINT2(_In_reads_(2) const int32_t* pArray) noexcept : x(pArray[0]), y(pArray[1]) {}
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMINT2&) const = default;
+        auto operator <=> (const XMINT2&) const = default;
+#endif
     };
 
     // 2D Vector; 32 bit unsigned integer components
@@ -625,6 +650,11 @@ namespace DirectX
 
         constexpr XMUINT2(uint32_t _x, uint32_t _y) noexcept : x(_x), y(_y) {}
         explicit XMUINT2(_In_reads_(2) const uint32_t* pArray) noexcept : x(pArray[0]), y(pArray[1]) {}
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMUINT2&) const = default;
+        auto operator <=> (const XMUINT2&) const = default;
+#endif
     };
 
     //------------------------------------------------------------------------------
@@ -650,16 +680,7 @@ namespace DirectX
     // 3D Vector; 32 bit floating point components aligned on a 16 byte boundary
     XM_ALIGNED_STRUCT(16) XMFLOAT3A : public XMFLOAT3
     {
-        XMFLOAT3A() = default;
-
-        XMFLOAT3A(const XMFLOAT3A&) = default;
-        XMFLOAT3A& operator=(const XMFLOAT3A&) = default;
-
-        XMFLOAT3A(XMFLOAT3A&&) = default;
-        XMFLOAT3A& operator=(XMFLOAT3A&&) = default;
-
-        constexpr XMFLOAT3A(float _x, float _y, float _z) noexcept : XMFLOAT3(_x, _y, _z) {}
-        explicit XMFLOAT3A(_In_reads_(3) const float* pArray) noexcept : XMFLOAT3(pArray) {}
+        using XMFLOAT3::XMFLOAT3;
     };
 
     //------------------------------------------------------------------------------
@@ -680,6 +701,11 @@ namespace DirectX
 
         constexpr XMINT3(int32_t _x, int32_t _y, int32_t _z) noexcept : x(_x), y(_y), z(_z) {}
         explicit XMINT3(_In_reads_(3) const int32_t* pArray) noexcept : x(pArray[0]), y(pArray[1]), z(pArray[2]) {}
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMINT3&) const = default;
+        auto operator <=> (const XMINT3&) const = default;
+#endif
     };
 
     // 3D Vector; 32 bit unsigned integer components
@@ -699,6 +725,11 @@ namespace DirectX
 
         constexpr XMUINT3(uint32_t _x, uint32_t _y, uint32_t _z) noexcept : x(_x), y(_y), z(_z) {}
         explicit XMUINT3(_In_reads_(3) const uint32_t* pArray) noexcept : x(pArray[0]), y(pArray[1]), z(pArray[2]) {}
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMUINT3&) const = default;
+        auto operator <=> (const XMUINT3&) const = default;
+#endif
     };
 
     //------------------------------------------------------------------------------
@@ -720,21 +751,17 @@ namespace DirectX
 
         constexpr XMFLOAT4(float _x, float _y, float _z, float _w) noexcept : x(_x), y(_y), z(_z), w(_w) {}
         explicit XMFLOAT4(_In_reads_(4) const float* pArray) noexcept : x(pArray[0]), y(pArray[1]), z(pArray[2]), w(pArray[3]) {}
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMFLOAT4&) const = default;
+        auto operator <=> (const XMFLOAT4&) const = default;
+#endif
     };
 
     // 4D Vector; 32 bit floating point components aligned on a 16 byte boundary
     XM_ALIGNED_STRUCT(16) XMFLOAT4A : public XMFLOAT4
     {
-        XMFLOAT4A() = default;
-
-        XMFLOAT4A(const XMFLOAT4A&) = default;
-        XMFLOAT4A& operator=(const XMFLOAT4A&) = default;
-
-        XMFLOAT4A(XMFLOAT4A&&) = default;
-        XMFLOAT4A& operator=(XMFLOAT4A&&) = default;
-
-        constexpr XMFLOAT4A(float _x, float _y, float _z, float _w) noexcept : XMFLOAT4(_x, _y, _z, _w) {}
-        explicit XMFLOAT4A(_In_reads_(4) const float* pArray) noexcept : XMFLOAT4(pArray) {}
+        using XMFLOAT4::XMFLOAT4;
     };
 
     //------------------------------------------------------------------------------
@@ -756,6 +783,11 @@ namespace DirectX
 
         constexpr XMINT4(int32_t _x, int32_t _y, int32_t _z, int32_t _w) noexcept : x(_x), y(_y), z(_z), w(_w) {}
         explicit XMINT4(_In_reads_(4) const int32_t* pArray) noexcept : x(pArray[0]), y(pArray[1]), z(pArray[2]), w(pArray[3]) {}
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMINT4&) const = default;
+        auto operator <=> (const XMINT4&) const = default;
+#endif
     };
 
     // 4D Vector; 32 bit unsigned integer components
@@ -776,6 +808,11 @@ namespace DirectX
 
         constexpr XMUINT4(uint32_t _x, uint32_t _y, uint32_t _z, uint32_t _w) noexcept : x(_x), y(_y), z(_z), w(_w) {}
         explicit XMUINT4(_In_reads_(4) const uint32_t* pArray) noexcept : x(pArray[0]), y(pArray[1]), z(pArray[2]), w(pArray[3]) {}
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMUINT4&) const = default;
+        auto operator <=> (const XMUINT4&) const = default;
+#endif
     };
 
 #ifdef __clang__
@@ -815,8 +852,13 @@ namespace DirectX
             _31(m20), _32(m21), _33(m22) {}
         explicit XMFLOAT3X3(_In_reads_(9) const float* pArray) noexcept;
 
-        float       operator() (size_t Row, size_t Column) const  noexcept { return m[Row][Column]; }
+        float  operator() (size_t Row, size_t Column) const  noexcept { return m[Row][Column]; }
         float& operator() (size_t Row, size_t Column) noexcept { return m[Row][Column]; }
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMFLOAT3X3&) const = default;
+        auto operator <=> (const XMFLOAT3X3&) const = default;
+#endif
     };
 
     //------------------------------------------------------------------------------
@@ -854,27 +896,19 @@ namespace DirectX
             _41(m30), _42(m31), _43(m32) {}
         explicit XMFLOAT4X3(_In_reads_(12) const float* pArray) noexcept;
 
-        float       operator() (size_t Row, size_t Column) const  noexcept { return m[Row][Column]; }
+        float  operator() (size_t Row, size_t Column) const  noexcept { return m[Row][Column]; }
         float& operator() (size_t Row, size_t Column) noexcept { return m[Row][Column]; }
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMFLOAT4X3&) const = default;
+        auto operator <=> (const XMFLOAT4X3&) const = default;
+#endif
     };
 
     // 4x3 Row-major Matrix: 32 bit floating point components aligned on a 16 byte boundary
     XM_ALIGNED_STRUCT(16) XMFLOAT4X3A : public XMFLOAT4X3
     {
-        XMFLOAT4X3A() = default;
-
-        XMFLOAT4X3A(const XMFLOAT4X3A&) = default;
-        XMFLOAT4X3A& operator=(const XMFLOAT4X3A&) = default;
-
-        XMFLOAT4X3A(XMFLOAT4X3A&&) = default;
-        XMFLOAT4X3A& operator=(XMFLOAT4X3A&&) = default;
-
-        constexpr XMFLOAT4X3A(float m00, float m01, float m02,
-            float m10, float m11, float m12,
-            float m20, float m21, float m22,
-            float m30, float m31, float m32)  noexcept :
-            XMFLOAT4X3(m00, m01, m02, m10, m11, m12, m20, m21, m22, m30, m31, m32) {}
-        explicit XMFLOAT4X3A(_In_reads_(12) const float* pArray)  noexcept : XMFLOAT4X3(pArray) {}
+        using XMFLOAT4X3::XMFLOAT4X3;
     };
 
     //------------------------------------------------------------------------------
@@ -909,26 +943,19 @@ namespace DirectX
             _31(m20), _32(m21), _33(m22), _34(m23) {}
         explicit XMFLOAT3X4(_In_reads_(12) const float* pArray) noexcept;
 
-        float       operator() (size_t Row, size_t Column) const noexcept { return m[Row][Column]; }
+        float  operator() (size_t Row, size_t Column) const noexcept { return m[Row][Column]; }
         float& operator() (size_t Row, size_t Column) noexcept { return m[Row][Column]; }
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMFLOAT3X4&) const = default;
+        auto operator <=> (const XMFLOAT3X4&) const = default;
+#endif
     };
 
     // 3x4 Column-major Matrix: 32 bit floating point components aligned on a 16 byte boundary
     XM_ALIGNED_STRUCT(16) XMFLOAT3X4A : public XMFLOAT3X4
     {
-        XMFLOAT3X4A() = default;
-
-        XMFLOAT3X4A(const XMFLOAT3X4A&) = default;
-        XMFLOAT3X4A& operator=(const XMFLOAT3X4A&) = default;
-
-        XMFLOAT3X4A(XMFLOAT3X4A&&) = default;
-        XMFLOAT3X4A& operator=(XMFLOAT3X4A&&) = default;
-
-        constexpr XMFLOAT3X4A(float m00, float m01, float m02, float m03,
-            float m10, float m11, float m12, float m13,
-            float m20, float m21, float m22, float m23)  noexcept :
-            XMFLOAT3X4(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23) {}
-        explicit XMFLOAT3X4A(_In_reads_(12) const float* pArray) noexcept : XMFLOAT3X4(pArray) {}
+        using XMFLOAT3X4::XMFLOAT3X4;
     };
 
     //------------------------------------------------------------------------------
@@ -965,27 +992,19 @@ namespace DirectX
             _41(m30), _42(m31), _43(m32), _44(m33) {}
         explicit XMFLOAT4X4(_In_reads_(16) const float* pArray) noexcept;
 
-        float       operator() (size_t Row, size_t Column) const noexcept { return m[Row][Column]; }
+        float  operator() (size_t Row, size_t Column) const noexcept { return m[Row][Column]; }
         float& operator() (size_t Row, size_t Column) noexcept { return m[Row][Column]; }
+
+#if (__cplusplus >= 202002L)
+        bool operator == (const XMFLOAT4X4&) const = default;
+        auto operator <=> (const XMFLOAT4X4&) const = default;
+#endif
     };
 
     // 4x4 Matrix: 32 bit floating point components aligned on a 16 byte boundary
     XM_ALIGNED_STRUCT(16) XMFLOAT4X4A : public XMFLOAT4X4
     {
-        XMFLOAT4X4A() = default;
-
-        XMFLOAT4X4A(const XMFLOAT4X4A&) = default;
-        XMFLOAT4X4A& operator=(const XMFLOAT4X4A&) = default;
-
-        XMFLOAT4X4A(XMFLOAT4X4A&&) = default;
-        XMFLOAT4X4A& operator=(XMFLOAT4X4A&&) = default;
-
-        constexpr XMFLOAT4X4A(float m00, float m01, float m02, float m03,
-            float m10, float m11, float m12, float m13,
-            float m20, float m21, float m22, float m23,
-            float m30, float m31, float m32, float m33) noexcept
-            : XMFLOAT4X4(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33) {}
-        explicit XMFLOAT4X4A(_In_reads_(16) const float* pArray) noexcept : XMFLOAT4X4(pArray) {}
+        using XMFLOAT4X4::XMFLOAT4X4;
     };
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -993,12 +1012,12 @@ namespace DirectX
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-
 #ifdef _PREFAST_
 #pragma prefast(pop)
 #endif
-
+#ifdef _MSC_VER
 #pragma warning(pop)
+#endif
 
 /****************************************************************************
  *
@@ -1330,17 +1349,17 @@ namespace DirectX
     XMVECTOR    XM_CALLCONV     XMVector2LinePointDistance(FXMVECTOR LinePoint1, FXMVECTOR LinePoint2, FXMVECTOR Point) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector2IntersectLine(FXMVECTOR Line1Point1, FXMVECTOR Line1Point2, FXMVECTOR Line2Point1, GXMVECTOR Line2Point2) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector2Transform(FXMVECTOR V, FXMMATRIX M) noexcept;
-    XMFLOAT4* XM_CALLCONV     XMVector2TransformStream(_Out_writes_bytes_(sizeof(XMFLOAT4) + OutputStride * (VectorCount - 1)) XMFLOAT4* pOutputStream,
+    XMFLOAT4*   XM_CALLCONV     XMVector2TransformStream(_Out_writes_bytes_(sizeof(XMFLOAT4) + OutputStride * (VectorCount - 1)) XMFLOAT4* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT2) + InputStride * (VectorCount - 1)) const XMFLOAT2* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount, _In_ FXMMATRIX M) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector2TransformCoord(FXMVECTOR V, FXMMATRIX M) noexcept;
-    XMFLOAT2* XM_CALLCONV     XMVector2TransformCoordStream(_Out_writes_bytes_(sizeof(XMFLOAT2) + OutputStride * (VectorCount - 1)) XMFLOAT2* pOutputStream,
+    XMFLOAT2*   XM_CALLCONV     XMVector2TransformCoordStream(_Out_writes_bytes_(sizeof(XMFLOAT2) + OutputStride * (VectorCount - 1)) XMFLOAT2* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT2) + InputStride * (VectorCount - 1)) const XMFLOAT2* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount, _In_ FXMMATRIX M) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector2TransformNormal(FXMVECTOR V, FXMMATRIX M) noexcept;
-    XMFLOAT2* XM_CALLCONV     XMVector2TransformNormalStream(_Out_writes_bytes_(sizeof(XMFLOAT2) + OutputStride * (VectorCount - 1)) XMFLOAT2* pOutputStream,
+    XMFLOAT2*   XM_CALLCONV     XMVector2TransformNormalStream(_Out_writes_bytes_(sizeof(XMFLOAT2) + OutputStride * (VectorCount - 1)) XMFLOAT2* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT2) + InputStride * (VectorCount - 1)) const XMFLOAT2* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount, _In_ FXMMATRIX M) noexcept;
@@ -1392,23 +1411,23 @@ namespace DirectX
     XMVECTOR    XM_CALLCONV     XMVector3Rotate(FXMVECTOR V, FXMVECTOR RotationQuaternion) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector3InverseRotate(FXMVECTOR V, FXMVECTOR RotationQuaternion) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector3Transform(FXMVECTOR V, FXMMATRIX M) noexcept;
-    XMFLOAT4* XM_CALLCONV     XMVector3TransformStream(_Out_writes_bytes_(sizeof(XMFLOAT4) + OutputStride * (VectorCount - 1)) XMFLOAT4* pOutputStream,
+    XMFLOAT4*   XM_CALLCONV     XMVector3TransformStream(_Out_writes_bytes_(sizeof(XMFLOAT4) + OutputStride * (VectorCount - 1)) XMFLOAT4* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT3) + InputStride * (VectorCount - 1)) const XMFLOAT3* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount, _In_ FXMMATRIX M) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector3TransformCoord(FXMVECTOR V, FXMMATRIX M) noexcept;
-    XMFLOAT3* XM_CALLCONV     XMVector3TransformCoordStream(_Out_writes_bytes_(sizeof(XMFLOAT3) + OutputStride * (VectorCount - 1)) XMFLOAT3* pOutputStream,
+    XMFLOAT3*   XM_CALLCONV     XMVector3TransformCoordStream(_Out_writes_bytes_(sizeof(XMFLOAT3) + OutputStride * (VectorCount - 1)) XMFLOAT3* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT3) + InputStride * (VectorCount - 1)) const XMFLOAT3* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount, _In_ FXMMATRIX M) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector3TransformNormal(FXMVECTOR V, FXMMATRIX M) noexcept;
-    XMFLOAT3* XM_CALLCONV     XMVector3TransformNormalStream(_Out_writes_bytes_(sizeof(XMFLOAT3) + OutputStride * (VectorCount - 1)) XMFLOAT3* pOutputStream,
+    XMFLOAT3*   XM_CALLCONV     XMVector3TransformNormalStream(_Out_writes_bytes_(sizeof(XMFLOAT3) + OutputStride * (VectorCount - 1)) XMFLOAT3* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT3) + InputStride * (VectorCount - 1)) const XMFLOAT3* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount, _In_ FXMMATRIX M) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector3Project(FXMVECTOR V, float ViewportX, float ViewportY, float ViewportWidth, float ViewportHeight, float ViewportMinZ, float ViewportMaxZ,
         FXMMATRIX Projection, CXMMATRIX View, CXMMATRIX World) noexcept;
-    XMFLOAT3* XM_CALLCONV     XMVector3ProjectStream(_Out_writes_bytes_(sizeof(XMFLOAT3) + OutputStride * (VectorCount - 1)) XMFLOAT3* pOutputStream,
+    XMFLOAT3*   XM_CALLCONV     XMVector3ProjectStream(_Out_writes_bytes_(sizeof(XMFLOAT3) + OutputStride * (VectorCount - 1)) XMFLOAT3* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT3) + InputStride * (VectorCount - 1)) const XMFLOAT3* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount,
@@ -1416,7 +1435,7 @@ namespace DirectX
         _In_ FXMMATRIX Projection, _In_ CXMMATRIX View, _In_ CXMMATRIX World) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector3Unproject(FXMVECTOR V, float ViewportX, float ViewportY, float ViewportWidth, float ViewportHeight, float ViewportMinZ, float ViewportMaxZ,
         FXMMATRIX Projection, CXMMATRIX View, CXMMATRIX World) noexcept;
-    XMFLOAT3* XM_CALLCONV     XMVector3UnprojectStream(_Out_writes_bytes_(sizeof(XMFLOAT3) + OutputStride * (VectorCount - 1)) XMFLOAT3* pOutputStream,
+    XMFLOAT3*   XM_CALLCONV     XMVector3UnprojectStream(_Out_writes_bytes_(sizeof(XMFLOAT3) + OutputStride * (VectorCount - 1)) XMFLOAT3* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT3) + InputStride * (VectorCount - 1)) const XMFLOAT3* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount,
@@ -1466,7 +1485,7 @@ namespace DirectX
     XMVECTOR    XM_CALLCONV     XMVector4AngleBetweenNormals(FXMVECTOR N1, FXMVECTOR N2) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector4AngleBetweenVectors(FXMVECTOR V1, FXMVECTOR V2) noexcept;
     XMVECTOR    XM_CALLCONV     XMVector4Transform(FXMVECTOR V, FXMMATRIX M) noexcept;
-    XMFLOAT4* XM_CALLCONV     XMVector4TransformStream(_Out_writes_bytes_(sizeof(XMFLOAT4) + OutputStride * (VectorCount - 1)) XMFLOAT4* pOutputStream,
+    XMFLOAT4*   XM_CALLCONV     XMVector4TransformStream(_Out_writes_bytes_(sizeof(XMFLOAT4) + OutputStride * (VectorCount - 1)) XMFLOAT4* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT4) + InputStride * (VectorCount - 1)) const XMFLOAT4* pInputStream,
         _In_ size_t InputStride, _In_ size_t VectorCount, _In_ FXMMATRIX M) noexcept;
@@ -1503,8 +1522,13 @@ namespace DirectX
     XMMATRIX    XM_CALLCONV     XMMatrixRotationX(float Angle) noexcept;
     XMMATRIX    XM_CALLCONV     XMMatrixRotationY(float Angle) noexcept;
     XMMATRIX    XM_CALLCONV     XMMatrixRotationZ(float Angle) noexcept;
+
+    // Rotates about y-axis (Yaw), then x-axis (Pitch), then z-axis (Roll)
     XMMATRIX    XM_CALLCONV     XMMatrixRotationRollPitchYaw(float Pitch, float Yaw, float Roll) noexcept;
+
+    // Rotates about y-axis (Angles.y), then x-axis (Angles.x), then z-axis (Angles.z)
     XMMATRIX    XM_CALLCONV     XMMatrixRotationRollPitchYawFromVector(FXMVECTOR Angles) noexcept;
+
     XMMATRIX    XM_CALLCONV     XMMatrixRotationNormal(FXMVECTOR NormalAxis, float Angle) noexcept;
     XMMATRIX    XM_CALLCONV     XMMatrixRotationAxis(FXMVECTOR Axis, float Angle) noexcept;
     XMMATRIX    XM_CALLCONV     XMMatrixRotationQuaternion(FXMVECTOR Quaternion) noexcept;
@@ -1566,8 +1590,13 @@ namespace DirectX
     XMVECTOR    XM_CALLCONV     XMQuaternionBaryCentricV(FXMVECTOR Q0, FXMVECTOR Q1, FXMVECTOR Q2, GXMVECTOR F, HXMVECTOR G) noexcept;
 
     XMVECTOR    XM_CALLCONV     XMQuaternionIdentity() noexcept;
+
+    // Rotates about y-axis (Yaw), then x-axis (Pitch), then z-axis (Roll)
     XMVECTOR    XM_CALLCONV     XMQuaternionRotationRollPitchYaw(float Pitch, float Yaw, float Roll) noexcept;
+
+    // Rotates about y-axis (Angles.y), then x-axis (Angles.x), then z-axis (Angles.z)
     XMVECTOR    XM_CALLCONV     XMQuaternionRotationRollPitchYawFromVector(FXMVECTOR Angles) noexcept;
+
     XMVECTOR    XM_CALLCONV     XMQuaternionRotationNormal(FXMVECTOR NormalAxis, float Angle) noexcept;
     XMVECTOR    XM_CALLCONV     XMQuaternionRotationAxis(FXMVECTOR Axis, float Angle) noexcept;
     XMVECTOR    XM_CALLCONV     XMQuaternionRotationMatrix(FXMMATRIX M) noexcept;
@@ -1594,11 +1623,15 @@ namespace DirectX
     XMVECTOR    XM_CALLCONV     XMPlaneNormalize(FXMVECTOR P) noexcept;
     XMVECTOR    XM_CALLCONV     XMPlaneIntersectLine(FXMVECTOR P, FXMVECTOR LinePoint1, FXMVECTOR LinePoint2) noexcept;
     void        XM_CALLCONV     XMPlaneIntersectPlane(_Out_ XMVECTOR* pLinePoint1, _Out_ XMVECTOR* pLinePoint2, _In_ FXMVECTOR P1, _In_ FXMVECTOR P2) noexcept;
-    XMVECTOR    XM_CALLCONV     XMPlaneTransform(FXMVECTOR P, FXMMATRIX M) noexcept;
-    XMFLOAT4* XM_CALLCONV     XMPlaneTransformStream(_Out_writes_bytes_(sizeof(XMFLOAT4) + OutputStride * (PlaneCount - 1)) XMFLOAT4* pOutputStream,
+
+    // Transforms a plane given an inverse transpose matrix
+    XMVECTOR    XM_CALLCONV     XMPlaneTransform(FXMVECTOR P, FXMMATRIX ITM) noexcept;
+
+    // Transforms an array of planes given an inverse transpose matrix
+    XMFLOAT4*   XM_CALLCONV     XMPlaneTransformStream(_Out_writes_bytes_(sizeof(XMFLOAT4) + OutputStride * (PlaneCount - 1)) XMFLOAT4* pOutputStream,
         _In_ size_t OutputStride,
         _In_reads_bytes_(sizeof(XMFLOAT4) + InputStride * (PlaneCount - 1)) const XMFLOAT4* pInputStream,
-        _In_ size_t InputStride, _In_ size_t PlaneCount, _In_ FXMMATRIX M) noexcept;
+        _In_ size_t InputStride, _In_ size_t PlaneCount, _In_ FXMMATRIX ITM) noexcept;
 
     XMVECTOR    XM_CALLCONV     XMPlaneFromPointNormal(FXMVECTOR Point, FXMVECTOR Normal) noexcept;
     XMVECTOR    XM_CALLCONV     XMPlaneFromPoints(FXMVECTOR Point1, FXMVECTOR Point2, FXMVECTOR Point3) noexcept;
@@ -1774,8 +1807,8 @@ namespace DirectX
     }
 
     // Special-case permute templates
-    template<> inline constexpr XMVECTOR XM_CALLCONV     XMVectorPermute<0, 1, 2, 3>(FXMVECTOR V1, FXMVECTOR) noexcept { return V1; }
-    template<> inline constexpr XMVECTOR XM_CALLCONV     XMVectorPermute<4, 5, 6, 7>(FXMVECTOR, FXMVECTOR V2) noexcept { return V2; }
+    template<> constexpr XMVECTOR XM_CALLCONV     XMVectorPermute<0, 1, 2, 3>(FXMVECTOR V1, FXMVECTOR) noexcept { return V1; }
+    template<> constexpr XMVECTOR XM_CALLCONV     XMVectorPermute<4, 5, 6, 7>(FXMVECTOR, FXMVECTOR V2) noexcept { return V2; }
 
 #if defined(_XM_SSE_INTRINSICS_) && !defined(_XM_NO_INTRINSICS_)
     template<> inline XMVECTOR      XM_CALLCONV     XMVectorPermute<0, 1, 4, 5>(FXMVECTOR V1, FXMVECTOR V2) noexcept { return _mm_movelh_ps(V1, V2); }
@@ -1863,7 +1896,7 @@ namespace DirectX
     }
 
     // Specialized swizzles
-    template<> inline constexpr XMVECTOR XM_CALLCONV XMVectorSwizzle<0, 1, 2, 3>(FXMVECTOR V) noexcept { return V; }
+    template<> constexpr XMVECTOR XM_CALLCONV XMVectorSwizzle<0, 1, 2, 3>(FXMVECTOR V) noexcept { return V; }
 
 #if defined(_XM_SSE_INTRINSICS_) && !defined(_XM_NO_INTRINSICS_)
     template<> inline XMVECTOR      XM_CALLCONV     XMVectorSwizzle<0, 1, 0, 1>(FXMVECTOR V) noexcept { return _mm_movelh_ps(V, V); }
@@ -2117,13 +2150,15 @@ namespace DirectX
      *
      ****************************************************************************/
 
+#ifdef _MSC_VER    
 #pragma warning(push)
 #pragma warning(disable:4068 4214 4204 4365 4616 4640 6001 6101)
      // C4068/4616: ignore unknown pragmas
      // C4214/4204: nonstandard extension used
      // C4365/4640: Off by default noise
      // C6001/6101: False positives
-
+#endif
+    
 #ifdef _PREFAST_
 #pragma prefast(push)
 #pragma prefast(disable : 25000, "FXMVECTOR is 16 bytes")
@@ -2234,12 +2269,12 @@ namespace DirectX
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-
 #ifdef _PREFAST_
 #pragma prefast(pop)
 #endif
-
+#ifdef _MSC_VER    
 #pragma warning(pop)
+#endif
 
 } // namespace DirectX
 

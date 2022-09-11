@@ -16,7 +16,7 @@ PlayerBehaviorCallback::~PlayerBehaviorCallback()
 
 PxControllerBehaviorFlags PlayerBehaviorCallback::getBehaviorFlags(const PxShape& shape, const PxActor& actor)
 {
-    logger.info("Shape, Actor");
+//    logger.info("Shape, Actor");
     PxControllerBehaviorFlags flags;
     flags.set(PxControllerBehaviorFlag::eCCT_SLIDE);
     return flags;

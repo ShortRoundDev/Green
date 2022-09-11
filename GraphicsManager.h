@@ -5,22 +5,21 @@
 #include "GlobalBuffer.h"
 #include "Frustum.h"
 
-#include "Windows.h"
-#include "d3d11.h"
+#include <d3d11.h>
 #include <wrl/client.h>
 #include <DirectXMath.h>
 #include <DirectXTK/Mouse.h>
 
 #include <unordered_map>
 
-#include "imgui.h"
+#include <imgui.h>
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
 class Logger;
 
-constexpr u32 SHADOW_RES = 512;
+constexpr u32 SHADOW_RES = 128;
 
 struct OrthoView
 {

@@ -1,7 +1,5 @@
 #include "Bone.h"
 
-#include "assimp/anim.h"
-
 #include <algorithm>
 
 Bone::Bone(const std::string& name, i32 id, const aiNodeAnim* channel) :

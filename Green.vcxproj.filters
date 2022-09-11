@@ -136,6 +136,12 @@
     <Filter Include="Source Files\Managers\Game\Entities\Actors">
       <UniqueIdentifier>{7c596c4f-b336-4a50-9273-ec70dc2a540c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Managers\Graphics\Mesh">
+      <UniqueIdentifier>{c8c1dc99-8303-4b9a-9caa-07df05231a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Graphics\Mesh">
+      <UniqueIdentifier>{297fd722-5401-4513-94b2-93726fd107fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -269,6 +275,12 @@
     </ClCompile>
     <ClCompile Include="Animator.cpp">
       <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="IMeshFactory.cpp">
+      <Filter>Source Files\Managers\Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="WavefrontMeshFactory.cpp">
+      <Filter>Source Files\Managers\Graphics\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -422,6 +434,15 @@
     <ClInclude Include="Animator.h">
       <Filter>Header Files\Managers\Graphics\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="IMeshFactory.h">
+      <Filter>Header Files\Managers\Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="WavefrontMeshFactory.h">
+      <Filter>Header Files\Managers\Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="WorldVertex.hlsl">
@@ -505,13 +526,11 @@
     <None Include="Light.hlsli">
       <Filter>Resource Files\Shaders\Util\Light</Filter>
     </None>
+    <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Default.cfg">
       <Filter>Resource Files</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="Assets\Boxes.obj">
-      <Filter>Resource Files\Assets</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Assets\Boxes.mtl">
       <Filter>Resource Files\Assets</Filter>

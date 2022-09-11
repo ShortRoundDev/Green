@@ -12,8 +12,8 @@ set_target_properties(imgui::imgui PROPERTIES
   IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/imgui.lib"
   )
 
-list(APPEND _IMPORT_CHECK_TARGETS imgui::imgui )
-list(APPEND _IMPORT_CHECK_FILES_FOR_imgui::imgui "${_IMPORT_PREFIX}/lib/imgui.lib" )
+list(APPEND _cmake_import_check_targets imgui::imgui )
+list(APPEND _cmake_import_check_files_for_imgui::imgui "${_IMPORT_PREFIX}/lib/imgui.lib" )
 
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

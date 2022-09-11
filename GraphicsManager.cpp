@@ -39,7 +39,7 @@ bool GraphicsManager::start()
 	m_gBuffer.dirLight.ambientA = { 21 / 255.0f, 9 / 255.0f, 3/ 255.0f, 72 / 255.0f };
 	m_gBuffer.dirLight.ambientB = { 214 / 255.0f, 122 / 255.0f, 65 / 255.0f, 8 / 255.0f };
 	m_gBuffer.dirLight.hardness = 1.3f;
-	m_gBuffer.dirLight.ambientDirection = { 1, 0, -0.4, 0.0f };
+	m_gBuffer.dirLight.ambientDirection = { 1, 0, -0.4f, 0.0f };
 
 	///// IMGUI /////
 	IMGUI_CHECKVERSION();
@@ -429,7 +429,7 @@ void GraphicsManager::onKeyUp(u32 key)
 bool GraphicsManager::initWindow()
 {
 
-	auto vars = System.getVars();
+	auto& vars = System.getVars();
 	auto title = vars.title.c_str();
 
 	m_instance = GetModuleHandle(NULL);
@@ -577,12 +577,13 @@ bool GraphicsManager::initInfrastructure()
 
 	//Actually enumerate now
 	DXGI_MODE_DESC* displayModeList = new DXGI_MODE_DESC[numModes];
+	ZeroMemory(displayModeList, numModes * sizeof(DXGI_MODE_DESC));
 	if (FAILED(output->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList)))
 	{
 		return false;
 	}
 
-	auto vars = System.getVars();
+	auto& vars = System.getVars();
 
 	for (UINT i = 0; i < numModes; i++)
 	{
@@ -590,6 +591,7 @@ bool GraphicsManager::initInfrastructure()
 		{
 			m_numerator = displayModeList[i].RefreshRate.Numerator;
 			m_denominator = displayModeList[i].RefreshRate.Denominator;
+			break;
 		}
 	}
 
@@ -600,7 +602,7 @@ bool GraphicsManager::initInfrastructure()
 
 bool GraphicsManager::initSwapchain()
 {
-	auto vars = System.getVars();
+	auto& vars = System.getVars();
 
 	DXGI_SWAP_CHAIN_DESC swapchainDesc = { };
 	ZeroMemory(&swapchainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
@@ -677,7 +679,7 @@ bool GraphicsManager::initBackBuffer()
 
 bool GraphicsManager::initDepthStencilBuffer()
 {
-	auto vars = System.getVars();
+	auto& vars = System.getVars();
 	D3D11_TEXTURE2D_DESC depthBufferDesc = { };
 	ZeroMemory(&depthBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
 	depthBufferDesc.Width = static_cast<u32>(m_clientWidth);
@@ -739,7 +741,7 @@ bool GraphicsManager::initDepthStencilBuffer()
 
 bool GraphicsManager::initRasterizer()
 {
-	auto vars = System.getVars();
+	auto& vars = System.getVars();
 
 	D3D11_RASTERIZER_DESC rasterDesc = { };
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
@@ -881,7 +883,7 @@ bool GraphicsManager::initQuad()
 		GVertex(0.0f, 4096, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f)
 	};
 
-	D3D11_BUFFER_DESC vertexDesc;
+	D3D11_BUFFER_DESC vertexDesc = {0};
 	vertexDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexDesc.ByteWidth = (UINT)(4 * sizeof(GVertex));
 	vertexDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -889,7 +891,7 @@ bool GraphicsManager::initQuad()
 	vertexDesc.MiscFlags = 0;
 	vertexDesc.StructureByteStride = 0;
 
-	D3D11_SUBRESOURCE_DATA vertexData;
+	D3D11_SUBRESOURCE_DATA vertexData = { 0 };
 	vertexData.pSysMem = quadVertexData;
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
@@ -906,7 +908,7 @@ bool GraphicsManager::initQuad()
 		0, 2, 3
 	};
 
-	D3D11_BUFFER_DESC indexDesc;
+	D3D11_BUFFER_DESC indexDesc = { 0 };
 	indexDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexDesc.ByteWidth = (u32)(sizeof(u32) * 6);
 	indexDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -914,7 +916,7 @@ bool GraphicsManager::initQuad()
 	indexDesc.MiscFlags = 0;
 	indexDesc.StructureByteStride = 0;
 
-	D3D11_SUBRESOURCE_DATA indexData;
+	D3D11_SUBRESOURCE_DATA indexData = { 0 };
 	indexData.pSysMem = indices;
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;

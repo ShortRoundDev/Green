@@ -2,8 +2,7 @@
 
 #include "Sprite.h"
 
-#include "DirectXMath.h"
-
+#include <DirectXMath.h>
 #include <string>
 
 using namespace DirectX;

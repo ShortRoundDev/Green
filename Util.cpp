@@ -1,6 +1,5 @@
 #include "Util.h"
 
-
 bool RayPlane(
     const XMFLOAT3& p, const XMFLOAT3& q,
     const XMFLOAT3& a, const XMFLOAT3& b, const XMFLOAT3& c,

@@ -4,7 +4,7 @@
 
 #include <d3d11.h>
 #include <wrl/client.h>
-#include "DirectXMath.h"
+#include <DirectXMath.h>
 
 #include <string>
 #include <vector>

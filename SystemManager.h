@@ -1,14 +1,13 @@
 #pragma once
 
+#include <Windows.h>
+
 #include "IManager.h"
 
 #include "GTypes.h"
 #include "SystemVars.h"
 
-#include "Windows.h"
-
 #include <unordered_map>
-#include <string>
 
 class SystemManager : public IManager
 {

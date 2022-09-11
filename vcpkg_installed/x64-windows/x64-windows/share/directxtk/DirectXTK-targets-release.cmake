@@ -12,8 +12,8 @@ set_target_properties(Microsoft::DirectXTK PROPERTIES
   IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/DirectXTK.lib"
   )
 
-list(APPEND _IMPORT_CHECK_TARGETS Microsoft::DirectXTK )
-list(APPEND _IMPORT_CHECK_FILES_FOR_Microsoft::DirectXTK "${_IMPORT_PREFIX}/lib/DirectXTK.lib" )
+list(APPEND _cmake_import_check_targets Microsoft::DirectXTK )
+list(APPEND _cmake_import_check_files_for_Microsoft::DirectXTK "${_IMPORT_PREFIX}/lib/DirectXTK.lib" )
 
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

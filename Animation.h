@@ -4,14 +4,17 @@
 #include "Bone.h"
 #include "BoneInfo.h"
 
-#include "DirectXMath.h"
+#include "Mesh.h"
+
+#include <string>
+#include <DirectXMath.h>
+
+#include <assimp/anim.h>
 #include <assimp/scene.h>
 
-#include <vector>
-#include <string>
 #include <map>
-
-#include "Mesh.h"
+#include <string>
+#include <vector>
 
 using namespace DirectX;
 
@@ -33,7 +36,7 @@ public:
 
     Bone* findBone(const std::string& name);
 
-    f32 getTicksPerSecond();
+    i32 getTicksPerSecond();
     f32 getDuration();
     const AnimNodeData& getRootNode();
     const std::map<std::string, BoneInfo>& getBoneInfoMap();

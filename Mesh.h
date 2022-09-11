@@ -4,16 +4,12 @@
 #include "GVertex.h"
 #include "AABB.h"
 
-#include "assimp/Importer.hpp"
+#include "BoneInfo.h"
 
 #include <d3d11.h>
 #include <wrl/client.h>
 
-#include "PxPhysicsAPI.h"
-
-#include "BoneInfo.h"
-
-#include <vector>
+#include <PxPhysicsAPI.h>
 #include <string>
 #include <map>
 
@@ -27,14 +23,22 @@ class ILight;
 class MeshViewModel;
 class NavMesh;
 
-class aiMesh;
-class aiScene;
+struct aiMesh;
+struct aiScene;
 
 void pushBoneToVertexStack(GVertex& vertex, i32 boneId, f32 weight);
 
 class Mesh
 {
 public:
+    Mesh();
+    Mesh(
+        const std::vector<GVertex>& vertices,
+        sz vertCount,
+        const std::vector<u32>& indices,
+        sz indexCount,
+        Texture* texture
+    );
 
     static bool loadObj(
         std::string path,
@@ -97,14 +101,6 @@ protected:
     static void getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* aMesh, const aiScene* scene);
 
 private:
-    Mesh();
-    Mesh(
-        const std::vector<GVertex>& vertices,
-        sz vertCount,
-        const std::vector<u32>& indices,
-        sz indexCount,
-        Texture* texture
-    );
 
     bool initialize(
         const std::vector<GVertex>& vertices,

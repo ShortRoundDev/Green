@@ -87,6 +87,10 @@ void Octree::querySolid(AABB* aabb, std::vector<MeshEntity*>& meshes)
 
 void Octree::queryType(AABB* aabb, std::vector<MeshEntity*>& meshes, u64 type)
 {
+    if (!m_root)
+    {
+        return;
+    }
     std::set<MeshEntity*> uniqueness;
     m_root->query(aabb, meshes, uniqueness, type);
 }
@@ -103,12 +107,20 @@ void Octree::querySolid(XMFLOAT3 point, std::vector<MeshEntity*>& meshes)
 
 void Octree::queryType(XMFLOAT3 point, std::vector<MeshEntity*>& meshes, u64 type)
 {
+    if (!m_root)
+    {
+        return;
+    }
     std::set<MeshEntity*> uniqueness;
     m_root->query(point, meshes, uniqueness, type);
 }
 
 void Octree::draw()
 {
+    if (!m_root)
+    {
+        return;
+    }
     Graphics.setWireframe(true);
     m_root->draw();
     Graphics.setWireframe(false);
@@ -116,5 +128,9 @@ void Octree::draw()
 
 sz Octree::size()
 {
+    if (!m_root)
+    {
+        return 0;
+    }
     return m_root->getSize();
 }

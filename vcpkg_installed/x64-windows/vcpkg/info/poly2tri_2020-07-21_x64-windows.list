@@ -21,4 +21,5 @@ x64-windows/share/poly2tri/copyright
 x64-windows/share/poly2tri/poly2triConfig-debug.cmake
 x64-windows/share/poly2tri/poly2triConfig-release.cmake
 x64-windows/share/poly2tri/poly2triConfig.cmake
+x64-windows/share/poly2tri/vcpkg.spdx.json
 x64-windows/share/poly2tri/vcpkg_abi_info.txt

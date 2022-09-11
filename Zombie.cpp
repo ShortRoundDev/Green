@@ -66,7 +66,7 @@ void Zombie::update()
     m_controller->move(move, 0.0f, 0, filters);
 
     PxExtendedVec3 pos = m_controller->getFootPosition();
-    m_pos = XMFLOAT3(pos.x, pos.y, pos.z);
+    m_pos = XMFLOAT3((f32)pos.x, (f32)pos.y, (f32)pos.z);
 }
 
 void Zombie::draw(Shader* shaderOverride)
@@ -81,7 +81,7 @@ void Zombie::draw(Shader* shaderOverride)
 
     Shader* shader = shaderOverride ? shaderOverride : m_shader;
     shader->use();
-    shader->bindModelMatrix(transform, &(m_animator->getFinalBoneMatrices()), m_animator->getFinalBoneMatrices().size());
+    shader->bindModelMatrix(transform, &(m_animator->getFinalBoneMatrices()), (u32)m_animator->getFinalBoneMatrices().size());
     auto bones = m_animator->getFinalBoneMatrices();
     m_mesh->draw();
 

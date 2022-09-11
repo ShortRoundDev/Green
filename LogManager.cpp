@@ -1,8 +1,8 @@
 #include "LogManager.h"
 
-#include "SystemManager.h"
+#include <Windows.h>
 
-#include "Windows.h"
+#include "SystemManager.h"
 
 bool LogManager::start()
 {

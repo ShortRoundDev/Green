@@ -385,6 +385,7 @@ OctreeNode* OctreeNode::query(XMFLOAT3 point)
             return m_children[i]->query(point);
         }
     }
+    return nullptr;
 }
 #pragma endregion
 
@@ -392,12 +393,9 @@ OctreeNode* OctreeNode::query(XMFLOAT3 point)
 #pragma region DEBUG_DRAWING
 void OctreeNode::draw()
 {
-    if (m_isLeaf)
+   /*if (m_isLeaf)
     {
-        if (
-            ((!IsShowGreen() && m_meshes.size() != 0) ^ (IsShowGreen() && m_meshes.size() == 0))
-            && (GetShowSize() == -1 || GetShowSize() == m_division)
-        )
+        if ((((!IsShowGreen() && m_meshes.size() != 0)) ^ (IsShowGreen() && (m_meshes.size() == 0))) && (GetShowSize() == -1 || GetShowSize() == m_division))
         {
             draw(IsShowGreen()
                 ? XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)
@@ -411,7 +409,7 @@ void OctreeNode::draw()
         {
             m_children[i]->draw();
         }
-    }
+    }*/
 }
 
 void OctreeNode::draw(XMFLOAT4 color)
@@ -440,30 +438,24 @@ void OctreeNode::generateNeighbors()
     }
 }
 
-bool OctreeNode::findPath(OctreeNode* destination, robin_hood::unordered_map<OctreeNode*, OctreeNode*>& path)
+bool OctreeNode::findPath(OctreeNode* destination, std::unordered_map<OctreeNode*, OctreeNode*>& path)
 {
     path.clear();
     std::vector<std::tuple<f32, OctreeNode*>> frontier;
     frontier.reserve(3000);
-    //fVec.reserve(3000);
-
-    /*std::priority_queue<
-        std::tuple<f32, OctreeNode*>,
-        std::vector<std::tuple<f32, OctreeNode*>>
-    > frontier(std::less<std::tuple<f32, OctreeNode*>>(), std::move(fVec));*/
 
     std::make_heap(frontier.begin(), frontier.end());
     
-    frontier.push_back(std::make_tuple(0, this));
+    frontier.push_back(std::make_tuple(0.0f, this));
     std::push_heap(frontier.begin(), frontier.end()); // doesn't matter what cost is for first node
     path[this] = nullptr;
-    robin_hood::unordered_map<OctreeNode*, f32> costSoFar;
+    std::unordered_map<OctreeNode*, f32> costSoFar;
     costSoFar[this] = 0;
 
     while (frontier.size() > 0)
     {
         std::pop_heap(frontier.begin(), frontier.end());
-        auto current = frontier.back();
+        auto& current = frontier.back();
         frontier.pop_back();
         OctreeNode* node = std::get<1>(current);
 
@@ -482,7 +474,7 @@ bool OctreeNode::findPath(OctreeNode* destination, robin_hood::unordered_map<Oct
             {
                 costSoFar[next] = newCost;
                 f32 priority = newCost + next->nodeHeuristic(destination->getBounds().getMinV());
-                frontier.push_back(std::make_tuple(priority, next));
+                frontier.push_back(std::make_tuple(priority, (OctreeNode*)next));
                 std::push_heap(frontier.begin(), frontier.end());
                 path[next] = node;
             }
@@ -689,7 +681,7 @@ sz OctreeNode::queryNeighbors(std::vector<OctreeNode*>& neighbors)
 
 f32 OctreeNode::nodeHeuristic(XMVECTOR end)
 {
-    auto vec = m_bounds.getMinV();
+    XMVECTOR vec = m_bounds.getMinV();
     vec = XMVectorSubtract(vec, end);
     vec = XMVector3Length(vec);
     return XMVectorGetX(vec) + (getDivision() - MAX_TREE_DEPTH) * 5;

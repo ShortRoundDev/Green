@@ -1,4 +1,5 @@
 #pragma once
+
 #include "GTypes.h"
 
 #include <string>

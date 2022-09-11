@@ -258,4 +258,5 @@ x64-windows/lib/SimulationController_static_64.lib
 x64-windows/share/
 x64-windows/share/physx/
 x64-windows/share/physx/copyright
+x64-windows/share/physx/vcpkg.spdx.json
 x64-windows/share/physx/vcpkg_abi_info.txt

@@ -5,4 +5,4 @@ Architecture: x64-windows
 Multi-Arch: same
 Description: Build test programs
 Type: Port
-Status: install ok half-installed
+Status: purge ok not-installed

@@ -2,8 +2,6 @@
 
 #include "LogManager.h"
 
-#include "Windows.h"
-
 #include <stdarg.h>
 #include <wchar.h>
 

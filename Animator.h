@@ -1,9 +1,5 @@
 #pragma once
-
-#include "DirectXMath.h"
 #include "Animation.h"
-
-#include <vector>
 
 using namespace DirectX;
 

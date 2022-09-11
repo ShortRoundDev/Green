@@ -29,9 +29,9 @@ struct HashPxVector3
 public:
     sz operator()(const PxVec3& vector) const
     {
-        return (std::bit_cast<u32>(vector.x) * 73856093) ^
-               (std::bit_cast<u32>(vector.y) * 19349663) ^
-               (std::bit_cast<u32>(vector.z) * 83492791);
+        return (std::bit_cast<u64>((f64)vector.x) * 73856093ul) ^
+               (std::bit_cast<u64>((f64)vector.y) * 19349663ul) ^
+               (std::bit_cast<u64>((f64)vector.z) * 83492791ul);
     }
 };
 
@@ -50,8 +50,8 @@ bool Mesh::createBbox(
     Mesh*& mesh
 )
 {
-    auto min = aabb.getMin();
-    auto max = aabb.getMax();
+    auto& min = aabb.getMin();
+    auto& max = aabb.getMax();
 
     f32
         x1 = min.x,
@@ -224,7 +224,7 @@ bool Mesh::loadObj(
             //For each FACE in MESH
             for (u32 k = 0; k < mesh->mNumFaces; k++)
             {
-                auto face = mesh->mFaces[k];
+                auto& face = mesh->mFaces[k];
 
                 //For each INDEX in FACE
                 for (u32 l = 0; l < face.mNumIndices; l++)
@@ -270,7 +270,7 @@ bool Mesh::loadObj(
         CopyMemory(convexVertices, nodeVertices.data(), nodeVertices.size() * sizeof(PxVec3));
 
         PxConvexMeshDesc meshDesc;
-        meshDesc.points.count = nodeVertices.size();
+        meshDesc.points.count = (u32)nodeVertices.size();
         meshDesc.points.stride = sizeof(PxVec3);
         meshDesc.points.data = convexVertices;
         meshDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
@@ -290,8 +290,6 @@ bool Mesh::loadObj(
         auto shape = PxRigidActorExt::createExclusiveShape(*actor, PxConvexMeshGeometry(mesh), *material);
 
         gameManager->getPxScene()->addActor(*actor);
-    Skip:
-        continue;
     }    
 
     if (navMesh)
@@ -351,7 +349,7 @@ bool Mesh::loadGltf(
     //For each FACE in MESH
     for (u32 i = 0; i < _mesh->mNumFaces; i++)
     {
-        auto face = _mesh->mFaces[i];
+        auto& face = _mesh->mFaces[i];
 
         //For each INDEX in FACE
         for (u32 j = 0; j < face.mNumIndices; j++)
@@ -403,14 +401,14 @@ bool Mesh::loadGltf(
 
 void Mesh::getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* aMesh, const aiScene* scene)
 {
-    for (int boneIndex = 0; boneIndex < aMesh->mNumBones; boneIndex++)
+    for (u32 boneIndex = 0; boneIndex < aMesh->mNumBones; boneIndex++)
     {
         int boneId = -1;
         std::string boneName = aMesh->mBones[boneIndex]->mName.C_Str();
 
         if (mesh->getBoneInfoMap().find(boneName) == mesh->getBoneInfoMap().end())
         {
-            BoneInfo newBone;
+            BoneInfo newBone = { 0 };
             newBone.id = mesh->getBoneCounter();
             convertAiMatrixToXMMatrix(aMesh->mBones[boneIndex]->mOffsetMatrix, newBone.offset);
             mesh->getBoneInfoMap()[boneName] = newBone;
@@ -463,13 +461,25 @@ void Mesh::draw()
 
 Mesh::Mesh():
     m_indexBuffer(nullptr),
-    m_vertexBuffer(nullptr)
+    m_vertexBuffer(nullptr),
+    m_indexCount(0),
+    m_scene(nullptr),
+    m_status(true),
+    m_texture(nullptr),
+    m_textureCount(0),
+    m_vertCount(0)
 {
 
 }
 
-Mesh::Mesh(AABB aabb)
-    : m_box(aabb)
+Mesh::Mesh(AABB aabb) :
+    m_box(aabb),
+    m_indexCount(0),
+    m_scene(nullptr),
+    m_status(true),
+    m_texture(nullptr),
+    m_textureCount(0),
+    m_vertCount(0)
 {
 
 }
@@ -575,7 +585,7 @@ bool Mesh::initialize(
     m_vertCount = (u32)vertCount;
     m_indexCount = (u32)indexCount;
 
-    D3D11_BUFFER_DESC vertexDesc;
+    D3D11_BUFFER_DESC vertexDesc = { 0 };
     vertexDesc.Usage = D3D11_USAGE_DEFAULT;
     vertexDesc.ByteWidth = (UINT)(vertCount * sizeof(GVertex));
     vertexDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -583,7 +593,7 @@ bool Mesh::initialize(
     vertexDesc.MiscFlags = 0;
     vertexDesc.StructureByteStride = 0;
 
-    D3D11_SUBRESOURCE_DATA vertexData;
+    D3D11_SUBRESOURCE_DATA vertexData = { 0 };
     vertexData.pSysMem = pVertices;
     vertexData.SysMemPitch = 0;
     vertexData.SysMemSlicePitch = 0;
@@ -596,7 +606,7 @@ bool Mesh::initialize(
         return false;
     }
 
-    D3D11_BUFFER_DESC indexDesc;
+    D3D11_BUFFER_DESC indexDesc = { 0 };
     indexDesc.Usage = D3D11_USAGE_DEFAULT;
     indexDesc.ByteWidth = (u32)(sizeof(u32) * indexCount);
     indexDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -604,7 +614,7 @@ bool Mesh::initialize(
     indexDesc.MiscFlags = 0;
     indexDesc.StructureByteStride = 0;
 
-    D3D11_SUBRESOURCE_DATA indexData;
+    D3D11_SUBRESOURCE_DATA indexData { 0 };
     indexData.pSysMem = pIndices;
     indexData.SysMemPitch = 0;
     indexData.SysMemSlicePitch = 0;
@@ -684,12 +694,12 @@ void Mesh::concatenateIndices(
     sz initialSize = out.size();
     for (u32 i = 0; i < a.size(); i++)
     {
-        out.push_back(a[i] + initialSize);
+        out.push_back(a[i] + (u32)initialSize);
     }
     initialSize = out.size();
     for (u32 i = 0; i < b.size(); i++)
     {
-        out.push_back(b[i] + initialSize);
+        out.push_back(b[i] + (u32)initialSize);
     }
 }
 

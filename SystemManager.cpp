@@ -1,10 +1,10 @@
 #include "SystemManager.h"
 
+#include <Windows.h>
+
 #include "GraphicsManager.h"
 #include "GTypes.h"
 #include "Logger.h"
-
-#include "Windows.h"
 
 #include <algorithm>
 
@@ -119,7 +119,7 @@ bool SystemManager::readFileHandle(HANDLE file, u8** buffer, sz maxSize, sz* out
 
     *outSize = size;
 
-    *buffer = (u8*) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size + 1);
+    *buffer = (u8*) HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (u64)size + 1);
 
     return ::ReadFile(file, *buffer, size, NULL, NULL);
 }
@@ -206,6 +206,7 @@ bool SystemManager::loadCfg(std::wstring filename)
         logger.err(L"Failed to read cfg file %s! Got %x", filename.c_str(), GetLastError());
         return false;
     }
+    cfgBuffer[4095] = 0; // silence stupid ass string warnings
 
     char* start = cfgBuffer;
 

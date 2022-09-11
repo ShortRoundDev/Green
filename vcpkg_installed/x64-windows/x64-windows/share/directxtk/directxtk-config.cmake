@@ -25,5 +25,17 @@ endmacro()
 ####################################################################################
 
 include(${CMAKE_CURRENT_LIST_DIR}/DirectXTK-targets.cmake)
+include(CMakeFindDependencyMacro)
+
+set(BUILD_XAUDIO_WIN10 OFF)
+set(BUILD_XAUDIO_WIN8 OFF)
+set(BUILD_XAUDIO_WIN7 OFF)
+if (BUILD_XAUDIO_WIN7 AND (NOT BUILD_XAUDIO_WIN10) AND (NOT BUILD_XAUDIO_WIN8) AND (NOT WINDOWS_STORE))
+    find_dependency(xaudio2redist CONFIG)
+endif()
+
+if(MINGW OR VCPKG_TOOLCHAIN)
+    find_dependency(directxmath CONFIG)
+endif()
 
 check_required_components("DirectXTK")

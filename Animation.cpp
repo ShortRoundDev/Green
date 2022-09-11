@@ -1,16 +1,18 @@
 #include "Animation.h"
 
-#include <fstream>
-#include <filesystem>
-#include <memory>
-
-#include <GLTFSDK/GLTFResourceReader.h>
-#include <GLTFSDK/Deserialize.h>
-
 #include "Mesh.h"
 #include "Util.h"
 
 #include "Logger.h"
+
+#include <GLTFSDK/Deserialize.h>
+#include <GLTFSDK/GLBResourceReader.h>
+#include <GLTFSDK/IStreamReader.h>
+
+#include <assimp/anim.h>
+
+#include <fstream>
+#include <sstream>
 
 using namespace Microsoft;
 
@@ -209,7 +211,7 @@ public:
     }
 };
 
-Bone* ::Animation::findBone(const std::string& name)
+Bone* Animation::findBone(const std::string& name)
 {
     auto res = m_boneInfoMap.find(name);
     if (res == m_boneInfoMap.end())
@@ -219,12 +221,12 @@ Bone* ::Animation::findBone(const std::string& name)
     return m_bones.data() + res->second.id; // woop woop
 }
 
-float ::Animation::getTicksPerSecond()
+i32 Animation::getTicksPerSecond()
 {
     return m_ticksPerSecond;
 }
 
-float ::Animation::getDuration()
+f32 Animation::getDuration()
 {
     return m_duration;
 }
@@ -239,13 +241,13 @@ const std::map<std::string, BoneInfo>& ::Animation::getBoneInfoMap()
     return m_boneInfoMap;
 }
 
-void ::Animation::readHierarchyData(AnimNodeData& node, const aiNode* src)
+void Animation::readHierarchyData(AnimNodeData& node, const aiNode* src)
 {
     node.name = src->mName.data;
     convertAiMatrixToXMMatrix(src->mTransformation, node.transform);
     node.childCount = src->mNumChildren;
 
-    for (int i = 0; i < src->mNumChildren; i++)
+    for (u32 i = 0; i < src->mNumChildren; i++)
     {
         AnimNodeData newData;
         readHierarchyData(newData, src->mChildren[i]);
@@ -260,7 +262,7 @@ void ::Animation::readMissingBones(const aiAnimation* animation, ::Mesh* mesh)
 
     i32 boneCount = mesh->getBoneCounter();
 
-    for (int i = 0; i < size; i++)
+    for (u32 i = 0; i < size; i++)
     {
         auto channel = animation->mChannels[i];
         std::string boneName = channel->mNodeName.data;

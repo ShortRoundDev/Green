@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include "DirectionalLight.h"
+#include "WavefrontMeshFactory.h"
 
 static ::Logger logger = CreateLogger("Scene");
 
@@ -81,6 +82,19 @@ void Scene::initFromFiles(std::string fileName, GameManager* gameManager)
 
 void Scene::initFromObjFile(std::string fileName, GameManager* gameManager)
 {
+    WavefrontMeshFactory* meshFactory = new WavefrontMeshFactory(fileName + ".obj", true, gameManager);
+
+    std::vector<MeshActor> meshActors;
+    meshFactory->createMeshes(meshActors);
+    std::transform(
+        meshActors.begin(), meshActors.end(),
+        std::back_inserter(m_brushes),
+        [](MeshActor meshActor) {
+            return meshActor.mesh;
+        }
+    );
+    delete meshFactory;
+    /*
     if (!Mesh::loadObj(
         fileName + ".obj",
         m_brushes,
@@ -91,7 +105,7 @@ void Scene::initFromObjFile(std::string fileName, GameManager* gameManager)
     {
         logger.err("Failed to load meshes!");
         return;
-    }
+    }*/
 }
 
 void Scene::initBrushViewModels()
@@ -233,7 +247,7 @@ void Scene::draw()
 
     renderViewModels();
 
-    for (auto ent : m_gameObjects)
+    /*for (auto ent : m_gameObjects)
     {
         ent->draw();
     }
@@ -281,11 +295,11 @@ void Scene::renderViewModels()
         auto box = m_meshViewModels[i]->getMesh()->getBox();
         if (Graphics.m_frustum.checkBox(&box))
         {
-            drawn++;
             m_meshViewModels[i]->draw();
+            drawn++;
         }
     }
-    logger.info("Drew %d out of %d (%f %)", drawn, m_meshViewModels.size(), (f32)drawn / (f32)m_meshViewModels.size());
+    
 
 }
 

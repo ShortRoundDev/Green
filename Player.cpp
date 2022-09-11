@@ -157,7 +157,7 @@ void Player::checkFloor()
     fd.flags |= PxQueryFlag::eANY_HIT;
     fd.flags |= PxQueryFlag::ePREFILTER;
     PxExtendedVec3 foot = m_controller->getFootPosition();
-    PxVec3 origin = PxVec3(foot.x, foot.y, foot.z);
+    PxVec3 origin = PxVec3((f32)foot.x, (f32)foot.y, (f32)foot.z);
 
     PxOverlapBuffer hit;
     float radius = m_radius - 1.0f;
@@ -203,7 +203,11 @@ void Player::setVectors()
 void Player::updateMoveThisFrame()
 {
     PxExtendedVec3 pos = m_controller->getPosition();
-    XMFLOAT3 moveVec = XMFLOAT3(pos.x - m_lastPos.x, pos.y - m_lastPos.y, pos.z - m_lastPos.z);
+    XMFLOAT3 moveVec = XMFLOAT3(
+        (f32)(pos.x - m_lastPos.x),
+        (f32)(pos.y - m_lastPos.y),
+        (f32)(pos.z - m_lastPos.z)
+    );
     XMVECTOR moveVecV = XMLoadFloat3(&moveVec);
 
     if (m_onGround || m_gravityOff)
@@ -224,7 +228,7 @@ void Player::updateMoveThisFrame()
     m_controller->move(move, 0.0f, 0, filters);
 
     pos = m_controller->getPosition();
-    m_pos = XMFLOAT3(pos.x, pos.y, pos.z);
+    m_pos = XMFLOAT3((f32)pos.x, (f32)pos.y, (f32)pos.z);
 
     return;
 }
@@ -232,7 +236,7 @@ void Player::updateMoveThisFrame()
 void Player::updateCamera()
 {
     auto pos = m_controller->getPosition();
-    Game.getScene()->getCamera()->setPosition(pos.x, pos.y + 16.0f, pos.z);
+    Game.getScene()->getCamera()->setPosition((f32)pos.x, (f32)pos.y + 16.0f, (f32)pos.z);
 }
 
 void Player::updateAmbientLight()
@@ -277,7 +281,6 @@ void Player::updateAmbientLight()
 
         f32 lerpedHardness = m_prevLight.hardness + ((m_targetLight.hardness - m_prevLight.hardness) * m_lightT);
 
-        DirectionalLightBuffer lightDesc;
         Graphics.m_gBuffer.dirLight.ambientA         = lerpedAmbientA;
         Graphics.m_gBuffer.dirLight.ambientB         = lerpedAmbientB;
         Graphics.m_gBuffer.dirLight.ambientDirection = lerpedAmbientDir;
@@ -384,7 +387,7 @@ void Player::inputMove(XMVECTOR& moveVec)
     XMStoreFloat2(&moveXZ, moveXZV);
     move3.x = moveXZ.x;
     move3.z = moveXZ.y;
-
+    
     moveVec = XMLoadFloat3(&move3);
 }
 #pragma endregion

@@ -22,7 +22,6 @@ TextureCube pointShadowMaps[MAX_LIGHTS] : register(t1);
 Texture2D   spotShadowMaps[MAX_LIGHTS]  : register(SLOT_OFF(t, SPOTLIGHT_OFFSET));
 Texture2D   sunShadowMap                : register(SLOT_OFF(t, SUNLIGHT_OFFSET));
 
-
 SamplerState sampleType                     : register(s0);
 SamplerComparisonState pointShadowSampler   : register(s1);
 SamplerState spotShadowSampler              : register(s2);
@@ -72,6 +71,7 @@ float4 Pixel(PixelInput input) : SV_TARGET
 
     float3 pointColor = float3(0.0f, 0.0f, 0.0f);
     
+    [unroll]
     for (uint i = 0; i < nPointLights; i++)
     {
         float pointShadow = PointLightShadow(
@@ -93,6 +93,7 @@ float4 Pixel(PixelInput input) : SV_TARGET
     }
     
     float3 spotColor = float3(0.0f, 0.0f, 0.0f);
+    [unroll]
     for (uint j = 0; j < nSpotLights; j++)
     {
         float spotShadow = SpotLightShadow(

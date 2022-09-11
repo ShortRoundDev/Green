@@ -6,10 +6,7 @@
 #include "Shader.h"
 #include "Logger.h"
 
-#include "PxPhysicsAPI.h"
-
 #include <string>
-
 
 using namespace physx;
 

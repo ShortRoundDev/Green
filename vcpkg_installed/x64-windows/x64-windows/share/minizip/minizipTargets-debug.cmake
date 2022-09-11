@@ -12,8 +12,8 @@ set_target_properties(minizip::minizip PROPERTIES
   IMPORTED_LOCATION_DEBUG "${_IMPORT_PREFIX}/debug/lib/minizip.lib"
   )
 
-list(APPEND _IMPORT_CHECK_TARGETS minizip::minizip )
-list(APPEND _IMPORT_CHECK_FILES_FOR_minizip::minizip "${_IMPORT_PREFIX}/debug/lib/minizip.lib" )
+list(APPEND _cmake_import_check_targets minizip::minizip )
+list(APPEND _cmake_import_check_files_for_minizip::minizip "${_IMPORT_PREFIX}/debug/lib/minizip.lib" )
 
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

@@ -4,11 +4,11 @@ cmake_minimum_required(VERSION 3.0)
 
 ################################################################################
 # RapidJSON source dir
-set( RapidJSON_SOURCE_DIR "C:/Users/colli/source/repos/vcpkg/buildtrees/rapidjson/src/c72ed4364c-35829b36f2.clean")
+
 
 ################################################################################
 # RapidJSON build dir
-set( RapidJSON_DIR "C:/Users/colli/source/repos/vcpkg/buildtrees/rapidjson/x64-windows-rel")
+
 
 ################################################################################
 # Compute paths
