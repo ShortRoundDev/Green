@@ -184,7 +184,9 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameWorldObject.cpp" />
+    <ClCompile Include="GltfMeshFactory.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
+    <ClCompile Include="GVertex.cpp" />
     <ClCompile Include="ILight.cpp" />
     <ClCompile Include="IManager.cpp" />
     <ClCompile Include="IMeshFactory.cpp" />
@@ -234,6 +236,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameWorldObject.h" />
     <ClInclude Include="GlobalBuffer.h" />
+    <ClInclude Include="GltfMeshFactory.h" />
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="GTypes.h" />
     <ClInclude Include="GVertex.h" />

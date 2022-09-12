@@ -124,7 +124,7 @@ bool Mesh::loadMemory(
     );
 }
 
-bool Mesh::loadObj(
+/*bool Mesh::loadObj(
     std::string path,
     std::vector<Mesh*>& meshes,
     GameManager* gameManager
@@ -299,7 +299,7 @@ bool Mesh::loadObj(
 
     return true;
 
-}
+}*/
 
 bool Mesh::loadGltf(
     std::string path,

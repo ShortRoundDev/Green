@@ -18,7 +18,7 @@ using namespace Microsoft;
 
 static Logger logger = CreateLogger("Animation");
 
-class StreamReader : public glTF::IStreamReader
+/*class StreamReader : public glTF::IStreamReader
 {
 public:
     StreamReader()
@@ -38,7 +38,7 @@ public:
         return stream;
     }
 
-};
+};*/
 
 ::Animation::Animation()
 {
@@ -67,7 +67,7 @@ public:
     readMissingBones(animation, mesh);
     */
 
-    auto sreader = std::make_unique<StreamReader>();
+    /*auto sreader = std::make_unique<StreamReader>();
     auto stream = sreader->GetInputStream(animationPath);
     glTF::GLTFResourceReader reader(std::move(sreader));
 
@@ -208,7 +208,7 @@ public:
                 }
             }
         }
-    }
+    }*/
 };
 
 Bone* Animation::findBone(const std::string& name)

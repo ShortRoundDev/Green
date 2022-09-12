@@ -40,19 +40,11 @@ public:
         Texture* texture
     );
 
-    static bool loadObj(
+    /*static bool loadObj(
         std::string path,
         std::vector<Mesh*>& meshes,
         GameManager* gameManager
-    );
-
-    static bool loadObj(
-        std::string path,
-        std::vector<Mesh*>& meshes,
-        NavMesh* navMesh,
-        GameManager* gameManager,
-        bool flipX = false
-    );
+    );*/
 
     static bool loadGltf(
         std::string path,
