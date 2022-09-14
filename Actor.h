@@ -7,6 +7,7 @@
 #include "Logger.h"
 
 #include <string>
+#include "GltfMeshFactory.h"
 
 using namespace physx;
 
@@ -26,9 +27,11 @@ public:
         m_controller(nullptr),
         m_shader(nullptr)
     {
-        if (!Mesh::loadGltf(model, &m_mesh, game))
+        GltfMeshFactory factory(model);
+        MeshActor meshActor;
+        if (factory.createMesh(meshActor))
         {
-            return;
+            m_mesh = meshActor.mesh;
         }
     }
 

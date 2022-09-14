@@ -40,18 +40,6 @@ public:
         Texture* texture
     );
 
-    /*static bool loadObj(
-        std::string path,
-        std::vector<Mesh*>& meshes,
-        GameManager* gameManager
-    );*/
-
-    static bool loadGltf(
-        std::string path,
-        Mesh** mesh,
-        GameManager* gameManager
-    );
-
     static bool loadMemory(
         std::vector<GVertex>& vertices,
         sz vertCount,

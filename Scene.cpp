@@ -247,7 +247,7 @@ void Scene::draw()
 
     renderViewModels();
 
-    /*for (auto ent : m_gameObjects)
+    for (auto ent : m_gameObjects)
     {
         ent->draw();
     }

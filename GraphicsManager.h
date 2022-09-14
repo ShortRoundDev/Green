@@ -55,6 +55,7 @@ public:
     void putTexture(std::string name, Texture* texture);
     Texture* getTexture(std::string name);
     Texture* lazyLoadTexture(std::string name);
+    Texture* lazyLoadTexture(std::string name, u8* data, sz size);
 
     ID3D11Device* getDevice();
     ID3D11DeviceContext* getContext();

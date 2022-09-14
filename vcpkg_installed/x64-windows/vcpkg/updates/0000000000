@@ -1,10 +1,10 @@
-Package: ms-gltf
-Version: r1.9.5.4
-Depends: rapidjson, vcpkg-cmake
+Package: crossguid
+Version: 2021-10-22
+Port-Version: 2
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 4244524417ff9229fae96719801ae7c040512357a42fca90b43af3c20b55484a
-Description: glTF-SDK is a C++ Software Development Kit for glTF
+Abi: a6c7e25ddfd108e99bf3d819f05400b78f3eb0d8083e5d6da4e72726508dd93c
+Description: CrossGuid is a minimal, cross platform, C++ GUID library.
 Type: Port
-Default-Features: test
-Status: purge ok half-installed
+Status: install ok half-installed

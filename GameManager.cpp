@@ -7,16 +7,19 @@
 #include "Scene.h"
 
 #include "Player.h"
+#include "Logger.h"
 
 constexpr u64 timeStepU = 8;
 constexpr f32 timeStepF = (f32)timeStepU / 1000.0f;
+
+static Logger logger = CreateLogger("GameManager");
 
 bool GameManager::start()
 {
     startPhysX();
     MF_Init();
 
-    m_scene = new Scene("School", this);
+    m_scene = new Scene("ModelTest", this);
 
     m_scene->generateShadowMaps();
     //m_scene->initEntities();
@@ -39,6 +42,10 @@ void GameManager::draw()
 
 void GameManager::update(u64 time, f32 diff)
 {
+    if (diff <= 0)
+    {
+        return;
+    }
     m_time = time;
     m_diff = diff;
     m_pxScene->simulate(diff);

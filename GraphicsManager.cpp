@@ -217,6 +217,17 @@ Texture* GraphicsManager::lazyLoadTexture(std::string path)
 	return texture;
 }
 
+Texture* GraphicsManager::lazyLoadTexture(std::string name, u8* data, sz size)
+{
+	auto texture = getTexture(name);
+	if (texture == NULL)
+	{
+		texture = new Texture(data, size);
+		putTexture(name, texture);
+	}
+	return texture;
+}
+
 ID3D11Device* GraphicsManager::getDevice()
 {
 	return m_device.Get();

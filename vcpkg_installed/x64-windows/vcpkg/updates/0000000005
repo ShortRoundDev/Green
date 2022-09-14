@@ -1,8 +1,0 @@
-Package: gtest
-Version: 1.11.0
-Architecture: x64-windows
-Multi-Arch: same
-Abi: 0b16b0fc636131a24d2a7be1e468536d728da6076cc0a5aedc62f8280b49e890
-Description: GoogleTest and GoogleMock testing frameworks
-Type: Port
-Status: purge ok not-installed

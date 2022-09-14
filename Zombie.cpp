@@ -74,14 +74,15 @@ void Zombie::draw(Shader* shaderOverride)
     XMMATRIX transform = XMMatrixIdentity();
 
     XMVECTOR pos = XMLoadFloat3(&m_pos);
-    XMFLOAT3 one = XMFLOAT3(32.0f, 32.0f, 32.0f);
+    XMFLOAT3 one = XMFLOAT3(16.0f, 16.0f, 16.0f);
     XMVECTOR oneV = XMLoadFloat3(&one);
 
     transform = XMMatrixTransformation(XMVectorZero(), XMVectorZero(), oneV, XMVectorZero(), XMVectorZero(), pos);
 
     Shader* shader = shaderOverride ? shaderOverride : m_shader;
     shader->use();
-    shader->bindModelMatrix(transform, &(m_animator->getFinalBoneMatrices()), (u32)m_animator->getFinalBoneMatrices().size());
+    shader->bindModelMatrix(transform);
+    //shader->bindModelMatrix(transform, &(m_animator->getFinalBoneMatrices()), (u32)m_animator->getFinalBoneMatrices().size());
     auto bones = m_animator->getFinalBoneMatrices();
     m_mesh->draw();
 

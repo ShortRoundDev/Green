@@ -23,5 +23,27 @@ private:
     u32 m_nodeIterator;
     bool m_status;
 
-    bool createMesh(MeshActor&, const glTF::Document& document, glTF::GLTFResourceReader* reader);
+    bool createMesh(
+        MeshActor& meshActor,
+        const glTF::Document& document,
+        glTF::GLTFResourceReader* reader
+    );
+
+    template<typename T, typename U, auto V>
+    void getAttributeData(
+        const glTF::Document& document,
+        const glTF::MeshPrimitive& primitive,
+        glTF::GLTFResourceReader* reader,
+        std::string accessor,
+        std::vector<U>& list
+    );
+
+    template<typename T, typename W, typename U, auto V>
+    void getAttributeData(
+        const glTF::Document& document,
+        const glTF::MeshPrimitive& primitive,
+        glTF::GLTFResourceReader* reader,
+        std::string accessor,
+        std::vector<U>& list
+    );
 };

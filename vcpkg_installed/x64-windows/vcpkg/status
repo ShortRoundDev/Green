@@ -1,9 +1,10 @@
 Package: zlib
-Version: 1.2.11
-Port-Version: 12
+Version: 1.2.12
+Port-Version: 1
+Depends: vcpkg-cmake
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 0dab9da04684dd10e23e6ee8b05781fcf7cfa441a8c7725293d945b8ca410cc8
+Abi: faa705872369d90425e7535ceeaf240cf602482e00e8457e47dea6dbe31ecd12
 Description: A compression library
 Type: Port
 Status: install ok installed
@@ -12,27 +13,28 @@ Package: utfcpp
 Version: 3.2.1
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 8e6b8c6e045fc84c8f3fb89b6afd42a8f295a0bd9a980de7a4f06fa444dad509
+Abi: 06e4a6c65211908488cbb1628d304f02c67f60c6315bbff246d9b15552f62571
 Description: UTF-8 with C++ in a Portable Way
 Type: Port
 Status: install ok installed
 
 Package: stb
-Version: 2020-09-14
+Version: 2021-09-10
 Port-Version: 1
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 673442af552e5fcd2604d891be9412306a27a77059cb9da6e6fe4e90f8564920
+Abi: 1f502bf91b688d2009ccee69151be7f89f804baeced9fe881029dd81d0560d8c
 Description: public domain header-only libraries
 Type: Port
 Status: install ok installed
 
 Package: rapidjson
-Version: 2020-09-14
-Port-Version: 1
+Version: 2022-06-28
+Port-Version: 3
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 12c0b556574b3feec02c0101f21e9a07a3fdbff54ad2a96d096bb74346cc2290
+Abi: 8e2ec57c0cda02f068496246e7cccee332aed0ceecbeecdc8c28d93d5a9dab39
 Description: A fast JSON parser/generator for C++ with both SAX/DOM style API <http://rapidjson.org/>
 Type: Port
 Status: install ok installed
@@ -45,52 +47,54 @@ Multi-Arch: same
 Abi: 092790edc2aa77b6fb5cfaaf00c922b86b80756d35de73268b0e4157390f4db9
 Description: The Clipper library performs clipping and offsetting for both lines and polygons. All four boolean clipping operations are supported - intersection, union, difference and exclusive-or. Polygons can be of any shape including self-intersecting polygons.
 Type: Port
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: poly2tri
 Version: 2020-07-21
-Port-Version: 1
+Port-Version: 2
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: c848c6b9541206d3b242352b3c5bf549c12ebe3ef61f813976d3280d1e3408e2
+Abi: 098f80ff49b6cc5211b20d99684f3269dd73ab0c62da80c838d10dc739b8ef40
 Description: The Clipper library performs clipping and offsetting for both lines and polygons. All four boolean clipping operations are supported - intersection, union, difference and exclusive-or. Polygons can be of any shape including self-intersecting polygons.
 Type: Port
 Status: install ok installed
 
 Package: minizip
 Version: 1.2.11
-Port-Version: 9
-Depends: zlib
+Port-Version: 11
+Depends: vcpkg-cmake, vcpkg-cmake-config, zlib
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 0e5a080003b44fa48d2050694e4052e0c6f04e9beec82c045a8e6232c30030b7
+Abi: e69aa91763f61f88cf88a56a646ec325355aae0c686104ea9065ed9116ebcae2
 Description: Zip compression library
 Type: Port
 Status: install ok installed
 
 Package: kubazip
-Version: 0.1.19
-Port-Version: 1
+Version: 0.2.4
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 3988dbb8e65021a3a0ff8a244c8f65234a14bdc061279340b28949bc60e792a0
+Abi: 9ba1b0067c9d11656394ce428cec258addd72d8b54a57bf841e16ebe97f20d73
 Description: A portable, simple zip library written in C
 Type: Port
 Status: install ok installed
 
 Package: vcpkg-cmake-config
-Version: 2021-09-27
+Version: 2022-02-06
+Port-Version: 1
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 628cf5f30af09e8edf55b0e0d771d1029009bc375d0ab09301d678ddb37e1d9c
+Abi: df95a76d9ddbb4fb37afb5bc67de41a0f192a538779b6104cde60cbe9eb225a9
 Type: Port
 Status: install ok installed
 
 Package: vcpkg-cmake
-Version: 2021-09-13
+Version: 2022-07-18
 Architecture: x64-windows
 Multi-Arch: same
-Abi: b378fe435668c7c347c4579a4e8a04f8bb3bfcf04905e604aefa4e7840d7fc0b
+Abi: 2ac5979094202f53516438089ac143d651cd65506147640cadfd76b09b835dba
 Type: Port
 Status: install ok installed
 
@@ -103,7 +107,7 @@ Multi-Arch: same
 Abi: 2d63946de1593a807c04c3fb1c7a3205b5aaff7ef552b9e7e727c8bb59ad8f9a
 Description: libpng is a library implementing an interface for reading and writing PNG (Portable Network Graphics) format files
 Type: Port
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: libjpeg-turbo
 Version: 2.0.6
@@ -113,7 +117,7 @@ Multi-Arch: same
 Abi: c024eb1ff14315e86522a563c9f0905074b60ee170fe581b87a4cb682c8ba113
 Description: libjpeg-turbo is a JPEG image codec that uses SIMD instructions (MMX, SSE2, NEON, AltiVec) to accelerate baseline JPEG compression and decompression on x86, x86-64, ARM, and PowerPC systems.
 Type: Port
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: bzip2
 Version: 1.0.8
@@ -123,7 +127,7 @@ Multi-Arch: same
 Abi: e55cfad269720e957652eaee63959b6c0113f48fe0703b18765c3b5e3eefd6c2
 Description: bzip2 is a freely available, patent free, high-quality data compressor. It typically compresses files to within 10% to 15% of the best available techniques (the PPM family of statistical compressors), whilst being around twice as fast at compression and six times faster at decompression.
 Type: Port
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: irrlicht
 Version: 1.8.4
@@ -134,35 +138,34 @@ Multi-Arch: same
 Abi: 97ff71a20ae4dfcb14beba1bf2d709ddcc5bb407b5c3e07f6dc63ec710cca5ad
 Description: The Irrlicht Engine is an open source realtime 3D engine written in C++. It is cross-platform, using D3D, OpenGL and its own software renderers.
 Type: Port
-Status: install ok installed
+Status: purge ok not-installed
 
 Package: assimp
-Version: 5.0.1
-Port-Version: 5
-Depends: irrlicht, kubazip, minizip, poly2tri, polyclipping, rapidjson, stb, utfcpp, zlib
+Version: 5.2.4
+Depends: draco, kubazip, minizip, poly2tri, pugixml, rapidjson, stb, utfcpp, vcpkg-cmake, vcpkg-cmake-config, zlib
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 2bd979164a71fb3e3634d4b9699295ba6824d9b0c184cf1e50edd10efffaf2ce
+Abi: d8741af68a92f5d02ad53f63823222e5a5b1d58038d5ceeaf67e8ad5f34b822e
 Description: The Open Asset import library
 Type: Port
 Status: install ok installed
 
 Package: directxmath
-Version: jan2021
-Port-Version: 1
+Version: 2022-05-18
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: e5991c0065d0fa67b5c2ae61de4f3b6ef91bc36783e16378fe838c321bfbcacd
+Abi: fd5e098c7d370e3f22d3a45faab714502119880292bcfa427afc96db1cf825e4
 Description: DirectXMath SIMD C++ math library
 Type: Port
 Status: install ok installed
 
 Package: directxtk
-Version: aug2021
-Depends: directxmath
+Version: 2022-07-29
+Depends: directxmath, vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: fe8e8204c46e96ea931d5b8425973f60061d8a3fe8b7d2cfd29a32625812ad69
+Abi: 6981919a2f42a5731e0b54833bb42390abd58c0c026d4393dbd8c97e80fb8c72
 Description: A collection of helper classes for writing DirectX 11.x code in C++.
 Type: Port
 Status: install ok installed
@@ -179,20 +182,22 @@ Status: purge ok not-installed
 
 Package: physx
 Version: 4.1.2
+Port-Version: 4
 Depends: vcpkg-cmake
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 09cdbdc06ba2ab316c51920d1b0760bbd1128638bad86e0bfe2190d50cf195e9
+Abi: 70449df8cbe52b425d7bf4dd2ca61152b6f8fdbe563f0a949c7b3a5091c7e308
 Description: The NVIDIA PhysX SDK is a scalable multi-platform physics solution supporting a wide range of devices, from smartphones to high-end multicore CPUs and GPUs
 Type: Port
 Status: install ok installed
 
 Package: imgui
-Version: 1.84.2
+Version: 1.88
 Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: d5ecb5b0054b440c0d5f1ba45531877d5c27a86b7c2ac1acb93ec6d1aa8c9e39
+Abi: 6d6ef70ba20b96a77ac21eae7c559592ca14218b22c332ad71eddc18977de6fa
 Description: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies.
 Type: Port
 Status: install ok installed
@@ -214,30 +219,32 @@ Type: Port
 Status: install ok installed
 
 Package: nlohmann-json
-Version: 3.10.2
+Version: 3.11.2
 Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 383c84a5cfe460e204bcab86aacf804fcd90b2331ae83c9222066a6c7cc32f4d
+Abi: 015a032e74e3ae9c7d95b773f89ec02e8f382319c61c030f2b3d6b9325433ab4
 Description: JSON for Modern C++
 Type: Port
 Status: install ok installed
 
 Package: gtest
-Version: 1.11.0
+Version: 1.12.1
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 0b16b0fc636131a24d2a7be1e468536d728da6076cc0a5aedc62f8280b49e890
+Abi: a8dc0cad3ce59448b8c710e68a3447bf4ea77053db96ad701dbfec6abcd6e0cb
 Description: GoogleTest and GoogleMock testing frameworks
 Type: Port
 Status: install ok installed
 
 Package: ms-gltf
-Version: r1.9.5.4
+Version: 2022-06-28
+Port-Version: 1
 Depends: rapidjson, vcpkg-cmake
 Architecture: x64-windows
 Multi-Arch: same
-Abi: 4244524417ff9229fae96719801ae7c040512357a42fca90b43af3c20b55484a
+Abi: 5066f53c94b4bf657e49ef7ba58d614966c43fce9a5d2bd53a1514e4729b2e0a
 Description: glTF-SDK is a C++ Software Development Kit for glTF
 Type: Port
 Default-Features: test
@@ -249,6 +256,27 @@ Depends: gtest
 Architecture: x64-windows
 Multi-Arch: same
 Description: Build test programs
+Type: Port
+Status: install ok installed
+
+Package: pugixml
+Version: 1.12.1
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: fc40315dc6c2389f9a297ce9009d606d92393773ea4321877dc869d195f2620f
+Description: Light-weight, simple and fast XML parser for C++ with XPath support
+Type: Port
+Status: install ok installed
+
+Package: draco
+Version: 1.5.2
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 32bf1bc491647db875924a8d5a848f8c4b781e65c8a8d9590657bca904dfaacf
+Description: A library for compressing and decompressing 3D geometric meshes and point clouds. It is intended to improve the storage and transmission of 3D graphics.
 Type: Port
 Status: install ok installed
 

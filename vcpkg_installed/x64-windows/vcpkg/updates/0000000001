@@ -1,8 +1,10 @@
-Package: ms-gltf
-Feature: test
-Depends: gtest
+Package: crossguid
+Version: 2021-10-22
+Port-Version: 2
+Depends: vcpkg-cmake, vcpkg-cmake-config
 Architecture: x64-windows
 Multi-Arch: same
-Description: Build test programs
+Abi: a6c7e25ddfd108e99bf3d819f05400b78f3eb0d8083e5d6da4e72726508dd93c
+Description: CrossGuid is a minimal, cross platform, C++ GUID library.
 Type: Port
-Status: purge ok half-installed
+Status: install ok installed
