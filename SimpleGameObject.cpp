@@ -17,9 +17,9 @@ SimpleGameObject::SimpleGameObject(XMFLOAT3 pos) :
 {
     m_shader = Graphics.getShader(L"World");
 
-    if (!Mesh::loadGltf("Ganon.gltf", &m_mesh, &Game))
+    //if (!Mesh::loadGltf("Ganon.gltf", &m_mesh, &Game))
     {
-        logger.err("Failed to load ganon!");
+      //  logger.err("Failed to load ganon!");
         return;
     }
 }

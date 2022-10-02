@@ -13,7 +13,7 @@ static ::Logger logger = CreateLogger("Zombie");
 const PxControllerFilters filters;
 
 Zombie::Zombie(XMFLOAT3 pos) : Actor(
-    "RbgBox.gltf",
+    "SimplerBones.gltf",
     pos,
     TYPE_ID(Zombie)
 )
@@ -31,13 +31,10 @@ Zombie::Zombie(XMFLOAT3 pos) : Actor(
     m_controller = Game.getControllers()->createController(desc);
     m_controller->setPosition(PxExtendedVec3(pos.x, pos.y, pos.z));
 
-
     if (!m_controller)
     {
         logger.err("Failed to create capsule!");
     }
-
-    m_animator = new Animator(new Animation("RbgBox.gltf", m_mesh));
 }
 
 Zombie::~Zombie()
@@ -47,7 +44,6 @@ Zombie::~Zombie()
 
 void Zombie::update()
 {
-    m_animator->update(1.0f);
     return;
 
     auto pPos = Game.getPlayer()->getPos();
@@ -74,16 +70,18 @@ void Zombie::draw(Shader* shaderOverride)
     XMMATRIX transform = XMMatrixIdentity();
 
     XMVECTOR pos = XMLoadFloat3(&m_pos);
-    XMFLOAT3 one = XMFLOAT3(16.0f, 16.0f, 16.0f);
+    XMFLOAT3 one = XMFLOAT3(1.0f, 1.0f, 1.0f);
     XMVECTOR oneV = XMLoadFloat3(&one);
 
     transform = XMMatrixTransformation(XMVectorZero(), XMVectorZero(), oneV, XMVectorZero(), XMVectorZero(), pos);
 
     Shader* shader = shaderOverride ? shaderOverride : m_shader;
     shader->use();
-    shader->bindModelMatrix(transform);
-    //shader->bindModelMatrix(transform, &(m_animator->getFinalBoneMatrices()), (u32)m_animator->getFinalBoneMatrices().size());
-    auto bones = m_animator->getFinalBoneMatrices();
+    //shader->bindModelMatrix(transform);
+    std::vector<XMMATRIX> finalMatrices;
+    m_animations["Bend"]->getFinalMatrix(finalMatrices);
+    
+    shader->bindModelMatrix(transform, &finalMatrices, (u32)finalMatrices.size());
     m_mesh->draw();
 
 }

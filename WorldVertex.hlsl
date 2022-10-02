@@ -8,11 +8,25 @@ PixelInput Vertex(VertexInput input)
 {
     PixelInput output;
     //output.position = float4(input.position.xyz, 1.0);
-    float4 totalPos = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float4 totalPos = input.position;
+    float weights[4] = { input.weights.x, input.weights.y, input.weights.z, 1.0f };
+    int boneIds[4] = { input.boneIndices.x, input.boneIndices.y, input.boneIndices.z, input.boneIndices.w };
     bool hasBones = false;
-    /*for (int i = 0; i < 0; i++)
+
+    float3 posL = float3(0.0f, 0.0f, 0.0f);
+    float3 normalL = float3(0.0f, 0.0f, 0.0f);
+    float3 tangentL = float3(0.0f, 0.0f, 0.0f);
+    for (int i = 0; i < 2; i++)
     {
-        uint boneId = input.boneIndices[i];
+        int boneId = boneIds[i];
+        if (boneId == -1)
+        {
+            break;
+        }
+        hasBones = true;
+        posL += weights[i] * mul(float4(input.position.xyz, 1.0f), bones[boneId]).xyz;
+        /*
+        uint boneId = boneIds[i];
         if (boneId == -1)
         {
             break;
@@ -24,12 +38,12 @@ PixelInput Vertex(VertexInput input)
         }
         hasBones = true;
         float4 localPos = mul(input.position, bones[boneId]);
-        totalPos += localPos * input.weights[i];
-    }*/
+        totalPos += localPos * weights[i];*/
+    }
     
-    if (!hasBones)
+    if (hasBones)
     {
-        totalPos = input.position;
+        totalPos = float4(posL, 1.0f);
     }
     
     output.normal = input.normal;

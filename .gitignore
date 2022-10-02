@@ -75,6 +75,8 @@ StyleCopReport.xml
 *.ilk
 *.meta
 x64/**/*.obj
+x64/**/assets/*.obj
+!Assets/*.obj
 *.iobj
 *.pch
 *.pdb

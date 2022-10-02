@@ -5,9 +5,11 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Logger.h"
+#include "GltfMeshFactory.h"
+#include "AnimationSkeleton.h"
 
 #include <string>
-#include "GltfMeshFactory.h"
+#include <map>
 
 using namespace physx;
 
@@ -25,13 +27,15 @@ public:
         GameObject(pos, typeId, game),
         m_mesh(nullptr),
         m_controller(nullptr),
-        m_shader(nullptr)
+        m_shader(nullptr),
+        m_animations()
     {
         GltfMeshFactory factory(model);
         MeshActor meshActor;
         if (factory.createMesh(meshActor))
         {
             m_mesh = meshActor.mesh;
+            m_animations = meshActor.animations;
         }
     }
 
@@ -45,6 +49,7 @@ public:
 protected:
     PxController* m_controller;
     Mesh* m_mesh;
+    std::map<std::string, AnimationSkeleton*> m_animations;
     Shader* m_shader;
 };
 

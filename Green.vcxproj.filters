@@ -264,15 +264,6 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>Source Files\Managers\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Bone.cpp">
-      <Filter>Source Files\Managers\Graphics\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Source Files\Managers\Graphics\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animator.cpp">
-      <Filter>Source Files\Managers\Graphics\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="IMeshFactory.cpp">
       <Filter>Source Files\Managers\Graphics\Mesh</Filter>
     </ClCompile>
@@ -287,6 +278,15 @@
     </ClCompile>
     <ClCompile Include="GVertex.cpp">
       <Filter>Source Files\Managers\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationChannel.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationJoint.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationSkeleton.cpp">
+      <Filter>Source Files\Managers\Graphics\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -425,18 +425,6 @@
     <ClInclude Include="Frustum.h">
       <Filter>Header Files\Managers\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="BoneInfo.h">
-      <Filter>Header Files\Managers\Graphics\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Bone.h">
-      <Filter>Header Files\Managers\Graphics\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Header Files\Managers\Graphics\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animator.h">
-      <Filter>Header Files\Managers\Graphics\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="IMeshFactory.h">
       <Filter>Header Files\Managers\Graphics\Mesh</Filter>
     </ClInclude>
@@ -451,6 +439,15 @@
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Managers\Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationChannel.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationJoint.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationSkeleton.h">
+      <Filter>Header Files\Managers\Graphics\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

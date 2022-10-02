@@ -4,8 +4,6 @@
 #include "GVertex.h"
 #include "AABB.h"
 
-#include "BoneInfo.h"
-
 #include <d3d11.h>
 #include <wrl/client.h>
 
@@ -26,7 +24,7 @@ class NavMesh;
 struct aiMesh;
 struct aiScene;
 
-void pushBoneToVertexStack(GVertex& vertex, i32 boneId, f32 weight);
+//void pushBoneToVertexStack(GVertex& vertex, i32 boneId, f32 weight);
 
 class Mesh
 {
@@ -62,10 +60,10 @@ public:
 
     AABB getBox();
     XMFLOAT3 getCentroid();
-    std::map<std::string, BoneInfo>& getBoneInfoMap();
+    //std::map<std::string, BoneInfo>& getBoneInfoMap();
     
-    i32 getBoneCounter();
-    void setBoneCounter(i32 boneCounter);
+//    i32 getBoneCounter();
+//    void setBoneCounter(i32 boneCounter);
 
     void addLight(ILight* light);
 
@@ -78,7 +76,7 @@ public:
     const aiScene* getScene();
     
 protected:
-    static void getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* aMesh, const aiScene* scene);
+    //static void getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* aMesh, const aiScene* scene);
 
 private:
 
@@ -90,8 +88,8 @@ private:
         Texture* texture
     );
 
-    std::map<std::string, BoneInfo> m_boneInfoMap;
-    i32 m_boneCounter = 0;
+    //std::map<std::string, BoneInfo> m_boneInfoMap;
+    //i32 m_boneCounter = 0;
 
     ComPtr<ID3D11Buffer> m_vertexBuffer;
     u32 m_vertCount;

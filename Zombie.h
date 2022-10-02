@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Actor.h"
-#include "Animator.h"
 
 class Zombie : public Actor
 {
@@ -13,7 +12,5 @@ public:
     void draw(Shader* shaderOverride = nullptr);
     void think();
 
-private:
-    Animator* m_animator;
 };
 

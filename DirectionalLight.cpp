@@ -36,7 +36,7 @@ DirectionalLight* DirectionalLight::Create(MF_Entity* entity)
         MF3_TO_XM4(pos),
         MFCOL_TO_XM4(color),
         MF3_TO_XM4(dir),
-        2048, 2048
+        4096, 4096
     );
 }
 
@@ -178,7 +178,10 @@ void DirectionalLight::renderShadowMap(Scene* scene)
 
 AABB DirectionalLight::getBounds()
 {
-    return AABB(XMFLOAT3(-FLT_MAX, -FLT_MAX, -FLT_MAX), XMFLOAT3(FLT_MAX, FLT_MAX, FLT_MAX));
+    return AABB(
+        XMFLOAT3(-FLT_MAX, -FLT_MAX, -FLT_MAX),
+        XMFLOAT3(FLT_MAX, FLT_MAX, FLT_MAX)
+    );
 }
 
 void DirectionalLight::draw()

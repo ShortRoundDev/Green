@@ -301,7 +301,7 @@ bool Mesh::loadObj(
 
 }*/
 
-bool Mesh::loadGltf(
+/*bool Mesh::loadGltf(
     std::string path,
     Mesh** mesh,
     GameManager* gameManager
@@ -397,9 +397,9 @@ bool Mesh::loadGltf(
     );
     (*mesh)->setScene((aiScene*)scene);
     return true;
-}
+}*/
 
-void Mesh::getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* aMesh, const aiScene* scene)
+/*void Mesh::getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* aMesh, const aiScene* scene)
 {
     for (u32 boneIndex = 0; boneIndex < aMesh->mNumBones; boneIndex++)
     {
@@ -440,7 +440,7 @@ void Mesh::getBonesForMesh(Mesh* mesh, std::vector<GVertex>& vertices, aiMesh* a
         }
     }
 }
-
+*/
 void Mesh::draw()
 {
     if (m_texture != NULL)
@@ -649,7 +649,7 @@ XMFLOAT3 Mesh::getCentroid()
     return centroidV.pos;
 }
 
-std::map<std::string, BoneInfo>& Mesh::getBoneInfoMap()
+/*std::map<std::string, BoneInfo>& Mesh::getBoneInfoMap()
 {
     return m_boneInfoMap;
 }
@@ -662,7 +662,7 @@ i32 Mesh::getBoneCounter()
 void Mesh::setBoneCounter(i32 boneCounter)
 {
     m_boneCounter = boneCounter;
-}
+}*/
 
 void Mesh::initAABB(const std::vector<GVertex>& vertices)
 {
@@ -791,7 +791,7 @@ bool Mesh::GenerateNavMesh(GameManager* game, NavMesh* navMesh, std::vector<Mesh
     return true;
 }
 
-void pushBoneToVertexStack(GVertex& vertex, i32 boneId, f32 weight)
+/*void pushBoneToVertexStack(GVertex& vertex, i32 boneId, f32 weight)
 {
     for (int i = 0; i < 4; i++)
     {
@@ -805,4 +805,4 @@ void pushBoneToVertexStack(GVertex& vertex, i32 boneId, f32 weight)
             return;
         }
     }
-}
+}*/
