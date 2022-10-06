@@ -74,3 +74,14 @@ void convertAiMatrixToXMMatrix(const aiMatrix4x4& aiMat, XMMATRIX& xmMat)
         aiMat.d1, aiMat.d2, aiMat.d3, aiMat.d4
     );
 }
+
+void printMatrix(Logger* logger, XMMATRIX matrix)
+{
+    XMFLOAT4X4 mat4;
+    XMStoreFloat4x4(&mat4, matrix);
+    
+    logger->info("[ %f %f %f %f ]", mat4._11, mat4._12, mat4._13, mat4._14);
+    logger->info("[ %f %f %f %f ]", mat4._21, mat4._22, mat4._23, mat4._24);
+    logger->info("[ %f %f %f %f ]", mat4._31, mat4._32, mat4._33, mat4._34);
+    logger->info("[ %f %f %f %f ]", mat4._41, mat4._42, mat4._43, mat4._44);
+}

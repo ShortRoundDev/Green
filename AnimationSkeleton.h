@@ -16,7 +16,9 @@ public:
     AnimationSkeleton(u8* boneHierarchy, std::vector<AnimationJoint> joints);
     ~AnimationSkeleton();
 
-    void getFinalMatrix(std::vector<XMMATRIX>& finalMatrix);
+    void getFinalMatrix(std::vector<XMMATRIX>& finalMatrix, std::vector<XMMATRIX>& inverseBindMatrices);
+    std::vector<AnimationJoint>& getJoints();
+    u8* getBoneHierarchy();
 
 private:
     u8* m_boneHierarchy;

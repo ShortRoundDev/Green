@@ -31,6 +31,7 @@ ShadowPixelInput Vertex(VertexInput input)
     {
         totalPos = input.position;
     }
+    totalPos.w = 1.0f;
 
    /* output.position = PerspectiveTransform(
 		input.position,

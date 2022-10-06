@@ -1,9 +1,10 @@
 #include "AnimationJoint.h"
 
-AnimationJoint::AnimationJoint(u32 boneId, XMMATRIX inverseBindMatrix, AnimationChannel animationChannel) :
+AnimationJoint::AnimationJoint(u32 boneId, XMMATRIX inverseBindMatrix, AnimationChannel animationChannel, XMMATRIX localMatrix) :
     m_inverseBindMatrix(inverseBindMatrix),
     m_boneId(boneId),
-    m_animationChannel(animationChannel)
+    m_animationChannel(animationChannel),
+    m_localMatrix(localMatrix)
 {
     
 }
@@ -23,6 +24,11 @@ XMMATRIX AnimationJoint::getTransformation()
 XMMATRIX AnimationJoint::getInverseBind()
 {
     return m_inverseBindMatrix;
+}
+
+XMMATRIX AnimationJoint::getLocalMatrix()
+{
+    return m_localMatrix;
 }
 
 XMMATRIX AnimationJoint::getSkinMatrix(XMMATRIX parentSkinMatrix)

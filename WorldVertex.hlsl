@@ -16,7 +16,7 @@ PixelInput Vertex(VertexInput input)
     float3 posL = float3(0.0f, 0.0f, 0.0f);
     float3 normalL = float3(0.0f, 0.0f, 0.0f);
     float3 tangentL = float3(0.0f, 0.0f, 0.0f);
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 1; i++)
     {
         int boneId = boneIds[i];
         if (boneId == -1)

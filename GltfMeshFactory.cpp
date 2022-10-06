@@ -109,6 +109,7 @@ bool GltfMeshFactory::createMesh(MeshActor& meshActor, const glTF::Document& doc
     auto primitive = mesh.primitives[0];
     meshFromPrimitive(meshActor.mesh, primitive, document, reader);
     animationFromSkin(meshActor.animations, document.skins[element.skinId], document, reader);
+    calculateInverseBindMatrices(meshActor.animations["Bind"], meshActor.inverseBindMatrices);
 
     return true;
 }
@@ -211,6 +212,7 @@ void GltfMeshFactory::meshFromPrimitive(
     }
 
     auto material = document.materials[primitive.materialId];
+
     auto textures = material.GetTextures();
     glTF::Texture texture;
     bool found = false;
@@ -378,11 +380,44 @@ void GltfMeshFactory::animationFromSkin(
         for (u32 j = 0; j < timeline.size(); j++)
         {
             auto node = document.nodes[skin.jointIds[j]];
+            
+            
+            auto glTranslate = node.translation;
+            auto glRotate = node.rotation;
+            auto glScale = node.scale;
+            XMVECTOR translate(XMVectorSet(glTranslate.x, glTranslate.y, glTranslate.z, 1.0f));
+            XMVECTOR rotate(XMVectorSet(glRotate.x, glRotate.y, glRotate.z, glRotate.w));
+            XMVECTOR scale(XMVectorSet(glScale.x, glScale.y, glScale.z, 1.0f));
+            
+            XMMATRIX localMatrix = XMMatrixAffineTransformation(scale, g_XMZero, rotate, translate);
+
             finalJoints.push_back(AnimationJoint(
-                j, inverseBindMatrices[j], timeline[j]
+                j, inverseBindMatrices[j], timeline[j], localMatrix
             ));
         }
 
         animations[animation.name] = new AnimationSkeleton(tree, std::move(finalJoints));
+    }
+}
+
+void GltfMeshFactory::calculateInverseBindMatrices(
+    AnimationSkeleton* bindPose,
+    std::vector<XMMATRIX>& inverseBindMatrices
+)
+{
+    auto joints = bindPose->getJoints();
+    auto hierarchy = bindPose->getBoneHierarchy();
+ 
+    inverseBindMatrices.reserve(joints.size());
+    inverseBindMatrices.push_back(joints[0].getLocalMatrix());
+
+    for (u32 i = 1; i < joints.size(); i++)
+    {
+        inverseBindMatrices.push_back(XMMatrixMultiply(joints[i].getLocalMatrix(), inverseBindMatrices[hierarchy[i]]));
+    }
+
+    for (u32 i = 0; i < joints.size(); i++)
+    {
+        inverseBindMatrices[i] = XMMatrixInverse(nullptr, inverseBindMatrices[i]);
     }
 }

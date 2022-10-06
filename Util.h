@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GTypes.h"
+#include "Logger.h"
 
 #include "DirectXMath.h"
 
@@ -16,3 +17,4 @@ bool RayPlane(
 );
 
 void convertAiMatrixToXMMatrix(const aiMatrix4x4& aiMat, XMMATRIX& xmMat);
+void printMatrix(Logger* logger, XMMATRIX matrix);

@@ -63,4 +63,9 @@ private:
         const glTF::Document& document,
         glTF::GLTFResourceReader* reader
     );
+
+    void calculateInverseBindMatrices(
+        AnimationSkeleton* bindPose,
+        std::vector<XMMATRIX>& inverseBindMatrices
+    );
 };

@@ -41,10 +41,11 @@ void AnimationChannel::getBoneTransform(XMMATRIX& transform, f32 timeStamp)
         rotationIdx--;
     }
 
-    AnimationKeyFrame
-        translate   = m_translation[translationIdx],
-        scale       = m_scale[scaleIdx],
-        rotation    = m_rotation[rotationIdx];
+    XMVECTOR
+        translate   = m_translation.size()  ? m_translation[translationIdx].value   : g_XMZero,
+        scale       = m_scale.size()        ? m_scale[scaleIdx].value               : g_XMOne,
+        rotation    = m_rotation.size()     ? m_rotation[rotationIdx].value         : g_XMZero;
 
-    transform = XMMatrixTranspose(XMMatrixTransformation(g_XMZero, g_XMZero, scale.value, g_XMZero, rotation.value, translate.value));
+    transform = XMMatrixAffineTransformation(scale, g_XMZero, rotation, translate);
+        //XMMatrixTransformation(g_XMZero, g_XMZero, scale.value, g_XMZero, rotation.value, translate.value));
 }

@@ -8,10 +8,13 @@
 #include "GltfMeshFactory.h"
 #include "AnimationSkeleton.h"
 
+#include <DirectXMath.h>
+
 #include <string>
 #include <map>
 
 using namespace physx;
+using namespace DirectX;
 
 class Actor : public GameObject
 {
@@ -36,6 +39,7 @@ public:
         {
             m_mesh = meshActor.mesh;
             m_animations = meshActor.animations;
+            m_inverseBindMatrices = meshActor.inverseBindMatrices;
         }
     }
 
@@ -50,6 +54,7 @@ protected:
     PxController* m_controller;
     Mesh* m_mesh;
     std::map<std::string, AnimationSkeleton*> m_animations;
+    std::vector<XMMATRIX> m_inverseBindMatrices;
     Shader* m_shader;
 };
 
