@@ -4,14 +4,11 @@
 
 #include "AnimationSkeleton.h"
 
-#include <DirectXMath.h>
-
 #include <vector>
 #include <string>
 #include <map>
 
 using namespace physx;
-using namespace DirectX;
 
 class Mesh;
 
@@ -21,7 +18,6 @@ struct MeshActor
     Mesh* mesh;
     PxActor* actor;
     std::map<std::string, AnimationSkeleton*> animations;
-    std::vector<XMMATRIX> inverseBindMatrices;
 };
 
 __interface IMeshFactory

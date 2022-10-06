@@ -39,7 +39,6 @@ public:
         {
             m_mesh = meshActor.mesh;
             m_animations = meshActor.animations;
-            m_inverseBindMatrices = meshActor.inverseBindMatrices;
         }
     }
 

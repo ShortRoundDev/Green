@@ -24,7 +24,7 @@ AnimationSkeleton::~AnimationSkeleton()
     //delete m_boneHierarchy;
 }
 
-void AnimationSkeleton::getFinalMatrix(std::vector<XMMATRIX>& finalMatrix, std::vector<XMMATRIX>& inverseBindMatrices)
+void AnimationSkeleton::getFinalMatrix(std::vector<XMMATRIX>& finalMatrix)
 {
     finalMatrix.reserve(m_joints.size());
     std::vector<XMMATRIX> toParentTransforms(m_joints.size());
@@ -59,13 +59,7 @@ void AnimationSkeleton::getFinalMatrix(std::vector<XMMATRIX>& finalMatrix, std::
 
     for (u32 i = 0; i < m_joints.size(); i++)
     {
-        XMMATRIX ibm = inverseBindMatrices[i];
-        XMMATRIX otherIbm = m_joints[i].getInverseBind();
-        
-        logger.info("Calculated IBM:");
-        printMatrix(&logger, ibm);
-        logger.info("Deserialized IBM:");
-        printMatrix(&logger, otherIbm);
+        XMMATRIX ibm = m_joints[i].getInverseBind();
 
         XMMATRIX toRoot = toRootTransforms[i];
         // multiply toRoot by inverse Bind Matrix

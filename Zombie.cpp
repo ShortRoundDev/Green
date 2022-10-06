@@ -80,7 +80,7 @@ void Zombie::draw(Shader* shaderOverride)
     shader->use();
 
     std::vector<XMMATRIX> finalMatrices;
-    m_animations["Bend"]->getFinalMatrix(finalMatrices, m_inverseBindMatrices);
+    m_animations["Bend"]->getFinalMatrix(finalMatrices);
     
     shader->bindModelMatrix(transform, &finalMatrices, (u32)finalMatrices.size());
     m_mesh->draw();

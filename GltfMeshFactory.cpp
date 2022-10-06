@@ -109,7 +109,6 @@ bool GltfMeshFactory::createMesh(MeshActor& meshActor, const glTF::Document& doc
     auto primitive = mesh.primitives[0];
     meshFromPrimitive(meshActor.mesh, primitive, document, reader);
     animationFromSkin(meshActor.animations, document.skins[element.skinId], document, reader);
-    calculateInverseBindMatrices(meshActor.animations["Bind"], meshActor.inverseBindMatrices);
 
     return true;
 }
@@ -368,12 +367,12 @@ void GltfMeshFactory::animationFromSkin(
         auto invBindData = reader->ReadBinaryData<f32>(document, invBindAccessor);
         for (u32 j = 0; j < invBindData.size(); j += 16)
         {
-            inverseBindMatrices.push_back(XMMatrixTranspose(XMMatrixSet(
+            inverseBindMatrices.push_back(XMMatrixSet(
                 invBindData[j +  0], invBindData[j +  1], invBindData[j +  2], invBindData[j +  3],
                 invBindData[j +  4], invBindData[j +  5], invBindData[j +  6], invBindData[j +  7],
                 invBindData[j +  8], invBindData[j +  9], invBindData[j + 10], invBindData[j + 11],
                 invBindData[j + 12], invBindData[j + 13], invBindData[j + 14], invBindData[j + 15]
-            )));
+            ));
         }
 
         std::vector<AnimationJoint> finalJoints;
@@ -397,27 +396,5 @@ void GltfMeshFactory::animationFromSkin(
         }
 
         animations[animation.name] = new AnimationSkeleton(tree, std::move(finalJoints));
-    }
-}
-
-void GltfMeshFactory::calculateInverseBindMatrices(
-    AnimationSkeleton* bindPose,
-    std::vector<XMMATRIX>& inverseBindMatrices
-)
-{
-    auto joints = bindPose->getJoints();
-    auto hierarchy = bindPose->getBoneHierarchy();
- 
-    inverseBindMatrices.reserve(joints.size());
-    inverseBindMatrices.push_back(joints[0].getLocalMatrix());
-
-    for (u32 i = 1; i < joints.size(); i++)
-    {
-        inverseBindMatrices.push_back(XMMatrixMultiply(joints[i].getLocalMatrix(), inverseBindMatrices[hierarchy[i]]));
-    }
-
-    for (u32 i = 0; i < joints.size(); i++)
-    {
-        inverseBindMatrices[i] = XMMatrixInverse(nullptr, inverseBindMatrices[i]);
     }
 }
