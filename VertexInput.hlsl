@@ -9,7 +9,7 @@ struct VertexInput
     float3 normal : NORMAL;
     float2 tex : TEXCOORD0;
     uint4 boneIndices : BONEINDICES;
-    float3 weights : WEIGHTS;
+    float4 weights : WEIGHTS;
 };
 
 #endif

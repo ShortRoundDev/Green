@@ -39,9 +39,12 @@ public:
 
     void getBoneTransform(XMMATRIX& transform, f32 timeStamp);
 
+    f32 getMaxTime();
+
 private:
     std::vector<AnimationKeyFrame> m_translation;
     std::vector<AnimationKeyFrame> m_scale;
     std::vector<AnimationKeyFrame> m_rotation;
+    f32 m_maxTime = -1.0f;
 };
 

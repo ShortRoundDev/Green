@@ -28,14 +28,14 @@ void AnimationChannel::getBoneTransform(XMMATRIX& transform, f32 timeStamp)
     }
 
     u32 scaleIdx = 0;
-    for (scaleIdx = 0; scaleIdx < m_scale.size() && m_scale[scaleIdx].timeStamp > timeStamp; scaleIdx++);
+    for (scaleIdx = 0; scaleIdx < m_scale.size() && m_scale[scaleIdx].timeStamp < timeStamp; scaleIdx++);
     if (scaleIdx > 0)
     {
         scaleIdx--;
     }
 
     u32 rotationIdx = 0;
-    for (rotationIdx = 0; rotationIdx < m_rotation.size() && m_rotation[rotationIdx].timeStamp > timeStamp; rotationIdx++);
+    for (rotationIdx = 0; rotationIdx < m_rotation.size() && m_rotation[rotationIdx].timeStamp < timeStamp; rotationIdx++);
     if (rotationIdx > 0)
     {
         rotationIdx--;
@@ -48,4 +48,27 @@ void AnimationChannel::getBoneTransform(XMMATRIX& transform, f32 timeStamp)
 
     transform = XMMatrixAffineTransformation(scale, g_XMZero, rotation, translate);
         //XMMatrixTransformation(g_XMZero, g_XMZero, scale.value, g_XMZero, rotation.value, translate.value));
+}
+
+f32 AnimationChannel::getMaxTime()
+{
+    if (m_maxTime < 0.0f)
+    {
+        f32 maxTime = (m_translation[m_translation.size() - 1]).timeStamp;
+        m_maxTime = maxTime;
+
+        maxTime = (m_scale[m_scale.size() - 1]).timeStamp;
+        if (maxTime > m_maxTime)
+        {
+            m_maxTime = maxTime;
+        }
+
+        maxTime = (m_rotation[m_rotation.size() - 1]).timeStamp;
+        if (maxTime > m_maxTime)
+        {
+            m_maxTime = maxTime;
+        }
+    }
+
+    return m_maxTime;
 }

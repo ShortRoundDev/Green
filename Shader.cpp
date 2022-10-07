@@ -186,7 +186,7 @@ bool Shader::initLayout(ID3D11Device* device, u8* byteCode, sz byteCodeLength)
 
     polygonLayout[4].SemanticName = "WEIGHTS";
     polygonLayout[4].SemanticIndex = 0;
-    polygonLayout[4].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+    polygonLayout[4].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
     polygonLayout[4].InputSlot = 0;
     polygonLayout[4].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
     polygonLayout[4].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;

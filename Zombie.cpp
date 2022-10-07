@@ -13,7 +13,7 @@ static ::Logger logger = CreateLogger("Zombie");
 const PxControllerFilters filters;
 
 Zombie::Zombie(XMFLOAT3 pos) : Actor(
-    "SimpleBones2.gltf",
+    "Zombie.gltf",
 
     pos,
     TYPE_ID(Zombie)
@@ -68,10 +68,12 @@ void Zombie::update()
 
 void Zombie::draw(Shader* shaderOverride)
 {
+    static f32 time = 0.0f;
+    time += 0.01f;
     XMMATRIX transform = XMMatrixIdentity();
 
     XMVECTOR pos = XMLoadFloat3(&m_pos);
-    XMFLOAT3 one = XMFLOAT3(1.0f, 1.0f, 1.0f);
+    XMFLOAT3 one = XMFLOAT3(16.0f, 16.0f, 16.0f);
     XMVECTOR oneV = XMLoadFloat3(&one);
 
     transform = XMMatrixAffineTransformation(oneV, g_XMZero, g_XMZero, XMVectorSet(0, 64, 0, 1));//XMMatrixTransformation(XMVectorZero(), XMVectorZero(), oneV, XMVectorZero(), XMVectorZero(), pos);
@@ -80,7 +82,7 @@ void Zombie::draw(Shader* shaderOverride)
     shader->use();
 
     std::vector<XMMATRIX> finalMatrices;
-    m_animations["Bend"]->getFinalMatrix(finalMatrices);
+    m_animations["Walk"]->getFinalMatrix(finalMatrices, time);
     
     shader->bindModelMatrix(transform, &finalMatrices, (u32)finalMatrices.size());
     m_mesh->draw();

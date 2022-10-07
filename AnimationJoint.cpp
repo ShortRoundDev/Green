@@ -14,10 +14,10 @@ AnimationJoint::~AnimationJoint()
 
 }
 
-XMMATRIX AnimationJoint::getTransformation()
+XMMATRIX AnimationJoint::getTransformation(f32 time)
 {
     XMMATRIX boneTransform;
-    m_animationChannel.getBoneTransform(boneTransform, 0.0f);
+    m_animationChannel.getBoneTransform(boneTransform, time);
     return boneTransform;
 }
 
@@ -36,4 +36,13 @@ XMMATRIX AnimationJoint::getSkinMatrix(XMMATRIX parentSkinMatrix)
     XMMATRIX boneTransform;
     m_animationChannel.getBoneTransform(boneTransform, 0.0f);
     return XMMatrixMultiply(parentSkinMatrix, XMMatrixMultiply(m_inverseBindMatrix, boneTransform));
+}
+
+f32 AnimationJoint::getMaxTime()
+{
+    if (m_maxTime < 0.0f)
+    {
+        m_maxTime = m_animationChannel.getMaxTime();
+    }
+    return m_maxTime;
 }

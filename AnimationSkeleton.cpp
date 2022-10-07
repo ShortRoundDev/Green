@@ -24,8 +24,9 @@ AnimationSkeleton::~AnimationSkeleton()
     //delete m_boneHierarchy;
 }
 
-void AnimationSkeleton::getFinalMatrix(std::vector<XMMATRIX>& finalMatrix)
+void AnimationSkeleton::getFinalMatrix(std::vector<XMMATRIX>& finalMatrix, f32 time)
 {
+    time = std::fmodf(time, getMaxTime());
     finalMatrix.reserve(m_joints.size());
     std::vector<XMMATRIX> toParentTransforms(m_joints.size());
 
@@ -33,7 +34,7 @@ void AnimationSkeleton::getFinalMatrix(std::vector<XMMATRIX>& finalMatrix)
     {
         // get each bone's animation
         // at the current frame
-        toParentTransforms[i] = m_joints[i].getTransformation();
+        toParentTransforms[i] = m_joints[i].getTransformation(time);
     }
 
     std::vector<XMMATRIX> toRootTransforms(m_joints.size());
@@ -77,4 +78,20 @@ std::vector<AnimationJoint>& AnimationSkeleton::getJoints()
 u8* AnimationSkeleton::getBoneHierarchy()
 {
     return m_boneHierarchy;
+}
+
+f32 AnimationSkeleton::getMaxTime()
+{
+    if (m_maxTime < 0.0f)
+    {
+        for (auto& joint : m_joints)
+        {
+            f32 maxTime = joint.getMaxTime();
+            if (m_maxTime < maxTime)
+            {
+                m_maxTime = maxTime;
+            }
+        }
+    }
+    return m_maxTime;
 }

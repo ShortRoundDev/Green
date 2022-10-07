@@ -177,12 +177,6 @@ void GltfMeshFactory::meshFromPrimitive(
     getAttributeData<f32, XMFLOAT4, 4>(document, primitive, reader, glTF::ACCESSOR_WEIGHTS_0, weights);
     getAttributeData<u8, i32, XMINT4, 4>(document, primitive, reader, glTF::ACCESSOR_JOINTS_0, bones);
 
-    for (int i = 0; i < bones.size(); i++)
-    {
-        bones[i].z = -1;
-        bones[i].w = -1;
-    }
-
     const auto& accessor = document.accessors.Get(primitive.indicesAccessorId);
     auto indexData = reader->ReadBinaryData<u16>(document, accessor);
 
@@ -272,9 +266,8 @@ void GltfMeshFactory::animationFromSkin(
             std::vector<AnimationKeyFrame>,
             std::vector<AnimationKeyFrame>
         >> timelineBuffer(jointSize);
-
+        
         glTF::Animation animation = document.animations[i];
-
         for (u32 j = 0; j < animation.channels.Size(); j++)
         {
             glTF::AnimationChannel channel = animation.channels[j];
@@ -321,7 +314,6 @@ void GltfMeshFactory::animationFromSkin(
             auto values = reader->ReadBinaryData<f32>(document, output);
 
             u32 vectorDisposition = values.size() / time.size(); // 3 or 4
-
             for (u32 k = 0; k < time.size(); k++)
             {
                 f32 vecBuffer[4] = { 0, 0, 0, 1.0f };
@@ -329,6 +321,7 @@ void GltfMeshFactory::animationFromSkin(
                 {
                     vecBuffer[l] = values[k * vectorDisposition + l];
                 }
+
                 channelBuffer->push_back(AnimationKeyFrame(
                     time[k],
                     XMVectorSet(vecBuffer[0], vecBuffer[1], vecBuffer[2], vecBuffer[3])
