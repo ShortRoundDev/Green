@@ -65,7 +65,7 @@ void MeshViewModel::draw()
     
     m_shader->bindModelMatrix(XMMatrixIdentity());
     m_shader->bindCBuffer(&lightBuffer);
-    m_mesh->draw();
+   // m_mesh->draw();
 }
 
 Mesh* MeshViewModel::getMesh()

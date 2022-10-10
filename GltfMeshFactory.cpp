@@ -373,18 +373,35 @@ void GltfMeshFactory::animationFromSkin(
         {
             auto node = document.nodes[skin.jointIds[j]];
             
-            
             auto glTranslate = node.translation;
             auto glRotate = node.rotation;
             auto glScale = node.scale;
             XMVECTOR translate(XMVectorSet(glTranslate.x, glTranslate.y, glTranslate.z, 1.0f));
             XMVECTOR rotate(XMVectorSet(glRotate.x, glRotate.y, glRotate.z, glRotate.w));
             XMVECTOR scale(XMVectorSet(glScale.x, glScale.y, glScale.z, 1.0f));
-            
-            XMMATRIX localMatrix = XMMatrixAffineTransformation(scale, g_XMZero, rotate, translate);
 
+            XMVECTOR position = XMVectorSet(0, 0, 0, 1.0f);
+            XMMATRIX localMatrix = XMMatrixAffineTransformation(scale, g_XMZero, rotate, translate);
+            position = XMVector4Transform(position, localMatrix);
+
+            int parent = tree[j];
+            while (j > 0 && true)
+            {
+                auto matrix = finalJoints[parent].getLocalMatrix();
+                position = XMVector4Transform(position, matrix);
+                
+                if(parent == tree[parent]){
+                    break;
+                }
+
+                parent = tree[parent];
+            }
+
+            XMFLOAT3 _position;
+            XMStoreFloat3(&_position, position);
             finalJoints.push_back(AnimationJoint(
-                j, inverseBindMatrices[j], timeline[j], localMatrix
+                j, inverseBindMatrices[j], timeline[j], localMatrix,
+                _position
             ));
         }
 

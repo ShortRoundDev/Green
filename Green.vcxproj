@@ -187,6 +187,7 @@
     <ClCompile Include="GltfMeshFactory.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="GVertex.cpp" />
+    <ClCompile Include="Hitbox.cpp" />
     <ClCompile Include="ILight.cpp" />
     <ClCompile Include="IManager.cpp" />
     <ClCompile Include="IMeshFactory.cpp" />
@@ -239,6 +240,8 @@
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="GTypes.h" />
     <ClInclude Include="GVertex.h" />
+    <ClInclude Include="Hitbox.h" />
+    <ClInclude Include="HitboxBuffer.h" />
     <ClInclude Include="ILight.h" />
     <ClInclude Include="IManager.h" />
     <ClInclude Include="IMeshFactory.h" />
@@ -276,6 +279,25 @@
     <ClInclude Include="Zombie.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="HitboxPixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="HitboxVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</EntryPointName>
+    </FxCompile>
     <FxCompile Include="GaussianPixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -391,6 +413,7 @@
     <None Include="Gamma.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
+    <None Include="HitboxBuffer.hlsli" />
     <None Include="Light.hlsli" />
     <None Include="LightUtil.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

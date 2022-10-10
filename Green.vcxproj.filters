@@ -142,6 +142,9 @@
     <Filter Include="Header Files\Managers\Graphics\Mesh">
       <UniqueIdentifier>{297fd722-5401-4513-94b2-93726fd107fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Hitbox">
+      <UniqueIdentifier>{2437adeb-c463-4225-8872-7f7412d3e550}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -287,6 +290,9 @@
     </ClCompile>
     <ClCompile Include="AnimationSkeleton.cpp">
       <Filter>Source Files\Managers\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Hitbox.cpp">
+      <Filter>Source Files\Managers\Game\Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -449,6 +455,12 @@
     <ClInclude Include="AnimationSkeleton.h">
       <Filter>Header Files\Managers\Graphics\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="Hitbox.h">
+      <Filter>Header Files\Managers\Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="HitboxBuffer.h">
+      <Filter>Header Files\Managers\Game\Entities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="WorldVertex.hlsl">
@@ -502,6 +514,12 @@
     <FxCompile Include="OctreePixel.hlsl">
       <Filter>Resource Files\Shaders\Octree</Filter>
     </FxCompile>
+    <FxCompile Include="HitboxVertex.hlsl">
+      <Filter>Resource Files\Shaders\Hitbox</Filter>
+    </FxCompile>
+    <FxCompile Include="HitboxPixel.hlsl">
+      <Filter>Resource Files\Shaders\Hitbox</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shadertoolsconfig.json">
@@ -533,6 +551,9 @@
       <Filter>Resource Files\Shaders\Util\Light</Filter>
     </None>
     <None Include=".gitignore" />
+    <None Include="HitboxBuffer.hlsli">
+      <Filter>Resource Files\Shaders\Hitbox</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Default.cfg">

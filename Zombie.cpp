@@ -12,12 +12,13 @@ static ::Logger logger = CreateLogger("Zombie");
 
 const PxControllerFilters filters;
 
-Zombie::Zombie(XMFLOAT3 pos) : Actor(
-    "Zombie.gltf",
-
-    pos,
-    TYPE_ID(Zombie)
-)
+Zombie::Zombie(XMFLOAT3 pos) :
+    Actor(
+        "Zombie.gltf",
+        pos,
+        TYPE_ID(Zombie)
+    ),
+    m_boneBoxes()
 {
     m_shader = Graphics.getShader(L"World");
     
@@ -35,6 +36,11 @@ Zombie::Zombie(XMFLOAT3 pos) : Actor(
     if (!m_controller)
     {
         logger.err("Failed to create capsule!");
+    }
+    m_boneBoxes.reserve(m_animations["Walk"]->getJoints().size());
+    for (u32 i = 0; i < m_animations["Walk"]->getJoints().size(); i++)
+    {
+        m_boneBoxes.push_back(Hitbox(3.0f, XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)));
     }
 }
 
@@ -76,16 +82,35 @@ void Zombie::draw(Shader* shaderOverride)
     XMFLOAT3 one = XMFLOAT3(16.0f, 16.0f, 16.0f);
     XMVECTOR oneV = XMLoadFloat3(&one);
 
-    transform = XMMatrixAffineTransformation(oneV, g_XMZero, g_XMZero, XMVectorSet(0, 64, 0, 1));//XMMatrixTransformation(XMVectorZero(), XMVectorZero(), oneV, XMVectorZero(), XMVectorZero(), pos);
+    transform = XMMatrixAffineTransformation(oneV, g_XMZero, g_XMZero, g_XMZero);
 
     Shader* shader = shaderOverride ? shaderOverride : m_shader;
     shader->use();
 
-    std::vector<XMMATRIX> finalMatrices;
-    m_animations["Walk"]->getFinalMatrix(finalMatrices, time);
+    m_skeleton.clear();
+    m_animations["Walk"]->getFinalMatrix(m_skeleton, time);
     
-    shader->bindModelMatrix(transform, &finalMatrices, (u32)finalMatrices.size());
+    shader->bindModelMatrix(transform, &m_skeleton, (u32)m_skeleton.size());
+    Graphics.setWireframe(true);
     m_mesh->draw();
+
+    //transform = XMMatrixAffineTransformation(oneV, g_XMZero, g_XMZero, XMVectorSet(0, 0, 0, 1));
+
+    for (u32 i = 0; i < m_animations["Walk"]->getJoints().size(); i++)
+    {
+        auto& m_hitbox = m_boneBoxes[i];
+
+        auto pos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+        pos = XMVector4Transform(pos, XMMatrixInverse(nullptr, m_animations["Walk"]->getJoints()[i].getInverseBind()));
+        pos = XMVector4Transform(pos, transform);
+
+        XMFLOAT3 _pos;
+        XMStoreFloat3(&_pos, pos);
+        m_hitbox.setPos(_pos);
+
+        m_hitbox.draw();
+    }
+    Graphics.setWireframe(false);
 }
 
 void Zombie::think()

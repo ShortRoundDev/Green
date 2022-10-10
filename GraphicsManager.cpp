@@ -7,6 +7,7 @@
 #include "ILight.h"
 #include "Texture.h"
 #include "Sprite.h"
+#include "HitboxBuffer.h"
 
 #include "MeshLightBuffer.h"
 #include "WireframeDebugColor.h"
@@ -860,6 +861,13 @@ bool GraphicsManager::initShaders()
 		//L"SpotLightShadowMapVertex.cso",
 		L"GaussianPixel.cso",
 		sizeof(OrthoView)
+	));
+
+	putShader(L"Hitbox", new Shader(
+		m_device.Get(),
+		L"HitboxVertex.cso",
+		L"HitboxPixel.cso",
+		sizeof(HitboxBuffer)
 	));
 	
 	return true;

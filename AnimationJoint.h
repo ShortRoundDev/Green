@@ -9,7 +9,8 @@ using namespace DirectX;
 class AnimationJoint
 {
 public:
-    AnimationJoint(u32 boneId, XMMATRIX inverseBindMatrix, AnimationChannel animationChannel, XMMATRIX localMatrix);
+    AnimationJoint(u32 boneId, XMMATRIX inverseBindMatrix, AnimationChannel animationChannel, XMMATRIX localMatrix, XMFLOAT3 pos);
+
     ~AnimationJoint();
 
     XMMATRIX getTransformation(f32 time);
@@ -17,6 +18,7 @@ public:
     XMMATRIX getLocalMatrix();
     XMMATRIX getSkinMatrix(XMMATRIX parentSkinMatrix);
     f32 getMaxTime();
+    const XMFLOAT3& getPos();
 
 private:
     XMMATRIX m_inverseBindMatrix;
@@ -24,5 +26,6 @@ private:
     u32 m_boneId;
     XMMATRIX m_localMatrix;
     f32 m_maxTime = -1.0f;
+    XMFLOAT3 m_pos;
 };
 

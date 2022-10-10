@@ -1,10 +1,11 @@
 #include "AnimationJoint.h"
 
-AnimationJoint::AnimationJoint(u32 boneId, XMMATRIX inverseBindMatrix, AnimationChannel animationChannel, XMMATRIX localMatrix) :
+AnimationJoint::AnimationJoint(u32 boneId, XMMATRIX inverseBindMatrix, AnimationChannel animationChannel, XMMATRIX localMatrix, XMFLOAT3 pos) :
     m_inverseBindMatrix(inverseBindMatrix),
     m_boneId(boneId),
     m_animationChannel(animationChannel),
-    m_localMatrix(localMatrix)
+    m_localMatrix(localMatrix),
+    m_pos(pos)
 {
     
 }
@@ -45,4 +46,9 @@ f32 AnimationJoint::getMaxTime()
         m_maxTime = m_animationChannel.getMaxTime();
     }
     return m_maxTime;
+}
+
+const XMFLOAT3& AnimationJoint::getPos()
+{
+    return m_pos;
 }

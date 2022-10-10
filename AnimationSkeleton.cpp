@@ -27,6 +27,9 @@ AnimationSkeleton::~AnimationSkeleton()
 void AnimationSkeleton::getFinalMatrix(std::vector<XMMATRIX>& finalMatrix, f32 time)
 {
     time = std::fmodf(time, getMaxTime());
+
+    time = std::truncf(time/0.4f) * 0.4f;
+
     finalMatrix.reserve(m_joints.size());
     std::vector<XMMATRIX> toParentTransforms(m_joints.size());
 
