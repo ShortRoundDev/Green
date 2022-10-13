@@ -16,6 +16,7 @@ public:
     void draw(Shader* shaderOverride = nullptr);
     void think();
 
+
 private:
     std::vector<XMMATRIX> m_skeleton;
     std::vector<Hitbox> m_boneBoxes;

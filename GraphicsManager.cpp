@@ -337,6 +337,18 @@ void GraphicsManager::setWireframe(bool on)
 	}
 }
 
+void GraphicsManager::setDepthTest(bool on)
+{
+	if (on)
+	{
+		m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+	}
+	else
+	{
+		m_deviceContext->OMSetDepthStencilState(m_noTestDepthStencilState.Get(), 1);
+	}
+}
+
 f32 GraphicsManager::getClientWidth()
 {
 	return m_clientWidth;
@@ -729,6 +741,13 @@ bool GraphicsManager::initDepthStencilBuffer()
 	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	if (FAILED(m_device->CreateDepthStencilState(&depthStencilDesc, m_depthStencilState.GetAddressOf())))
+	{
+		return false;
+	}
+
+	depthStencilDesc.DepthEnable = false;
+
+	if (FAILED(m_device->CreateDepthStencilState(&depthStencilDesc, m_noTestDepthStencilState.GetAddressOf())))
 	{
 		return false;
 	}

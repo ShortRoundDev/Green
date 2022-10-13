@@ -82,7 +82,7 @@ void Zombie::draw(Shader* shaderOverride)
     XMFLOAT3 one = XMFLOAT3(16.0f, 16.0f, 16.0f);
     XMVECTOR oneV = XMLoadFloat3(&one);
 
-    transform = XMMatrixAffineTransformation(oneV, g_XMZero, g_XMZero, g_XMZero);
+    transform = XMMatrixAffineTransformation(oneV, g_XMZero, g_XMZero, XMVectorSet(0.0f, 64, 0.0f, 0.0f));
 
     Shader* shader = shaderOverride ? shaderOverride : m_shader;
     shader->use();
@@ -91,17 +91,17 @@ void Zombie::draw(Shader* shaderOverride)
     m_animations["Walk"]->getFinalMatrix(m_skeleton, time);
     
     shader->bindModelMatrix(transform, &m_skeleton, (u32)m_skeleton.size());
-    Graphics.setWireframe(true);
     m_mesh->draw();
 
     //transform = XMMatrixAffineTransformation(oneV, g_XMZero, g_XMZero, XMVectorSet(0, 0, 0, 1));
-
+    Graphics.setDepthTest(false);
     for (u32 i = 0; i < m_animations["Walk"]->getJoints().size(); i++)
     {
         auto& m_hitbox = m_boneBoxes[i];
 
         auto pos = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
         pos = XMVector4Transform(pos, XMMatrixInverse(nullptr, m_animations["Walk"]->getJoints()[i].getInverseBind()));
+        pos = XMVector4Transform(pos, m_skeleton[i]);
         pos = XMVector4Transform(pos, transform);
 
         XMFLOAT3 _pos;
@@ -110,7 +110,7 @@ void Zombie::draw(Shader* shaderOverride)
 
         m_hitbox.draw();
     }
-    Graphics.setWireframe(false);
+    Graphics.setDepthTest(true);
 }
 
 void Zombie::think()

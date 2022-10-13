@@ -77,6 +77,7 @@ public:
     void resetViewport();
     void setShadowRasterizer(bool shadowRasterizer);
     void setWireframe(bool on);
+    void setDepthTest(bool on);
 
     GlobalBuffer m_gBuffer;
     Frustum m_frustum;
@@ -111,6 +112,7 @@ private:
     ComPtr<ID3D11RenderTargetView> m_renderTargetView;
     ComPtr<ID3D11Texture2D> m_depthStencilBuffer;
     ComPtr<ID3D11DepthStencilState> m_depthStencilState;
+    ComPtr<ID3D11DepthStencilState> m_noTestDepthStencilState;
     ComPtr<ID3D11DepthStencilView> m_depthStencilView;
     ComPtr<ID3D11RasterizerState> m_sceneRasterizer;
     ComPtr<ID3D11RasterizerState> m_wireRasterizer;

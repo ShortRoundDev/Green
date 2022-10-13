@@ -1,6 +1,9 @@
 #include "AnimationChannel.h"
 #include <algorithm>
 
+#include <map>
+#include <string>
+
 AnimationChannel::AnimationChannel(
     std::vector<AnimationKeyFrame>& translation,
     std::vector<AnimationKeyFrame>& scale,
@@ -72,3 +75,4 @@ f32 AnimationChannel::getMaxTime()
 
     return m_maxTime;
 }
+
