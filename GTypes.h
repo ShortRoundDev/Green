@@ -30,6 +30,7 @@ constexpr f32 M_PI_4_F = M_PI_F / 4.0f;
 constexpr f64 M_PI_4_D = M_PI_D / 4.0;
 
 constexpr float TO_RAD = 0.0174532925f;
+constexpr float TO_DEG = 57.2957795;
 
 #define TYPE_ID(x) (u64)((typeid(x).hash_code()))
 

@@ -58,7 +58,7 @@ bool GraphicsManager::start()
 	m_mouse->SetWindow(Graphics.getWindow());
 	m_mouse->SetMode(Mouse::MODE_RELATIVE);
 
-	m_mouseLook = true;
+	m_mouseLook = false;
 	io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 
 	initQuad();
@@ -146,6 +146,51 @@ bool GraphicsManager::update()
 		auto state = m_mouse->GetState();
 		m_mouseX = state.x;
 		m_mouseY = state.y;
+	} else {
+		bool xDown = false;
+		bool yDown = false;
+
+		if (keyDown(37))
+		{
+			m_mouseX--;
+			xDown = true;
+		}
+		if (keyDown(39))
+		{
+			m_mouseX++;
+			xDown = true;
+		}
+		if (keyDown(38))
+		{
+			if (m_mouseY > -4)
+			{
+				m_mouseY--;
+			}
+			yDown = true;
+		}
+		if (keyDown(40))
+		{
+			if (m_mouseY < 4)
+			{
+				m_mouseY++;
+			}
+			yDown = true;
+		}
+		if (!xDown)
+		{
+			m_mouseX /= 2;
+		}
+		else
+		{
+			if (std::abs(m_mouseX) > 5)
+			{
+				m_mouseX = 5 * (m_mouseX == 0 ? 0 : m_mouseX > 0 ? 1 : -1);
+			}
+		}
+		if (!yDown)
+		{
+			m_mouseY /= 2;
+		}
 	}
 
 	return false;
@@ -279,16 +324,16 @@ HWND GraphicsManager::getWindow()
 
 i32 GraphicsManager::diffX()
 {
-	if(m_mouseLook)
-		return m_mouseX;
-	return 0;
+	//if(m_mouseLook)
+	return m_mouseX;
+	//return 0;
 }
 
 i32 GraphicsManager::diffY()
 {
-	if(m_mouseLook)
-		return m_mouseY;
-	return 0;
+	//if(m_mouseLook)
+	return m_mouseY;
+	//return 0;
 }
 
 void GraphicsManager::setViewMatrix(const XMMATRIX& view)
