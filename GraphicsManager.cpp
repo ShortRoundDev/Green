@@ -58,7 +58,7 @@ bool GraphicsManager::start()
 	m_mouse->SetWindow(Graphics.getWindow());
 	m_mouse->SetMode(Mouse::MODE_RELATIVE);
 
-	m_mouseLook = false;
+	m_mouseLook = true;
 	io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 
 	initQuad();

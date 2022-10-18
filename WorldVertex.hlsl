@@ -26,7 +26,7 @@ PixelInput Vertex(VertexInput input)
         hasBones = true;
         posL += (weights[i] * mul(float4(input.position.xyz, 1.0f), bones[boneId]).xyz);
 
-        normalL += (weights[i] * mul(float4(input.normal.xyz, 1.0f), (float3x3)bones[boneId]).xyz);
+        normalL += (weights[i] * mul(float4(input.normal.xyz, 1.0f), (float3x3) bones[boneId]).xyz);
         /*
         uint boneId = boneIds[i];
         if (boneId == -1)
@@ -52,6 +52,7 @@ PixelInput Vertex(VertexInput input)
     {
         output.normal = normalize(input.normal);
     }
+    output.normal = normalize(mul(output.normal, (float3x3)modelTransform));
     output.tex = input.tex;
     
     totalPos = mul(totalPos, modelTransform);

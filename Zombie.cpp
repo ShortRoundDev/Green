@@ -135,24 +135,40 @@ void Zombie::think()
     auto myPosVec = XMLoadFloat3(&m_pos);
     auto diff = XMVectorSubtract(playerPosVec, myPosVec);
     diff = XMVector3Normalize(XMVectorSetY(diff, 0.0f)); // drop the y component
-    moveVec = XMVectorAdd(moveVec, XMVectorScale(diff, 0.05f));
 
     m_rotTarget = -std::atan2f(XMVectorGetZ(diff), XMVectorGetX(diff)) + M_PI_2_F;
-    if (m_rotTarget < m_rotation)
+    
+    auto rotTargetVec2 = XMVectorSet(XMVectorGetX(diff), XMVectorGetZ(diff), 0.0f, 0.0f);
+    auto rotNowVec2 = XMVector2Normalize(
+        XMVectorSet(std::sinf(m_rotation), std::cosf(m_rotation), 0.0f, 0.0f)
+    );
+
+    auto rotAngle = XMVectorGetX(XMVector2Cross(rotTargetVec2, rotNowVec2));
+
+    logger.info("%05.2f", rotAngle);
+
+    if (rotAngle > 0.0f)
     {
-        m_rotation -= 0.01f;
+        m_rotation += 0.02f;
     }
     else
     {
-        m_rotation += 0.01f;
+        m_rotation -= 0.02f;
     }
+
+    moveVec = XMVectorAdd(
+        moveVec,
+        XMVectorScale(
+            XMVectorSet(std::sinf(m_rotation), 0.0f, std::cosf(m_rotation), 0.0f),
+            0.1f
+        )
+    );
 
     //logger.info("%f", m_rotation);
 
     ////////////////
     auto move = PxVec3(XMVectorGetX(moveVec), XMVectorGetY(moveVec), XMVectorGetZ(moveVec));
     m_lastPos = m_controller->getPosition();
-    logger.info("%f", m_lastPos.y);
     m_controller->move(move, 0.0f, 0, filters);
 
     pos = m_controller->getPosition();
